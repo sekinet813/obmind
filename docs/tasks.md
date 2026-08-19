@@ -303,3 +303,19 @@ Roadmap: Phase 2 Parse → Serialize → Parse のユニットテスト
 
 Roadmap: Phase 3 Horizontal Layout Engine
 
+### T-021 Node描画
+
+- [x] NodeをFlutter Widgetとして描画する
+
+完了条件:
+
+- Node textが表示される
+- 座標をDomainモデルへ持たせない
+
+依存:
+
+- T-020
+
+Roadmap: Phase 3 Node描画（Widget）
+
+

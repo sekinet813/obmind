@@ -45,7 +45,7 @@ UIより先に安定させます。
 ## Phase 3：Mind Map Rendering PoC
 
 - [x] Horizontal Layout Engine
-- [ ] Node描画（Widget）
+- [x] Node描画（Widget）
 - [ ] Edge描画（CustomPainter）
 - [ ] Pan
 - [ ] Zoom
