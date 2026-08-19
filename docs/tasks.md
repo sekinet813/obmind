@@ -273,7 +273,7 @@ Roadmap: Phase 2 Cycle防止
 
 ### T-019 Parse → Serialize → Parse
 
-- [ ] Round-tripで意味が維持されることをテストする
+- [x] Round-tripで意味が維持されることをテストする
 
 完了条件:
 
