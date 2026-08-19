@@ -115,7 +115,7 @@ Roadmap: Phase 0 Layout Engineのinterface設計
 
 ### T-009ログ方針の実装
 
-- [ ] `print()`に頼らないlogging abstractionを`lib/core`へ追加する
+- [x] `print()`に頼らないlogging abstractionを`lib/core`へ追加する
 
 完了条件:
 

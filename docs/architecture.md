@@ -150,7 +150,7 @@ Autosaveはdebounceとatomic writeを前提にします。保存直前に外部�
 
 ## Logging
 
-`print()`を無秩序に使いません。Logging abstractionまたはFlutter標準のログ機構を使い、Productionでは不要なDebug Logを抑制できるようにします。実装は機能追加に合わせて行います。
+`print()`を無秩序に使いません。`lib/core/logging`の`AppLogger`を使い、`dart:developer`へ書き出します。Productionでは`configureAppLogging(suppressDebug: kReleaseMode)`でDebug Logを抑制します。Domainはこのabstractionをimportしません。
 
 ## Error Handling
 
