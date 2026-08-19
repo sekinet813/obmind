@@ -1,5 +1,5 @@
-import 'package:app_template/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:obmind/l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

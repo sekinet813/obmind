@@ -97,13 +97,13 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In ja, this message translates to:
-  /// **'App Template'**
+  /// **'Obmind'**
   String get appTitle;
 
   /// No description provided for @homeMessage.
   ///
   /// In ja, this message translates to:
-  /// **'このテンプレートからアプリの実装を始めてください。'**
+  /// **'Markdownを正本とする、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
 }
 

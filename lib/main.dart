@@ -1,7 +1,7 @@
-import 'package:app_template/presentation/app.dart';
 import 'package:flutter/material.dart';
+import 'package:obmind/app/app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const AppTemplate());
+  runApp(const ObmindApp());
 }

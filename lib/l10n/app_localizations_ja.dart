@@ -9,8 +9,8 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'App Template';
+  String get appTitle => 'Obmind';
 
   @override
-  String get homeMessage => 'このテンプレートからアプリの実装を始めてください。';
+  String get homeMessage => 'Markdownを正本とする、Local-firstなマインドマップアプリです。';
 }

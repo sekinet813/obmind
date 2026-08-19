@@ -1,12 +1,15 @@
-import 'package:app_template/presentation/app.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:obmind/app/app.dart';
 
 void main() {
   testWidgets('日本語の初期画面を表示する', (tester) async {
-    await tester.pumpWidget(const AppTemplate());
+    await tester.pumpWidget(const ObmindApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('App Template'), findsOneWidget);
-    expect(find.text('このテンプレートからアプリの実装を始めてください。'), findsOneWidget);
+    expect(find.text('Obmind'), findsOneWidget);
+    expect(
+      find.text('Markdownを正本とする、Local-firstなマインドマップアプリです。'),
+      findsOneWidget,
+    );
   });
 }

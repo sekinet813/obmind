@@ -1,5 +1,5 @@
-name: app_template
-description: "Android / iOS向けFlutterアプリのテンプレート。"
+name: obmind
+description: "Markdownを正本とする、Local-firstなマインドマップアプリ。"
 publish_to: "none"
 version: 1.0.0+1
 

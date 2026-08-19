@@ -18,7 +18,7 @@ AndroidはローカルPCでビルドしなくても、GitHub ActionsのDebug APK
 方針:
 
 - Debug APKは開発中の実機確認用途とする
-- Play Store配布やRelease署名はこのテンプレートの対象外とする
+- Play Store配布やRelease署名はこのリポジトリの標準対象外とする
 - CIで静的解析・テストが失敗した場合は、APK配布まで進めない
 - Artifactの保持期間は7日間とし、長期保管を目的としない
 - APKそのものをGitリポジトリへコミットしない
@@ -57,4 +57,4 @@ GitHub-hosted runnerからインストール可能なIPAを出すには、Apple 
 3. 成功時のみArtifactまたは内部配布先へアップロードする
 4. secretsが無いリポジトリでは、署名なしビルド確認のままにする
 
-このテンプレートはsecretsを前提にしないため、標準ではIPA Artifactを出しません。
+このリポジトリはsecretsを前提にしないため、標準ではIPA Artifactを出しません。

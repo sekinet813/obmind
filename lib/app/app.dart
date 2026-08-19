@@ -1,10 +1,10 @@
-import 'package:app_template/l10n/app_localizations.dart';
-import 'package:app_template/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:obmind/features/library/presentation/home_page.dart';
+import 'package:obmind/l10n/app_localizations.dart';
 
-class AppTemplate extends StatelessWidget {
-  const AppTemplate({super.key});
+class ObmindApp extends StatelessWidget {
+  const ObmindApp({super.key});
 
   @override
   Widget build(BuildContext context) {

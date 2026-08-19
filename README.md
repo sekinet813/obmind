@@ -1,38 +1,38 @@
-# Flutter App Template
+# Obmind
 
-Android / iOS向けFlutterアプリをすぐに開発するためのテンプレートです。
+**Visual thinking. Your files.**
 
-GitHubの**Use this template**からコピーし、アプリ名・識別子・docsを埋めたあと、実装を始められます。`main`へmergeするとGitHub Actionsがテストし、Android Debug APKをArtifactとしてダウンロードできます。
+Obmind（オブマインド）は、Markdownファイルをデータの正本として扱う、Local-firstなマインドマップアプリです。
 
-## 使い方
+スマートフォンでグラフィカルにマインドマップを編集しつつ、データはサービス側ではなくユーザー自身が所有します。Obmindを使わなくなっても、思考はMarkdownとして残ります。
 
-1. このリポジトリの**Use this template**から新しいリポジトリを作る
-2. `docs/tasks.md`の`T-001`から順に着手する
-3. 以降の機能は`docs/tasks.md`へタスクを足して実装する
+## 現状
 
-コピー直後の識別子（変更前提）:
+いまはPhase 0です。設計ドキュメントとDomain Modelの骨格までがあり、マインドマップ編集UI・ファイル保存・Obsidian Vault連携はまだありません。起動すると日本語のプレースホルダホーム画面だけが表示されます。
 
-| 項目 | 初期値 |
-| --- | --- |
-| package | `app_template` |
-| Android applicationId | `com.example.app_template` |
-| iOS Bundle ID | `com.example.appTemplate` |
-| 表示名 | `App Template` |
+## Local-first
 
-識別子の変更箇所は`docs/tasks.md`の`T-001`を参照してください。
+基本的な作成・編集はインターネット接続なしで使えることを目標にします。MVPではObmind専用バックエンドを持ちません。
 
-## 開発ドキュメント
+## Markdown
 
-エージェントで開発する場合は、まず[AGENTS.md](AGENTS.md)を読んでください。
+マインドマップの正本はMarkdownです。
 
-- [開発タスク](docs/tasks.md)
-- [アーキテクチャ](docs/architecture.md)
-- [モバイルでの動作確認](docs/mobile-testing.md)
-- [長時間・夜間自律開発](docs/overnight-development.md)
+- H1がRoot Node
+- 入れ子の箇条書きがChild Node
+- Node IDはHTMLコメントとして保存し、通常のMarkdown表示を邪魔しにくくします
 
-このテンプレートは長時間・夜間の自律開発にも使えます。`docs/tasks.md`と`AGENTS.md`、Codex Goal modeなどを組み合わせ、未完了タスクを順に実装・検証・コミットできます。開始時は[prompts/overnight.md](prompts/overnight.md)を使ってください。詳細は[docs/overnight-development.md](docs/overnight-development.md)を参照してください。
+独自情報を除いても、一般的なMarkdownとして意味が残る形式にします。詳細は[docs/markdown-format.md](docs/markdown-format.md)を参照してください。
 
-## ローカル開発
+## Obsidianとの関係
+
+Obsidian APIへ接続するアプリではありません。ユーザーが選んだフォルダ（Obsidian Vaultを含む）のMarkdownを読み書きする想定です。Obsidian Sync、Git、Syncthingなど既存の同期手段をそのまま使えます。
+
+## 対応Platform
+
+MVPの対象はiOSとAndroidです。Web / macOS / Windowsは対象外です。
+
+## Development
 
 ```bash
 dart format --set-exit-if-changed .
@@ -54,24 +54,44 @@ flutter build ios --debug --no-codesign
 flutter run
 ```
 
+エージェントで開発する場合は、まず[AGENTS.md](AGENTS.md)を読んでください。
+
+- [要件](docs/requirements.md)
+- [アーキテクチャ](docs/architecture.md)
+- [Markdown Format v0.1](docs/markdown-format.md)
+- [ロードマップ](docs/roadmap.md)
+- [開発タスク](docs/tasks.md)
+- [テスト方針](docs/testing.md)
+- [モバイルでの動作確認](docs/mobile-testing.md)
+- [長時間・夜間自律開発](docs/overnight-development.md)
+
+長時間実行の開始時は[prompts/overnight.md](prompts/overnight.md)を使ってください。
+
+## Architecture
+
+Feature-firstを基本とし、UI・Domain・Markdown・File Systemを分離します。Domain層はFlutter WidgetとOS APIへ依存しません。詳細は[docs/architecture.md](docs/architecture.md)です。
+
+## Roadmap
+
+Phase 0（設計）から始め、Storage PoC、Markdown Core、描画、編集、永続化、UX、Design、Betaの順で進めます。[docs/roadmap.md](docs/roadmap.md)がフェーズ俯瞰、[docs/tasks.md](docs/tasks.md)が実行用バックログです。
+
+## 識別子
+
+| 項目 | 現在の値 | 備考 |
+| --- | --- | --- |
+| package | `obmind` | Dart package名 |
+| 表示名 | `Obmind` | |
+| Android applicationId | `com.example.obmind` | 開発用。本番IDは未決定 |
+| iOS Bundle ID | `com.example.obmind` | 開発用。本番IDは未決定 |
+
 ## CI
 
 PRと`main`へのpush、手動実行で次が走ります。
 
+- `dart format --set-exit-if-changed .`
 - `flutter analyze`
 - `flutter test`
 - Debug APKのビルドとArtifactアップロード（Linux）
 - iOSの署名なしビルド確認（macOS）
 
-Artifact名は`<リポジトリ名>-debug-apk`です。ダウンロード手順は[docs/mobile-testing.md](docs/mobile-testing.md)を参照してください。
-
 Flutter SDKバージョンは`.github/flutter-version`にピン固定しています。
-
-## バージョン更新
-
-テンプレートと、コピー後の各リポジトリの両方で次が動きます。
-
-- Dependabot: pub依存とGitHub Actionsを週次でPRにする
-- Flutter SDKピン: 週次でlatest stableを確認し、新しければPRにする
-
-自動mergeはしません。CIが通ったPRを確認してからmergeしてください。Flutter SDKピン更新のPRは既定の`GITHUB_TOKEN`ではActionsが自動起動しないことがあります。その場合は対象ブランチでFlutter CIを手動実行してください。
