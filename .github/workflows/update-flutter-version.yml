@@ -1,0 +1,62 @@
+name: Update Flutter version
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-flutter-version
+  cancel-in-progress: true
+
+jobs:
+  update:
+    name: Open PR when a newer Flutter stable exists
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check latest Flutter stable
+        id: check
+        run: |
+          current="$(tr -d '[:space:]' < .github/flutter-version)"
+          latest="$(
+            curl -sS https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json |
+              jq -r '.current_release.stable as $hash | .releases[] | select(.hash == $hash) | .version'
+          )"
+
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+
+          if [ "$current" = "$latest" ]; then
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+            echo "Already on latest Flutter stable: $current"
+          else
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$latest" > .github/flutter-version
+            echo "Flutter stable $current -> $latest"
+          fi
+
+      - name: Create pull request
+        if: steps.check.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: bump Flutter SDK pin to ${{ steps.check.outputs.latest }}"
+          title: "chore: bump Flutter SDK pin to ${{ steps.check.outputs.latest }}"
+          body: |
+            新しいFlutter stableを検出したため、`.github/flutter-version`を更新します。
+
+            - 現在: `${{ steps.check.outputs.current }}`
+            - 更新後: `${{ steps.check.outputs.latest }}`
+
+            CIが通ることを確認してからmergeしてください。
+          branch: chore/flutter-sdk-${{ steps.check.outputs.latest }}
+          delete-branch: true
+          add-paths: .github/flutter-version
