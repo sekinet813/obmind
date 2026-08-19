@@ -6,4 +6,4 @@ Layout EngineはWidgetから独立し、`MindMapDocument`から`NodeLayout`を�
 
 `CreateMarkdownInFolder`はフォルダ選択とMarkdown作成をOrchestrationします。OSのPicker UIはInfrastructure側です。
 
-Horizontal Layoutの実装はPhase 3です。
+`HorizontalLayoutEngine`は左から右へ子を置き、折りたたまれた子孫はレイアウトから省きます。座標はDomainのNodeへ書き戻しません。

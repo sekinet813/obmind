@@ -284,3 +284,22 @@ Roadmap: Phase 2 Cycle防止
 - T-016
 
 Roadmap: Phase 2 Parse → Serialize → Parse のユニットテスト
+
+## P1: Phase 3 Mind Map Rendering PoC
+
+### T-020 Horizontal Layout Engine
+
+- [x] `MindMapDocument`から水平レイアウトの`MindMapLayout`を計算する
+
+完了条件:
+
+- 同一Inputに対して安定した`NodeLayout`になる
+- DomainのNodeを変更しない
+- 折りたたまれた子孫をレイアウトから省ける
+
+依存:
+
+- T-008
+
+Roadmap: Phase 3 Horizontal Layout Engine
+
