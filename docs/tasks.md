@@ -158,6 +158,9 @@ Parserより先に、実機でフォルダへMarkdownを読み書きできるか
 
 - [ ] ユーザーがディレクトリを選び、その場所へMarkdownを作成できる
 
+Status: BLOCKED
+Reason: Xcodeが未インストールで、iOSシミュレータも実機も使えない。Command Line Toolsのみ。`flutter doctor`がXcode incompleteを報告する。
+
 完了条件:
 
 - security-scoped resourceをInfrastructureが扱う
@@ -171,6 +174,9 @@ Parserより先に、実機でフォルダへMarkdownを読み書きできるか
 
 - [ ] 選んだディレクトリのMarkdownを読み、編集して保存する
 
+Status: Skip
+Reason: T-012がBLOCKEDのため実行できない
+
 完了条件:
 
 - 作成 → 読み込み → 編集 → 保存がiOSで確認できる
@@ -183,6 +189,9 @@ Parserより先に、実機でフォルダへMarkdownを読み書きできるか
 ### T-014Storage abstractionへPoC結果を反映する
 
 - [ ] PoCで分かった制約を`MindMapStorage`とarchitectureへ反映する
+
+Status: Skip
+Reason: T-013が未完了のため、iOS側の制約をarchitectureへ反映できない
 
 完了条件:
 
