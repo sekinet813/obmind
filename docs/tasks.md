@@ -396,6 +396,23 @@ Roadmap: Phase 3 100 Node程度での確認
 
 Roadmap: Phase 4 Node選択
 
+### T-027 Add Child / Sibling
+
+- [x] 選択中のNodeへChild / Siblingを追加する
+
+完了条件:
+
+- Domainの`MindMapTree`を通す
+- RootのSiblingは追加できない
+
+依存:
+
+- T-017
+- T-026
+
+Roadmap: Phase 4 Add Child / Sibling
+
+
 
 
 

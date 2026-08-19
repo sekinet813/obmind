@@ -18,5 +18,8 @@
   "markdownSaved": "保存しました",
   "markdownSaveFailed": "保存に失敗しました。元のファイルは空にしていません",
   "noMarkdownFiles": "このフォルダにMarkdownがありません",
-  "editMarkdownHint": "Markdown"
+  "editMarkdownHint": "Markdown",
+  "addChildNode": "子を追加",
+  "addSiblingNode": "兄弟を追加",
+  "newNodeText": "新しいノード"
 }

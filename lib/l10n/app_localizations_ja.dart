@@ -45,4 +45,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get editMarkdownHint => 'Markdown';
+
+  @override
+  String get addChildNode => '子を追加';
+
+  @override
+  String get addSiblingNode => '兄弟を追加';
+
+  @override
+  String get newNodeText => '新しいノード';
 }

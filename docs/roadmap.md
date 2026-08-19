@@ -54,7 +54,7 @@ UIより先に安定させます。
 ## Phase 4：Editing
 
 - [x] Node選択
-- [ ] Add Child / Sibling
+- [x] Add Child / Sibling
 - [ ] Edit（キャンバスから離れない）
 - [ ] Delete
 - [ ] Reorder / Move Parent（Drag）

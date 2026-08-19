@@ -165,6 +165,24 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'Markdown'**
   String get editMarkdownHint;
+
+  /// No description provided for @addChildNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'子を追加'**
+  String get addChildNode;
+
+  /// No description provided for @addSiblingNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'兄弟を追加'**
+  String get addSiblingNode;
+
+  /// No description provided for @newNodeText.
+  ///
+  /// In ja, this message translates to:
+  /// **'新しいノード'**
+  String get newNodeText;
 }
 
 class _AppLocalizationsDelegate
