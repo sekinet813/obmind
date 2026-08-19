@@ -202,3 +202,85 @@ Reason: T-013が未完了のため、iOS側の制約をarchitectureへ反映で�
 
 - T-011
 - T-013
+
+## P1: Phase 2 Markdown Core
+
+UIより先にParser / Serializer / Tree操作を安定させる。
+
+### T-015 Markdown Parser
+
+- [x] Markdownから`MindMapDocument`を構築する
+- [x] ID欠落時に採番し、未対応ブロックを警告する
+
+完了条件:
+
+- Format v0.1のH1 + nested unordered listを`MindMapDocument`へ変換できる
+- IDが無い既存MarkdownにIDを採番する
+- 未対応ブロックを黙って捨てない（警告または失敗）
+- DomainがFlutter WidgetとOS APIに依存しない
+
+依存:
+
+- T-005
+
+Roadmap: Phase 2 Markdown Parser
+
+### T-016 Markdown Serializer
+
+- [ ] `MindMapDocument`をFormat v0.1のMarkdownへ書き出す
+
+完了条件:
+
+- Frontmatter、H1、2スペースインデントの`- `リスト、HTMLコメントIDをこの順で出す
+- collapsedと未知属性をコメントへ戻せる
+
+依存:
+
+- T-015
+
+Roadmap: Phase 2 Markdown Serializer
+
+### T-017 Tree操作
+
+- [ ] Add / Delete / Move / ReorderをDomainで行う
+
+完了条件:
+
+- Rootは削除できない
+- childrenの順序が保持される
+- 操作後もidが一意
+
+依存:
+
+- T-005
+
+Roadmap: Phase 2 Tree操作
+
+### T-018 Cycle防止
+
+- [ ] Nodeを自分の子孫へMoveできないようにする
+
+完了条件:
+
+- CycleになるMoveは拒否する
+- ユニットテストがある
+
+依存:
+
+- T-017
+
+Roadmap: Phase 2 Cycle防止
+
+### T-019 Parse → Serialize → Parse
+
+- [ ] Round-tripで意味が維持されることをテストする
+
+完了条件:
+
+- Tree構造、text、ID、順序、collapsed、theme / layout / versionが維持される
+
+依存:
+
+- T-016
+
+Roadmap: Phase 2 Parse → Serialize → Parse のユニットテスト

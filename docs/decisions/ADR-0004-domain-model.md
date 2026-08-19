@@ -23,7 +23,9 @@ MindMapDocument
 ├── title（Rootのtextと同期）
 ├── root: MindNode
 ├── theme
-└── layout
+├── layout
+├── formatVersion
+└── extraObmindFields
 
 MindNode
 ├── id: NodeId

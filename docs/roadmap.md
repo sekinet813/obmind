@@ -24,15 +24,19 @@
 - [x] Android Markdown read
 - [x] Android Markdown write
 - [ ] iOS folder picker PoC
+  - Status: BLOCKED Reason: Xcode未インストール。詳細は`docs/tasks.md`のT-012
 - [ ] iOS Markdown read
+  - Status: Skip Reason: T-012依存
 - [ ] iOS Markdown write
+  - Status: Skip Reason: T-012依存
 - [ ] Storage abstractionへPoC結果を反映する
+  - Status: Skip Reason: T-013未完了
 
 ## Phase 2：Markdown Core
 
 UIより先に安定させます。
 
-- [ ] Markdown Parser
+- [x] Markdown Parser
 - [ ] Markdown Serializer
 - [ ] Tree操作（Add / Delete / Move / Reorder）
 - [ ] Cycle防止
