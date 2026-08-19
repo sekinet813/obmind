@@ -381,6 +381,22 @@ Roadmap: Phase 3 Zoom
 
 Roadmap: Phase 3 100 Node程度での確認
 
+### T-026 Node選択
+
+- [x] キャンバス上のNodeを選択できる
+
+完了条件:
+
+- TapでNodeを選択できる
+- 選択状態をMarkdownへ保存しない
+
+依存:
+
+- T-021
+
+Roadmap: Phase 4 Node選択
+
+
 
 
 

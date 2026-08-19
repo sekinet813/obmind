@@ -53,7 +53,7 @@ UIより先に安定させます。
 
 ## Phase 4：Editing
 
-- [ ] Node選択
+- [x] Node選択
 - [ ] Add Child / Sibling
 - [ ] Edit（キャンバスから離れない）
 - [ ] Delete

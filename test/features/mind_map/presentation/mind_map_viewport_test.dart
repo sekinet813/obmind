@@ -51,4 +51,30 @@ void main() {
     expect(find.byType(InteractiveViewer), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('selects a node on tap without storing coordinates', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+    NodeId? selected;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            selectedId: const NodeId('root'),
+            onNodeSelected: (id) => selected = id,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('child'));
+    await tester.pump();
+
+    expect(selected, const NodeId('child'));
+  });
 }

@@ -17,6 +17,8 @@ class MindMapViewport extends StatelessWidget {
     this.scaleEnabled = true,
     this.minScale = 0.5,
     this.maxScale = 2.5,
+    this.selectedId,
+    this.onNodeSelected,
   });
 
   final MindMapDocument document;
@@ -26,6 +28,8 @@ class MindMapViewport extends StatelessWidget {
   final bool scaleEnabled;
   final double minScale;
   final double maxScale;
+  final NodeId? selectedId;
+  final ValueChanged<NodeId>? onNodeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +58,10 @@ class MindMapViewport extends StatelessWidget {
                   child: MindNodeWidget(
                     text: node.text,
                     collapsed: node.collapsed,
+                    selected: selectedId == node.id,
+                    onTap: onNodeSelected == null
+                        ? null
+                        : () => onNodeSelected!(node.id),
                   ),
                 ),
           ],
