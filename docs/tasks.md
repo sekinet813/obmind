@@ -318,4 +318,21 @@ Roadmap: Phase 3 Horizontal Layout Engine
 
 Roadmap: Phase 3 Node描画（Widget）
 
+### T-022 Edge描画
+
+- [x] 親子のEdgeをCustomPainterで描画する
+
+完了条件:
+
+- Layoutにある親子だけを描く
+- Domainへ座標を保存しない
+
+依存:
+
+- T-020
+- T-021
+
+Roadmap: Phase 3 Edge描画（CustomPainter）
+
+
 
