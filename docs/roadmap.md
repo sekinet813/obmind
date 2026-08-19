@@ -47,7 +47,7 @@ UIより先に安定させます。
 - [x] Horizontal Layout Engine
 - [x] Node描画（Widget）
 - [x] Edge描画（CustomPainter）
-- [ ] Pan
+- [x] Pan
 - [ ] Zoom
 - [ ] 100 Node程度での確認
 

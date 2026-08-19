@@ -334,5 +334,22 @@ Roadmap: Phase 3 Node描画（Widget）
 
 Roadmap: Phase 3 Edge描画（CustomPainter）
 
+### T-023 Pan
+
+- [x] Viewportで1本指Panできる
+
+完了条件:
+
+- NodeとEdgeがLayout座標で配置される
+- Panが有効でZoomはまだ無効
+
+依存:
+
+- T-021
+- T-022
+
+Roadmap: Phase 3 Pan
+
+
 
 

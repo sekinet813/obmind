@@ -22,19 +22,23 @@ class MindNodeWidget extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (collapsed) ...[
-                  Icon(
-                    Icons.chevron_right,
-                    size: 18,
-                    color: scheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (collapsed) ...[
+                    Icon(
+                      Icons.chevron_right,
+                      size: 18,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                  Text(text, maxLines: 3, overflow: TextOverflow.ellipsis),
                 ],
-                Text(text, maxLines: 3, overflow: TextOverflow.ellipsis),
-              ],
+              ),
             ),
           ),
         ),
