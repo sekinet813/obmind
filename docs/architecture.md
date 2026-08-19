@@ -51,6 +51,7 @@ Presentation
      ↓
 Application
 │
+├── LayoutEngine（MindMapDocument → MindMapLayout）
 ├── CreateNode / EditNode / DeleteNode
 ├── MoveNode / ReorderNode
 ├── LoadMindMap / SaveMindMap
@@ -81,11 +82,22 @@ MindMapViewport
 └── NodeLayer（MindNodeWidget...）
 ```
 
-Layout EngineはWidgetから独立させ、`MindMapDocument`から`NodeLayout`を計算します。全Nodeを常時Widget Treeへ載せ続けないよう、将来のViewport Cullingを阻害しない構造にします。
+Layout EngineはWidgetから独立させ、`MindMapDocument`から`NodeLayout`を計算します。全Nodeを常時Widget Treeへ載せ続けないよう、将来のViewport Cullingを阻害しない構造にします。契約はApplication層の`LayoutEngine`です。
 
 ### Application
 
 ノード操作、Load/Save、Undo/Redoなどのユースケースを置きます。UIの一時的なStateとDomain Stateを混ぜません。
+
+Layout Engineもここに置きます。Presentationが測った`NodeSize`を入力し、表示用の`MindMapLayout`を返します。`NodeLayout`の`x` / `y`は計算結果であり、DomainモデルやMarkdownへ保存しません。
+
+```dart
+abstract interface class LayoutEngine {
+  MindMapLayout layout(
+    MindMapDocument document, {
+    required Map<NodeId, NodeSize> nodeSizes,
+  });
+}
+```
 
 ### Domain
 

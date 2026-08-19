@@ -13,7 +13,7 @@
 - [x] ADRを追加する
 - [x] Domain Modelの骨格
 - [x] Storage abstraction（interface）
-- [ ] Layout Engineのinterface設計（描画PoC前）
+- [x] Layout Engineのinterface設計（描画PoC前）
 - [ ] ログ方針の実装（abstraction）
 
 ## Phase 1：Storage PoC

@@ -96,7 +96,7 @@ Reason: 本番識別子は人間が決める。開発用は`com.example.obmind`�
 
 ### T-008Layout Engineのinterface設計
 
-- [ ] Domain外の`NodeLayout`とLayout Engine interfaceを文書または骨格コードで定義する
+- [x] Domain外の`NodeLayout`とLayout Engine interfaceを文書または骨格コードで定義する
 
 目的:
 
