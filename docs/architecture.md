@@ -140,6 +140,8 @@ abstract interface class MindMapStorage {
 
 `MindMapLocation`はパス文字列やContent URIをDomainへ漏らさないための値です。実体のURIやsecurity-scoped bookmarkはInfrastructureが持ちます。
 
+フォルダ選択は`MindMapFolderPicker`です。Androidの`ACTION_OPEN_DOCUMENT_TREE`は`AndroidDocumentStorage`だけが呼びます。PresentationはApplicationの`CreateMarkdownInFolder`を通します。
+
 Autosaveはdebounceとatomic writeを前提にします。保存直前に外部変更を検知できるよう、読み込み時のファイル情報（更新時刻やハッシュ）をInfrastructure側で保持し、無条件上書きしません。高度なConflict ResolutionはMVP対象外です。
 
 ## Markdown

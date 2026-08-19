@@ -105,6 +105,30 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'Markdownを正本とする、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
+
+  /// No description provided for @pickFolderAndCreateMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダを選んでMarkdownを作成'**
+  String get pickFolderAndCreateMarkdown;
+
+  /// No description provided for @folderPickCancelled.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダ選択をキャンセルしました'**
+  String get folderPickCancelled;
+
+  /// No description provided for @folderPickFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダの選択または保存に失敗しました'**
+  String get folderPickFailed;
+
+  /// No description provided for @markdownCreated.
+  ///
+  /// In ja, this message translates to:
+  /// **'{fileName}を作成しました'**
+  String markdownCreated(String fileName);
 }
 
 class _AppLocalizationsDelegate

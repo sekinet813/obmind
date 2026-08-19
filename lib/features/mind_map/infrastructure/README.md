@@ -2,4 +2,4 @@
 
 Markdownのparse / serializeと、OS固有ストレージ実装を置きます。
 
-Phase 0では未実装です。
+Androidのフォルダ選択PoCは`AndroidDocumentStorage`がSAFを扱います。PresentationとDomainはこの具象をimportしません。

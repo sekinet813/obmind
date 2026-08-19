@@ -5,6 +5,17 @@ class _MemoryMindMapStorage implements MindMapStorage {
   final Map<String, String> files = {};
 
   @override
+  Future<MindMapFile> create(
+    MindMapLocation folder,
+    String displayName, {
+    String markdown = '',
+  }) async {
+    final location = MindMapLocation('${folder.token}/$displayName');
+    files[location.token] = markdown;
+    return MindMapFile(location: location, displayName: displayName);
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     return files.entries
         .map(
@@ -41,4 +52,21 @@ void main() {
     expect(await storage.read(location), '# Root\n');
     expect(await storage.list(const MindMapLocation('maps')), hasLength(1));
   });
+
+  test(
+    'create writes markdown under a folder token without OS types',
+    () async {
+      final storage = _MemoryMindMapStorage();
+      const folder = MindMapLocation('maps');
+
+      final file = await storage.create(
+        folder,
+        'idea.md',
+        markdown: '# Root\n',
+      );
+
+      expect(file.displayName, 'idea.md');
+      expect(await storage.read(file.location), '# Root\n');
+    },
+  );
 }

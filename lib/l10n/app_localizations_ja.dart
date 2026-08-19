@@ -13,4 +13,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get homeMessage => 'Markdownを正本とする、Local-firstなマインドマップアプリです。';
+
+  @override
+  String get pickFolderAndCreateMarkdown => 'フォルダを選んでMarkdownを作成';
+
+  @override
+  String get folderPickCancelled => 'フォルダ選択をキャンセルしました';
+
+  @override
+  String get folderPickFailed => 'フォルダの選択または保存に失敗しました';
+
+  @override
+  String markdownCreated(String fileName) {
+    return '$fileNameを作成しました';
+  }
 }

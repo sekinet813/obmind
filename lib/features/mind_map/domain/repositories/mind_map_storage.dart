@@ -24,6 +24,17 @@ final class MindMapFile {
   final String displayName;
 }
 
+/// Failure from a storage operation. Does not carry OS types.
+final class MindMapStorageException implements Exception {
+  const MindMapStorageException(this.message, {this.cause});
+
+  final String message;
+  final Object? cause;
+
+  @override
+  String toString() => 'MindMapStorageException: $message';
+}
+
 /// Read and write Markdown without exposing OS file APIs to Domain.
 abstract interface class MindMapStorage {
   Future<String> read(MindMapLocation location);
@@ -31,4 +42,11 @@ abstract interface class MindMapStorage {
   Future<void> write(MindMapLocation location, String markdown);
 
   Future<List<MindMapFile>> list(MindMapLocation folder);
+
+  /// Creates a Markdown file in [folder] and writes [markdown].
+  Future<MindMapFile> create(
+    MindMapLocation folder,
+    String displayName, {
+    String markdown = '',
+  });
 }

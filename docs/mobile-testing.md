@@ -32,6 +32,10 @@ AndroidはローカルPCでビルドしなくても、GitHub ActionsのDebug APK
 - 同じapplicationIdの古いDebug APKが残っている場合は、一度アンインストールしてから入れ直す
 - 確認後は必要に応じて「不明なアプリのインストール」の許可を解除する
 
+## Android folder picker PoC
+
+ホーム画面の「フォルダを選んでMarkdownを作成」から、SAFのフォルダ選択でDocumentsなどを選び、その場所へ`obmind-poc.md`が作られることを確認します。PresentationはSAFを直接呼びません。
+
 ## iOS: ローカル確認
 
 CIのmacOSジョブは`flutter build ios --debug --no-codesign`でコンパイルできることだけを確認します。署名がないため、この成果物はiPhoneへ直接インストールできません。

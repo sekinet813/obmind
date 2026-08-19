@@ -130,7 +130,7 @@ Parserより先に、実機でフォルダへMarkdownを読み書きできるか
 
 ### T-010Android folder picker PoC
 
-- [ ] ユーザーがフォルダを選び、その場所へMarkdownを作成できる
+- [x] ユーザーがフォルダを選び、その場所へMarkdownを作成できる
 
 完了条件:
 

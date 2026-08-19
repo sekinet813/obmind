@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:obmind/features/library/presentation/home_page.dart';
+import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 class ObmindApp extends StatelessWidget {
-  const ObmindApp({super.key});
+  const ObmindApp({super.key, this.createMarkdownInFolder});
+
+  final CreateMarkdownInFolder? createMarkdownInFolder;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class ObmindApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: HomePage(createMarkdownInFolder: createMarkdownInFolder),
     );
   }
 }
