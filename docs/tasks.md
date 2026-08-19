@@ -258,7 +258,7 @@ Roadmap: Phase 2 Tree操作
 
 ### T-018 Cycle防止
 
-- [ ] Nodeを自分の子孫へMoveできないようにする
+- [x] Nodeを自分の子孫へMoveできないようにする
 
 完了条件:
 

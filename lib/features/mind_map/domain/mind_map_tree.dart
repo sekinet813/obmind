@@ -81,7 +81,7 @@ final class MindMapTree {
         newParentId.value,
       );
     }
-    if (id == newParentId || _find(moving, newParentId) != null) {
+    if (wouldCreateCycle(document, id, newParentId)) {
       throw const MindMapTreeException(MindMapTreeError.cycle);
     }
 
@@ -94,6 +94,22 @@ final class MindMapTree {
         return node.copyWith(children: children);
       }),
     );
+  }
+
+  /// True when [id] would become an ancestor of itself under [newParentId].
+  static bool wouldCreateCycle(
+    MindMapDocument document,
+    NodeId id,
+    NodeId newParentId,
+  ) {
+    if (id == newParentId) {
+      return true;
+    }
+    final moving = _find(document.root, id);
+    if (moving == null) {
+      return false;
+    }
+    return _find(moving, newParentId) != null;
   }
 
   static MindMapDocument reorder(

@@ -39,7 +39,7 @@ UIより先に安定させます。
 - [x] Markdown Parser
 - [x] Markdown Serializer
 - [x] Tree操作（Add / Delete / Move / Reorder）
-- [ ] Cycle防止
+- [x] Cycle防止
 - [ ] Parse → Serialize → Parse のユニットテスト
 
 ## Phase 3：Mind Map Rendering PoC
