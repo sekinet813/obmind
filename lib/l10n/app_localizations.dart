@@ -183,6 +183,12 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'新しいノード'**
   String get newNodeText;
+
+  /// No description provided for @deleteNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get deleteNode;
 }
 
 class _AppLocalizationsDelegate

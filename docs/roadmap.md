@@ -56,7 +56,7 @@ UIより先に安定させます。
 - [x] Node選択
 - [x] Add Child / Sibling
 - [ ] Edit（キャンバスから離れない）
-- [ ] Delete
+- [x] Delete
 - [ ] Reorder / Move Parent（Drag）
 - [ ] Collapse / Expand
 - [ ] Undo / Redo

@@ -21,5 +21,6 @@
   "editMarkdownHint": "Markdown",
   "addChildNode": "子を追加",
   "addSiblingNode": "兄弟を追加",
-  "newNodeText": "新しいノード"
+  "newNodeText": "新しいノード",
+  "deleteNode": "削除"
 }

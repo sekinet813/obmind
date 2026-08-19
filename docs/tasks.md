@@ -412,6 +412,23 @@ Roadmap: Phase 4 Node選択
 
 Roadmap: Phase 4 Add Child / Sibling
 
+### T-028 Delete
+
+- [x] 選択中の非Root Nodeを削除する
+
+完了条件:
+
+- Rootは削除できない
+- Domainの`MindMapTree.delete`を通す
+
+依存:
+
+- T-017
+- T-026
+
+Roadmap: Phase 4 Delete
+
+
 
 
 

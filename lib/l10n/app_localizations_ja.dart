@@ -54,4 +54,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get newNodeText => '新しいノード';
+
+  @override
+  String get deleteNode => '削除';
 }

@@ -57,11 +57,35 @@ class _MindMapPageState extends State<MindMapPage> {
     });
   }
 
+  NodeId? _parentId(NodeId id) {
+    for (final node in _document.root.depthFirst) {
+      for (final child in node.children) {
+        if (child.id == id) {
+          return node.id;
+        }
+      }
+    }
+    return null;
+  }
+
+  void _deleteSelected() {
+    final id = _selectedId;
+    if (id == null || id == _document.root.id) {
+      return;
+    }
+    final parentId = _parentId(id);
+    setState(() {
+      _document = MindMapTree.delete(_document, id);
+      _selectedId = parentId ?? _document.root.id;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final canAddSibling =
         _selectedId != null && _selectedId != _document.root.id;
+    final canDelete = canAddSibling;
     return Scaffold(
       appBar: AppBar(title: Text(_document.title)),
       body: MindMapViewport(
@@ -72,19 +96,27 @@ class _MindMapPageState extends State<MindMapPage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            children: [
-              TextButton.icon(
-                onPressed: _selectedId == null ? null : _addChild,
-                icon: const Icon(Icons.subdirectory_arrow_right),
-                label: Text(l10n.addChildNode),
-              ),
-              TextButton.icon(
-                onPressed: canAddSibling ? _addSibling : null,
-                icon: const Icon(Icons.arrow_downward),
-                label: Text(l10n.addSiblingNode),
-              ),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                TextButton.icon(
+                  onPressed: _selectedId == null ? null : _addChild,
+                  icon: const Icon(Icons.subdirectory_arrow_right),
+                  label: Text(l10n.addChildNode),
+                ),
+                TextButton.icon(
+                  onPressed: canAddSibling ? _addSibling : null,
+                  icon: const Icon(Icons.arrow_downward),
+                  label: Text(l10n.addSiblingNode),
+                ),
+                TextButton.icon(
+                  onPressed: canDelete ? _deleteSelected : null,
+                  icon: const Icon(Icons.delete_outline),
+                  label: Text(l10n.deleteNode),
+                ),
+              ],
+            ),
           ),
         ),
       ),

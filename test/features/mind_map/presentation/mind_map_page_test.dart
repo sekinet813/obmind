@@ -4,6 +4,7 @@ import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
+import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 void main() {
@@ -55,5 +56,19 @@ void main() {
 
     expect(find.text('新しいノード'), findsOneWidget);
     expect(find.text('a'), findsOneWidget);
+  });
+
+  testWidgets('deletes the selected non-root node', (tester) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+
+    await tester.tap(find.text('a'));
+    await tester.pump();
+    await tester.tap(find.text('削除'));
+    await tester.pump();
+
+    expect(find.text('a'), findsNothing);
+    expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
   });
 }
