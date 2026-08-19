@@ -33,4 +33,22 @@ void main() {
     expect(viewer.minScale, 0.5);
     expect(viewer.maxScale, 2.5);
   });
+
+  testWidgets('builds a canvas with about 100 nodes', (tester) async {
+    final document = MindMapDocument(
+      root: node('root', children: [for (var i = 0; i < 99; i++) node('n$i')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: MindMapViewport(document: document)),
+      ),
+    );
+
+    expect(find.text('root'), findsOneWidget);
+    expect(find.text('n0'), findsOneWidget);
+    expect(find.text('n98'), findsOneWidget);
+    expect(find.byType(InteractiveViewer), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

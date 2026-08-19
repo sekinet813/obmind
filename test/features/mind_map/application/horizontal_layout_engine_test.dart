@@ -131,4 +131,26 @@ void main() {
       greaterThan(layout[const NodeId('root-id')]!.x),
     );
   });
+
+  test('layouts about 100 nodes stably without overlapping siblings', () {
+    final document = MindMapDocument(
+      root: node('root', children: [for (var i = 0; i < 99; i++) node('n$i')]),
+    );
+    final sizes = sizesFor(document);
+
+    final first = engine.layout(document, nodeSizes: sizes);
+    final second = engine.layout(document, nodeSizes: sizes);
+
+    expect(first.nodes, hasLength(100));
+    expect(first.width.isFinite, isTrue);
+    expect(first.height.isFinite, isTrue);
+    expect(first.width, second.width);
+    expect(first.height, second.height);
+
+    final siblings = [for (var i = 0; i < 99; i++) first[NodeId('n$i')]!];
+    for (var i = 1; i < siblings.length; i++) {
+      expect(overlaps(siblings[i - 1], siblings[i]), isFalse);
+      expect(siblings[i].y, greaterThan(siblings[i - 1].y));
+    }
+  });
 }
