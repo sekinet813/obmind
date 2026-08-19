@@ -48,7 +48,7 @@ UIより先に安定させます。
 - [x] Node描画（Widget）
 - [x] Edge描画（CustomPainter）
 - [x] Pan
-- [ ] Zoom
+- [x] Zoom
 - [ ] 100 Node程度での確認
 
 ## Phase 4：Editing

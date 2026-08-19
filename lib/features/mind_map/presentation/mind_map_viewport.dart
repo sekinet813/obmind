@@ -14,7 +14,7 @@ class MindMapViewport extends StatelessWidget {
     this.layoutEngine = const HorizontalLayoutEngine(),
     this.nodeSizes = const {},
     this.panEnabled = true,
-    this.scaleEnabled = false,
+    this.scaleEnabled = true,
     this.minScale = 0.5,
     this.maxScale = 2.5,
   });

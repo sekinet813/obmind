@@ -341,7 +341,7 @@ Roadmap: Phase 3 Edge描画（CustomPainter）
 完了条件:
 
 - NodeとEdgeがLayout座標で配置される
-- Panが有効でZoomはまだ無効
+- PanがInteractiveViewerで有効
 
 依存:
 
@@ -349,6 +349,22 @@ Roadmap: Phase 3 Edge描画（CustomPainter）
 - T-022
 
 Roadmap: Phase 3 Pan
+
+### T-024 Zoom
+
+- [x] ViewportでPinch Zoomできる
+
+完了条件:
+
+- scaleEnabledが有効
+- min / max scaleがある
+
+依存:
+
+- T-023
+
+Roadmap: Phase 3 Zoom
+
 
 
 

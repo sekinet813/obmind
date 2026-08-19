@@ -10,7 +10,9 @@ void main() {
     return MindNode(id: NodeId(id), text: id, children: children);
   }
 
-  testWidgets('shows nodes and enables one-finger pan', (tester) async {
+  testWidgets('shows nodes and enables one-finger pan and pinch zoom', (
+    tester,
+  ) async {
     final document = MindMapDocument(
       root: node('root', children: [node('child')]),
     );
@@ -27,6 +29,8 @@ void main() {
       find.byType(InteractiveViewer),
     );
     expect(viewer.panEnabled, isTrue);
-    expect(viewer.scaleEnabled, isFalse);
+    expect(viewer.scaleEnabled, isTrue);
+    expect(viewer.minScale, 0.5);
+    expect(viewer.maxScale, 2.5);
   });
 }

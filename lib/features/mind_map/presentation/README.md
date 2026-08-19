@@ -6,6 +6,6 @@ MindMapViewport、EdgeLayer、NodeWidgetを置きます。Phase 3以降です。
 
 `MindMapEdgeLayer`は`CustomPainter`で親子のEdgeを描きます。Layoutに無い子孫へは線を引きません。
 
-`MindMapViewport`はLayout結果でNodeとEdgeを配置し、`InteractiveViewer`で1本指Panします。Zoomはまだ無効です。
+`MindMapViewport`はLayout結果でNodeとEdgeを配置し、`InteractiveViewer`で1本指PanとPinch Zoomします。
 
 Phase 1のStorage PoCでは、Markdownの読み書き確認用に簡単な編集画面を置きます。
