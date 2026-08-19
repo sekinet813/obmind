@@ -71,4 +71,31 @@ void main() {
     expect(find.text('a'), findsNothing);
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
   });
+
+  testWidgets('collapses descendants of the selected node', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(
+          root: node(
+            'root',
+            children: [
+              node('a', children: [node('a1')]),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('a'));
+    await tester.pump();
+    await tester.tap(find.text('折りたたむ'));
+    await tester.pump();
+
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsNothing);
+    expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+
+    await tester.tap(find.text('展開'));
+    await tester.pump();
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+  });
 }

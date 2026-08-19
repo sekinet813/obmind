@@ -189,6 +189,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'削除'**
   String get deleteNode;
+
+  /// No description provided for @collapseNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'折りたたむ'**
+  String get collapseNode;
+
+  /// No description provided for @expandNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'展開'**
+  String get expandNode;
 }
 
 class _AppLocalizationsDelegate

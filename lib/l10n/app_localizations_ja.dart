@@ -57,4 +57,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deleteNode => '削除';
+
+  @override
+  String get collapseNode => '折りたたむ';
+
+  @override
+  String get expandNode => '展開';
 }

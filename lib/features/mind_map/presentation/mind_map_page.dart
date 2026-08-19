@@ -80,12 +80,34 @@ class _MindMapPageState extends State<MindMapPage> {
     });
   }
 
+  MindNode? _node(NodeId id) {
+    for (final node in _document.root.depthFirst) {
+      if (node.id == id) {
+        return node;
+      }
+    }
+    return null;
+  }
+
+  void _toggleCollapsed() {
+    final id = _selectedId;
+    final node = id == null ? null : _node(id);
+    if (node == null || node.children.isEmpty) {
+      return;
+    }
+    setState(() {
+      _document = MindMapTree.setCollapsed(_document, id!, !node.collapsed);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final canAddSibling =
         _selectedId != null && _selectedId != _document.root.id;
     final canDelete = canAddSibling;
+    final selected = _selectedId == null ? null : _node(_selectedId!);
+    final canToggleCollapsed = selected != null && selected.children.isNotEmpty;
     return Scaffold(
       appBar: AppBar(title: Text(_document.title)),
       body: MindMapViewport(
@@ -96,27 +118,38 @@ class _MindMapPageState extends State<MindMapPage> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                TextButton.icon(
-                  onPressed: _selectedId == null ? null : _addChild,
-                  icon: const Icon(Icons.subdirectory_arrow_right),
-                  label: Text(l10n.addChildNode),
+          child: Wrap(
+            spacing: 4,
+            children: [
+              TextButton.icon(
+                onPressed: _selectedId == null ? null : _addChild,
+                icon: const Icon(Icons.subdirectory_arrow_right),
+                label: Text(l10n.addChildNode),
+              ),
+              TextButton.icon(
+                onPressed: canAddSibling ? _addSibling : null,
+                icon: const Icon(Icons.arrow_downward),
+                label: Text(l10n.addSiblingNode),
+              ),
+              TextButton.icon(
+                onPressed: canDelete ? _deleteSelected : null,
+                icon: const Icon(Icons.delete_outline),
+                label: Text(l10n.deleteNode),
+              ),
+              TextButton.icon(
+                onPressed: canToggleCollapsed ? _toggleCollapsed : null,
+                icon: Icon(
+                  selected?.collapsed == true
+                      ? Icons.unfold_more
+                      : Icons.unfold_less,
                 ),
-                TextButton.icon(
-                  onPressed: canAddSibling ? _addSibling : null,
-                  icon: const Icon(Icons.arrow_downward),
-                  label: Text(l10n.addSiblingNode),
+                label: Text(
+                  selected?.collapsed == true
+                      ? l10n.expandNode
+                      : l10n.collapseNode,
                 ),
-                TextButton.icon(
-                  onPressed: canDelete ? _deleteSelected : null,
-                  icon: const Icon(Icons.delete_outline),
-                  label: Text(l10n.deleteNode),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

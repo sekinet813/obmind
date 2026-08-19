@@ -137,6 +137,23 @@ final class MindMapTree {
     );
   }
 
+  static MindMapDocument setCollapsed(
+    MindMapDocument document,
+    NodeId id,
+    bool collapsed,
+  ) {
+    if (_find(document.root, id) == null) {
+      throw MindMapTreeException(MindMapTreeError.nodeNotFound, id.value);
+    }
+    return document.copyWith(
+      root: _update(
+        document.root,
+        id,
+        (node) => node.copyWith(collapsed: collapsed),
+      ),
+    );
+  }
+
   static void _ensureNewIds(MindMapDocument document, MindNode incoming) {
     final existing = document.nodeIds.map((id) => id.value).toSet();
     for (final node in incoming.depthFirst) {

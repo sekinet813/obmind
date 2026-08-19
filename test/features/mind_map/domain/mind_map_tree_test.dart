@@ -138,6 +138,23 @@ void main() {
     ]);
   });
 
+  test('setCollapsed hides descendants without removing them', () {
+    final original = documentWith(
+      node(
+        'root',
+        children: [
+          node('a', children: [node('a1')]),
+        ],
+      ),
+    );
+
+    final collapsed = MindMapTree.setCollapsed(original, NodeId('a'), true);
+
+    expect(collapsed.root.children.single.collapsed, isTrue);
+    expect(collapsed.root.children.single.children.single.id.value, 'a1');
+    expect(original.root.children.single.collapsed, isFalse);
+  });
+
   test('operations reject unknown ids and duplicate ids', () {
     final original = documentWith(node('root', children: [node('a')]));
 

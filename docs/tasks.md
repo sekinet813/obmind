@@ -428,6 +428,44 @@ Roadmap: Phase 4 Add Child / Sibling
 
 Roadmap: Phase 4 Delete
 
+### T-029 Collapse / Expand
+
+- [x] 選択中のNodeを折りたたみ・展開する
+
+完了条件:
+
+- collapsedがLayoutから子孫を外す
+- MarkdownへはNodeコメント属性として残る（Serializer既存）
+
+依存:
+
+- T-020
+- T-026
+
+Roadmap: Phase 4 Collapse / Expand
+
+### T-030 Edit（キャンバスから離れない）
+
+- [ ] キャンバス上でNode textを編集する
+
+Status: BLOCKED
+Reason: インライン編集はキーボード・フォーカス・Pan/Zoomとの競合があり、Phase 6のGesture競合と一体で決める。Dialogへ逃げる実装は「キャンバスから離れない」要件を満たさない。
+
+### T-031 Reorder / Move Parent（Drag）
+
+- [ ] Dragで並び替えと親変更をする
+
+Status: BLOCKED
+Reason: 1本指PanとNode Dragの競合解消はPhase 6。DomainのMove / ReorderはT-017で完了済み。
+
+### T-032 Undo / Redo
+
+- [ ] Add / Delete / Edit / Move / Reorder / Collapse をUndoできる
+
+Status: BLOCKED
+Reason: EditとDragが未完了のため対象操作が揃わない。部分的な履歴は誤解を招く。
+
+
 
 
 

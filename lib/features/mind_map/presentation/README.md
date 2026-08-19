@@ -6,6 +6,6 @@ MindMapViewport、EdgeLayer、NodeWidgetを置きます。Phase 3以降です。
 
 `MindMapEdgeLayer`は`CustomPainter`で親子のEdgeを描きます。Layoutに無い子孫へは線を引きません。
 
-`MindMapPage`は選択中のNodeへ子・兄弟を追加し、Root以外を削除できます。操作は`MindMapTree`を通し、Rootの兄弟追加とRoot削除はできません。
+`MindMapPage`は選択中のNodeへ子・兄弟を追加し、Root以外を削除し、子を持つNodeを折りたたみできます。操作は`MindMapTree`を通します。
 
 Phase 1のStorage PoCでは、Markdownの読み書き確認用に簡単な編集画面を置きます。

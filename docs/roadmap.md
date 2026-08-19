@@ -56,10 +56,13 @@ UIより先に安定させます。
 - [x] Node選択
 - [x] Add Child / Sibling
 - [ ] Edit（キャンバスから離れない）
+  - Status: BLOCKED Reason: インライン編集とPan/Zoomの競合はPhase 6と一体。詳細はT-030
 - [x] Delete
 - [ ] Reorder / Move Parent（Drag）
-- [ ] Collapse / Expand
+  - Status: BLOCKED Reason: PanとDragの競合はPhase 6。Domain操作はT-017済み
+- [x] Collapse / Expand
 - [ ] Undo / Redo
+  - Status: BLOCKED Reason: Edit / Drag未完了。詳細はT-032
 
 ## Phase 5：Persistence
 
