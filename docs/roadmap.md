@@ -37,7 +37,7 @@
 UIより先に安定させます。
 
 - [x] Markdown Parser
-- [ ] Markdown Serializer
+- [x] Markdown Serializer
 - [ ] Tree操作（Add / Delete / Move / Reorder）
 - [ ] Cycle防止
 - [ ] Parse → Serialize → Parse のユニットテスト

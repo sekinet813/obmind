@@ -227,7 +227,7 @@ Roadmap: Phase 2 Markdown Parser
 
 ### T-016 Markdown Serializer
 
-- [ ] `MindMapDocument`をFormat v0.1のMarkdownへ書き出す
+- [x] `MindMapDocument`をFormat v0.1のMarkdownへ書き出す
 
 完了条件:
 
