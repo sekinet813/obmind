@@ -27,4 +27,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String markdownCreated(String fileName) {
     return '$fileNameを作成しました';
   }
+
+  @override
+  String get openMarkdown => 'Markdownを開いて編集';
+
+  @override
+  String get saveMarkdown => '保存';
+
+  @override
+  String get markdownSaved => '保存しました';
+
+  @override
+  String get markdownSaveFailed => '保存に失敗しました。元のファイルは空にしていません';
+
+  @override
+  String get noMarkdownFiles => 'このフォルダにMarkdownがありません';
+
+  @override
+  String get editMarkdownHint => 'Markdown';
 }

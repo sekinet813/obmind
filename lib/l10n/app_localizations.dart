@@ -129,6 +129,42 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'{fileName}を作成しました'**
   String markdownCreated(String fileName);
+
+  /// No description provided for @openMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdownを開いて編集'**
+  String get openMarkdown;
+
+  /// No description provided for @saveMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存'**
+  String get saveMarkdown;
+
+  /// No description provided for @markdownSaved.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存しました'**
+  String get markdownSaved;
+
+  /// No description provided for @markdownSaveFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存に失敗しました。元のファイルは空にしていません'**
+  String get markdownSaveFailed;
+
+  /// No description provided for @noMarkdownFiles.
+  ///
+  /// In ja, this message translates to:
+  /// **'このフォルダにMarkdownがありません'**
+  String get noMarkdownFiles;
+
+  /// No description provided for @editMarkdownHint.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdown'**
+  String get editMarkdownHint;
 }
 
 class _AppLocalizationsDelegate

@@ -12,5 +12,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "openMarkdown": "Markdownを開いて編集",
+  "saveMarkdown": "保存",
+  "markdownSaved": "保存しました",
+  "markdownSaveFailed": "保存に失敗しました。元のファイルは空にしていません",
+  "noMarkdownFiles": "このフォルダにMarkdownがありません",
+  "editMarkdownHint": "Markdown"
 }

@@ -67,29 +67,75 @@ final class AndroidDocumentStorage
   }
 
   @override
-  Future<List<MindMapFile>> list(MindMapLocation folder) {
-    return Future.error(
-      const MindMapStorageException(
-        'list is not part of the Android folder PoC',
-      ),
-    );
+  Future<List<MindMapFile>> list(MindMapLocation folder) async {
+    try {
+      final rows =
+          await _channel.invokeListMethod<Map<Object?, Object?>>(
+            'listMarkdown',
+            {'folderToken': folder.token},
+          ) ??
+          const [];
+      return rows
+          .map((row) {
+            final uri = row['uri'] as String?;
+            final name = row['displayName'] as String? ?? uri ?? '';
+            if (uri == null || uri.isEmpty) {
+              throw const MindMapStorageException('invalid list entry');
+            }
+            return MindMapFile(
+              location: MindMapLocation(uri),
+              displayName: name,
+            );
+          })
+          .toList(growable: false);
+    } on MindMapStorageException {
+      rethrow;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown list failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException('failed to list markdown', cause: error);
+    }
   }
 
   @override
-  Future<String> read(MindMapLocation location) {
-    return Future.error(
-      const MindMapStorageException(
-        'read is not part of the Android folder PoC',
-      ),
-    );
+  Future<String> read(MindMapLocation location) async {
+    try {
+      final markdown = await _channel.invokeMethod<String>('readMarkdown', {
+        'fileToken': location.token,
+      });
+      if (markdown == null) {
+        throw const MindMapStorageException('failed to read markdown');
+      }
+      return markdown;
+    } on MindMapStorageException {
+      rethrow;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown read failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException('failed to read markdown', cause: error);
+    }
   }
 
   @override
-  Future<void> write(MindMapLocation location, String markdown) {
-    return Future.error(
-      const MindMapStorageException(
-        'write is not part of the Android folder PoC',
-      ),
-    );
+  Future<void> write(MindMapLocation location, String markdown) async {
+    try {
+      await _channel.invokeMethod<void>('writeMarkdown', {
+        'fileToken': location.token,
+        'markdown': markdown,
+      });
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown write failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException('failed to write markdown', cause: error);
+    }
   }
 }

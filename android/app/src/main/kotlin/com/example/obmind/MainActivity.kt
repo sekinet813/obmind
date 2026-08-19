@@ -18,6 +18,9 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "pickFolder" -> pickFolder(result)
                     "createMarkdown" -> createMarkdown(call.arguments, result)
+                    "readMarkdown" -> readMarkdown(call.arguments, result)
+                    "writeMarkdown" -> writeMarkdown(call.arguments, result)
+                    "listMarkdown" -> listMarkdown(call.arguments, result)
                     else -> result.notImplemented()
                 }
             }
@@ -99,6 +102,63 @@ class MainActivity : FlutterActivity() {
             } catch (error: Exception) {
                 runOnUiThread {
                     result.error("create_failed", error.message, null)
+                }
+            }
+        }.start()
+    }
+
+    private fun readMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val fileToken = (arguments as? Map<*, *>)?.get("fileToken") as? String
+        if (fileToken.isNullOrEmpty()) {
+            result.error("invalid_args", "fileToken is required", null)
+            return
+        }
+        runStorage(result) { documentTreeAccess.readMarkdown(fileToken) }
+    }
+
+    private fun writeMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val args = arguments as? Map<*, *>
+        val fileToken = args?.get("fileToken") as? String
+        val markdown = args?.get("markdown") as? String
+        if (fileToken.isNullOrEmpty() || markdown == null) {
+            result.error("invalid_args", "fileToken and markdown are required", null)
+            return
+        }
+        runStorage(result) {
+            documentTreeAccess.writeMarkdown(fileToken, markdown)
+            null
+        }
+    }
+
+    private fun listMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val folderToken = (arguments as? Map<*, *>)?.get("folderToken") as? String
+        if (folderToken.isNullOrEmpty()) {
+            result.error("invalid_args", "folderToken is required", null)
+            return
+        }
+        runStorage(result) { documentTreeAccess.listMarkdown(folderToken) }
+    }
+
+    private fun runStorage(
+        result: MethodChannel.Result,
+        block: () -> Any?,
+    ) {
+        Thread {
+            try {
+                val value = block()
+                runOnUiThread { result.success(value) }
+            } catch (error: Exception) {
+                runOnUiThread {
+                    result.error("storage_failed", error.message, null)
                 }
             }
         }.start()

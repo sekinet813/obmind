@@ -143,7 +143,7 @@ Parserより先に、実機でフォルダへMarkdownを読み書きできるか
 
 ### T-011Android Markdown read / write
 
-- [ ] 選んだフォルダのMarkdownを読み、編集して保存する
+- [x] 選んだフォルダのMarkdownを読み、編集して保存する
 
 完了条件:
 

@@ -3,18 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/markdown_file_service.dart';
 import 'package:obmind/features/mind_map/infrastructure/android_document_storage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   configureAppLogging(suppressDebug: kReleaseMode);
-  runApp(ObmindApp(createMarkdownInFolder: _createMarkdownInFolder()));
+  runApp(_buildApp());
 }
 
-CreateMarkdownInFolder? _createMarkdownInFolder() {
+Widget _buildApp() {
   if (defaultTargetPlatform != TargetPlatform.android) {
-    return null;
+    return const ObmindApp();
   }
   final storage = AndroidDocumentStorage();
-  return CreateMarkdownInFolder(picker: storage, storage: storage);
+  return ObmindApp(
+    createMarkdownInFolder: CreateMarkdownInFolder(
+      picker: storage,
+      storage: storage,
+    ),
+    folderPicker: storage,
+    markdownFiles: MarkdownFileService(storage),
+  );
 }

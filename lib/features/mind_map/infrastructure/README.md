@@ -2,4 +2,4 @@
 
 Markdownのparse / serializeと、OS固有ストレージ実装を置きます。
 
-Androidのフォルダ選択PoCは`AndroidDocumentStorage`がSAFを扱います。PresentationとDomainはこの具象をimportしません。
+Androidのフォルダ選択とMarkdownの読み書きPoCは`AndroidDocumentStorage`がSAFを扱います。保存は一時ファイルへ書いてから本ファイルへ写し、失敗時に元ファイルを空にしません。PresentationとDomainはこの具象をimportしません。

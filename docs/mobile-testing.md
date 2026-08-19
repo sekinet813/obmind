@@ -34,7 +34,7 @@ AndroidはローカルPCでビルドしなくても、GitHub ActionsのDebug APK
 
 ## Android folder picker PoC
 
-ホーム画面の「フォルダを選んでMarkdownを作成」から、SAFのフォルダ選択でDocumentsなどを選び、その場所へ`obmind-poc.md`が作られることを確認します。PresentationはSAFを直接呼びません。
+ホーム画面の「フォルダを選んでMarkdownを作成」から、SAFのフォルダ選択でDocumentsなどを選び、その場所へ`obmind-poc.md`が作られることを確認します。作成後に編集画面が開き、読み込み・編集・保存ができることも確認します。保存に失敗した場合、元のファイルが空にならないことを確認します。PresentationはSAFを直接呼びません。
 
 ## iOS: ローカル確認
 

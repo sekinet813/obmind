@@ -21,8 +21,8 @@
 実機で、選んだフォルダにMarkdownを作成・読み・編集・保存できることを確認します。Obsidian Vaultを優先します。
 
 - [x] Android folder picker PoC
-- [ ] Android Markdown read
-- [ ] Android Markdown write
+- [x] Android Markdown read
+- [x] Android Markdown write
 - [ ] iOS folder picker PoC
 - [ ] iOS Markdown read
 - [ ] iOS Markdown write

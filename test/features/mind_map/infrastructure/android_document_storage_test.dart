@@ -59,4 +59,44 @@ void main() {
       'content://tree/primary/document/obmind-poc.md',
     );
   });
+
+  test('read and write go through the channel without SAF types', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      if (call.method == 'readMarkdown') {
+        expect(call.arguments['fileToken'], 'content://doc/a.md');
+        return '# Root\n';
+      }
+      if (call.method == 'writeMarkdown') {
+        expect(call.arguments['fileToken'], 'content://doc/a.md');
+        expect(call.arguments['markdown'], '# Edited\n');
+        return null;
+      }
+      return null;
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    const location = MindMapLocation('content://doc/a.md');
+
+    expect(await storage.read(location), '# Root\n');
+    await storage.write(location, '# Edited\n');
+  });
+
+  test('list maps document URIs to MindMapFile', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'listMarkdown');
+      expect(call.arguments['folderToken'], 'content://tree/primary');
+      return [
+        {'uri': 'content://doc/a.md', 'displayName': 'a.md'},
+      ];
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    final files = await storage.list(
+      const MindMapLocation('content://tree/primary'),
+    );
+
+    expect(files, hasLength(1));
+    expect(files.single.displayName, 'a.md');
+    expect(files.single.location.token, 'content://doc/a.md');
+  });
 }

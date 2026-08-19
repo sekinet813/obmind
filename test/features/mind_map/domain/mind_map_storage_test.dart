@@ -69,4 +69,23 @@ void main() {
       expect(await storage.read(file.location), '# Root\n');
     },
   );
+
+  test('failed write does not empty existing markdown', () async {
+    final storage = _ThrowingWriteStorage();
+    const location = MindMapLocation('maps/idea.md');
+    storage.files[location.token] = '# Root\n';
+
+    expect(
+      () => storage.write(location, ''),
+      throwsA(isA<MindMapStorageException>()),
+    );
+    expect(await storage.read(location), '# Root\n');
+  });
+}
+
+class _ThrowingWriteStorage extends _MemoryMindMapStorage {
+  @override
+  Future<void> write(MindMapLocation location, String markdown) async {
+    throw const MindMapStorageException('write failed');
+  }
 }
