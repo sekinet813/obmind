@@ -242,7 +242,7 @@ Roadmap: Phase 2 Markdown Serializer
 
 ### T-017 Tree操作
 
-- [ ] Add / Delete / Move / ReorderをDomainで行う
+- [x] Add / Delete / Move / ReorderをDomainで行う
 
 完了条件:
 
