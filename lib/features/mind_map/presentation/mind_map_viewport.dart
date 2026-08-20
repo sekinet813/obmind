@@ -89,6 +89,9 @@ class MindMapViewportState extends State<MindMapViewport>
   final _layoutKey = GlobalKey();
   var _didCenterOnOpen = false;
   Offset _boundsOrigin = Offset.zero;
+  NodeId? _ensuredEditingId;
+  EdgeInsets _ensuredViewInsets = EdgeInsets.zero;
+  Size? _ensuredViewportSize;
 
   TransformationController get _transformationController =>
       widget.transformationController ?? _ownedController!;
@@ -202,7 +205,8 @@ class MindMapViewportState extends State<MindMapViewport>
 
   /// Pans just enough for [id] to sit inside the visible canvas.
   ///
-  /// Does not change scale or persist coordinates.
+  /// Does not change scale or persist coordinates. Keyboard overlap is
+  /// subtracted so an editing node stays above the IME.
   void ensureNodeVisible(NodeId id, Size viewportSize) {
     final layout = _targetLayout;
     if (layout == null || viewportSize.isEmpty) {
@@ -220,12 +224,16 @@ class MindMapViewportState extends State<MindMapViewport>
     final tx = _transformationController.value.storage[12];
     final ty = _transformationController.value.storage[13];
     final padding = widget.centerPadding;
+    final keyboardOverlap = _keyboardOverlap(viewportSize);
     const margin = 16.0;
     final view = Rect.fromLTWH(
       padding.left + margin,
       padding.top + margin,
       math.max(viewportSize.width - padding.horizontal - margin * 2, 1),
-      math.max(viewportSize.height - padding.vertical - margin * 2, 1),
+      math.max(
+        viewportSize.height - padding.vertical - keyboardOverlap - margin * 2,
+        1,
+      ),
     );
     final left = (node.x - origin.dx) * scale + tx;
     final top = (node.y - origin.dy) * scale + ty;
@@ -253,6 +261,24 @@ class MindMapViewportState extends State<MindMapViewport>
     _transformationController.value = next;
   }
 
+  /// How much of [viewportSize] is covered by the software keyboard.
+  ///
+  /// Scaffold may already shrink the body; this only counts remaining overlap.
+  double _keyboardOverlap(Size viewportSize) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) {
+      return 0;
+    }
+    final view = View.of(context);
+    final keyboard = MediaQueryData.fromView(view).viewInsets.bottom;
+    if (keyboard <= 0) {
+      return 0;
+    }
+    final viewportBottom = box.localToGlobal(Offset(0, viewportSize.height)).dy;
+    final screenHeight = view.physicalSize.height / view.devicePixelRatio;
+    return math.max(0, viewportBottom - (screenHeight - keyboard));
+  }
+
   void _scheduleInitialCenter(Size viewportSize) {
     if (_didCenterOnOpen) {
       return;
@@ -263,6 +289,32 @@ class MindMapViewportState extends State<MindMapViewport>
         return;
       }
       centerOnRoot(viewportSize);
+    });
+  }
+
+  /// Pans the editing node above the keyboard without changing zoom.
+  void _scheduleEnsureEditingVisible(Size viewportSize) {
+    final id = widget.editingId;
+    final insets = MediaQueryData.fromView(View.of(context)).viewInsets;
+    if (id == null) {
+      _ensuredEditingId = null;
+      _ensuredViewInsets = insets;
+      _ensuredViewportSize = viewportSize;
+      return;
+    }
+    if (id == _ensuredEditingId &&
+        insets == _ensuredViewInsets &&
+        _ensuredViewportSize == viewportSize) {
+      return;
+    }
+    _ensuredEditingId = id;
+    _ensuredViewInsets = insets;
+    _ensuredViewportSize = viewportSize;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.editingId != id) {
+        return;
+      }
+      ensureNodeVisible(id, viewportSize);
     });
   }
 
@@ -388,9 +440,12 @@ class MindMapViewportState extends State<MindMapViewport>
               constraints.hasBoundedHeight &&
               constraints.maxWidth > 0 &&
               constraints.maxHeight > 0) {
-            _scheduleInitialCenter(
-              Size(constraints.maxWidth, constraints.maxHeight),
+            final viewportSize = Size(
+              constraints.maxWidth,
+              constraints.maxHeight,
             );
+            _scheduleInitialCenter(viewportSize);
+            _scheduleEnsureEditingVisible(viewportSize);
           }
           return InteractiveViewer(
             transformationController: _transformationController,

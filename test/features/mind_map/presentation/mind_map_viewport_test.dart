@@ -401,4 +401,48 @@ void main() {
     );
     expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
   });
+
+  testWidgets('keeps the editing node above viewInsets without changing zoom', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+    final controller = TransformationController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+            transformationController: controller,
+            editingId: const NodeId('child'),
+            editingController: TextEditingController(text: 'child'),
+            centerPadding: const EdgeInsets.only(bottom: 80),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.drag(find.byType(InteractiveViewer), const Offset(0, 220));
+    await tester.pump();
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pump();
+    await tester.pump();
+
+    final keyboardTop =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio - 280;
+    final field = tester.getRect(find.byType(TextField));
+    expect(field.bottom, lessThanOrEqualTo(keyboardTop));
+    expect(controller.value.getMaxScaleOnAxis(), 1);
+  });
 }

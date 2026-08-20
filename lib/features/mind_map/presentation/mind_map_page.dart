@@ -512,6 +512,7 @@ class _MindMapPageState extends State<MindMapPage> {
     final showContextActions =
         canEdit && _selectedId != null && _draggingId == null;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

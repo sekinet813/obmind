@@ -338,4 +338,50 @@ void main() {
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
     expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
   });
+
+  testWidgets('keeps the editing node above the software keyboard', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('zoomIn')));
+    await tester.pump();
+    final scaleBefore = tester
+        .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+        .transformationController!
+        .value
+        .getMaxScaleOnAxis();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pump();
+    await tester.pump();
+
+    final keyboardTop =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio - 360;
+    final field = tester.getRect(find.byType(TextField));
+    expect(field.bottom, lessThanOrEqualTo(keyboardTop));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(
+      viewer.transformationController!.value.getMaxScaleOnAxis(),
+      closeTo(scaleBefore, 0.001),
+    );
+  });
 }
