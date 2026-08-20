@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_ja.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('ja')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ja'),
+    Locale('en'),
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -201,6 +205,12 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'新しいノード'**
   String get newNodeText;
+
+  /// No description provided for @newMindMapName.
+  ///
+  /// In ja, this message translates to:
+  /// **'新規マインドマップ'**
+  String get newMindMapName;
 
   /// No description provided for @deleteNode.
   ///
@@ -477,6 +487,36 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'プライバシーポリシー'**
   String get privacyPolicyTitle;
+
+  /// No description provided for @privacyPolicyBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'Obmindは、アカウントも独自のサーバーも持たない、Local-firstなマインドマップアプリです。思考はMarkdownファイルとして、あなたが選んだフォルダに残ります。\n\n収集しないデータ\n\nObmindは、氏名、メールアドレス、位置情報、連絡先、広告IDなどの個人情報を集めません。利用状況の解析や広告のための送信もしません。アカウント登録は不要です。\n\nファイルの扱い\n\nマインドマップの内容は、端末と、あなたが選んだ保存フォルダに留まります。Obmindが選んだフォルダのMarkdownを読み書きするのは、地図を表示・編集・保存するためです。選んでいないフォルダへはアクセスしません。\n\n保存フォルダの場所、最近開いた地図、一覧の表示方法など、アプリの操作に必要な設定は端末内にだけ覚えます。これらの設定をObmindのサーバーへ送ることはありません。独自サーバー自体がありません。\n\n第三者への送信\n\n思考の内容も、端末内の設定も、第三者へ送信しません。クラウドへ自動でアップロードする機能はありません。別アプリやクラウドへ置くかどうかは、あなたが選んだフォルダの置き場所に従います。\n\nアプリを削除した場合\n\nObmindをアンインストールしても、あなたが選んだフォルダにあるMarkdownファイルは、その場所に残ります。端末内のアプリ設定だけが消えます。'**
+  String get privacyPolicyBody;
+
+  /// No description provided for @languageSettingsTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'言語'**
+  String get languageSettingsTitle;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In ja, this message translates to:
+  /// **'端末の言語'**
+  String get languageSystem;
+
+  /// No description provided for @languageJapanese.
+  ///
+  /// In ja, this message translates to:
+  /// **'日本語'**
+  String get languageJapanese;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In ja, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
 }
 
 class _AppLocalizationsDelegate
@@ -490,7 +530,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ja'].contains(locale.languageCode);
+      <String>['en', 'ja'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -499,6 +539,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
     case 'ja':
       return AppLocalizationsJa();
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:obmind/app/app.dart';
+import 'package:obmind/app/app_locale_controller.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/infrastructure/shared_preferences_library_view_mode_repository.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
@@ -17,6 +18,7 @@ import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 import 'package:obmind/features/mind_map/infrastructure/shared_preferences_recent_mind_maps_repository.dart';
 import 'package:obmind/features/mind_map/infrastructure/shared_preferences_vault_folder_repository.dart';
+import 'package:obmind/features/settings/infrastructure/shared_preferences_app_locale_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,8 +27,10 @@ Future<void> main() async {
 }
 
 Future<Widget> _buildApp() async {
+  final localeRepository = await SharedPreferencesAppLocaleRepository.create();
+  final localeController = await AppLocaleController.create(localeRepository);
   if (defaultTargetPlatform != TargetPlatform.android) {
-    return const ObmindApp();
+    return ObmindApp(localeController: localeController);
   }
   final storage = AndroidDocumentStorage();
   const serializer = MarkdownSerializer();
@@ -66,5 +70,6 @@ Future<Widget> _buildApp() async {
       vault: vaultRepository,
     ),
     libraryViewModeRepository: libraryViewModeRepository,
+    localeController: localeController,
   );
 }

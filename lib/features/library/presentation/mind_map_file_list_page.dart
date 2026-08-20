@@ -349,7 +349,10 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
     }
     final l10n = AppLocalizations.of(context)!;
     try {
-      final file = await createMarkdownInFolder(folder: widget.vaultFolder);
+      final file = await createMarkdownInFolder(
+        folder: widget.vaultFolder,
+        defaultBaseName: l10n.newMindMapName,
+      );
       if (!mounted) {
         return;
       }

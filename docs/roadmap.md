@@ -228,3 +228,10 @@ Google Play提出のための準備。本番Application IDはT-007（人間が�
   - Task: T-093
 - [x] Play提出前チェックリスト
   - Task: T-094
+
+## Phase 15：Localization
+
+アプリ内UIを日本語と英語に対応する。Play掲載文の英訳は人間作業のまま。詳細な完了条件は[tasks.md](tasks.md)のT-095を参照。
+
+- [x] 日本語 / 英語の多言語対応
+  - Task: T-095

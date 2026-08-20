@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:obmind/app/privacy_policy.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -19,7 +18,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           PaperSurface(
             padding: const EdgeInsets.all(20),
             child: SelectableText(
-              PrivacyPolicy.body.trim(),
+              l10n.privacyPolicyBody.trim(),
               style: theme.textTheme.bodyLarge,
             ),
           ),

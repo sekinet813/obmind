@@ -41,6 +41,19 @@ void main() {
     );
   });
 
+  test('uses a localized base name and sequential suffixes', () {
+    expect(
+      MindMapFileName.nextNewMapName(const [], baseName: 'New Mind Map'),
+      'New Mind Map.md',
+    );
+    expect(
+      MindMapFileName.nextNewMapName(const [
+        'New Mind Map.md',
+      ], baseName: 'New Mind Map'),
+      'New Mind Map (1).md',
+    );
+  });
+
   test('stem strips md and markdown extensions without changing case', () {
     expect(MindMapFileName.stem('新規マインドマップ.md'), '新規マインドマップ');
     expect(MindMapFileName.stem('Idea.MD'), 'Idea');
