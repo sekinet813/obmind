@@ -66,7 +66,7 @@ UIより先に安定させます。
 
 ## Phase 5：Persistence
 
-- [ ] Load / Save
+- [x] Load / Save
   - Task: T-033
 - [ ] Autosave（debounce / atomic write）
   - Task: T-034

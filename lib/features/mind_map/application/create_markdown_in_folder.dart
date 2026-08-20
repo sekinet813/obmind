@@ -3,7 +3,7 @@ import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.da
 
 const pocMarkdownFileName = 'obmind-poc.md';
 
-const pocMarkdownContents = '# Obmind\n\nこのファイルはObmindのStorage PoCで作成されました。\n';
+const pocMarkdownContents = '# Obmind\n';
 
 /// Picks a user folder and creates a Markdown file there.
 final class CreateMarkdownInFolder {

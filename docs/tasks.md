@@ -515,7 +515,7 @@ Roadmap: Phase 4 Undo / Redo
 
 ### T-033 Load / Save
 
-- [ ] `MindMapDocument`をMarkdownから読み、編集結果を保存する
+- [x] `MindMapDocument`をMarkdownから読み、編集結果を保存する
 
 完了条件:
 

@@ -154,6 +154,18 @@ abstract class AppLocalizations {
   /// **'保存に失敗しました。元のファイルは空にしていません'**
   String get markdownSaveFailed;
 
+  /// No description provided for @mindMapLoadFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'マインドマップとして読み込めませんでした'**
+  String get mindMapLoadFailed;
+
+  /// No description provided for @mindMapReadOnlyUnsupported.
+  ///
+  /// In ja, this message translates to:
+  /// **'未対応のMarkdown内容があるため、上書き保存できません'**
+  String get mindMapReadOnlyUnsupported;
+
   /// No description provided for @noMarkdownFiles.
   ///
   /// In ja, this message translates to:

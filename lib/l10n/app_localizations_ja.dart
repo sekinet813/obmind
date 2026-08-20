@@ -41,6 +41,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get markdownSaveFailed => '保存に失敗しました。元のファイルは空にしていません';
 
   @override
+  String get mindMapLoadFailed => 'マインドマップとして読み込めませんでした';
+
+  @override
+  String get mindMapReadOnlyUnsupported => '未対応のMarkdown内容があるため、上書き保存できません';
+
+  @override
   String get noMarkdownFiles => 'このフォルダにMarkdownがありません';
 
   @override

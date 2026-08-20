@@ -40,12 +40,14 @@ final class AndroidDocumentStorage
     String markdown = '',
   }) async {
     try {
-      final result = await _channel
-          .invokeMapMethod<String, Object?>('createMarkdown', {
-            'folderToken': folder.token,
-            'displayName': displayName,
-            'markdown': markdown,
-          });
+      final result = await _channel.invokeMapMethod<String, Object?>(
+        'createMarkdown',
+        {
+          'folderToken': folder.token,
+          'displayName': displayName,
+          'markdown': markdown,
+        },
+      );
       final uri = result?['uri'] as String?;
       final name = result?['displayName'] as String? ?? displayName;
       if (uri == null || uri.isEmpty) {
