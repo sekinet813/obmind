@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/presentation/mind_map_file_list_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
@@ -69,6 +70,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final createMarkdownInFolder = widget.createMarkdownInFolder;
     final canOpen =
         widget.folderPicker != null &&
@@ -77,31 +79,51 @@ class _HomePageState extends State<HomePage> {
         widget.saveMindMap != null;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(l10n.appTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.appTitle)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text(
-            l10n.homeMessage,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge,
+          PaperSurface(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              l10n.homeMessage,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge,
+            ),
           ),
           if (_recentFiles.isNotEmpty) ...[
             const SizedBox(height: 24),
-            Text(
-              l10n.recentMindMaps,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            for (final file in _recentFiles)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(file.displayName),
+            Text(l10n.recentMindMaps, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            for (final file in _recentFiles) ...[
+              PaperSurface(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
                 onTap: _busy ? null : () => _openMindMap(file),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.description_outlined,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        file.displayName,
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
               ),
+            ],
           ],
           if (createMarkdownInFolder != null) ...[
             const SizedBox(height: 24),

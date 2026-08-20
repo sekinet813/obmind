@@ -114,3 +114,43 @@ UIより先に安定させます。
   - Task: T-051
 - [x] Obsidian interoperability test
   - Task: T-052
+
+## Phase 9：UX改善（ユーザーフィードバック）
+
+日常利用の使い勝手を優先する。詳細な完了条件は[tasks.md](tasks.md)のT-053以降を参照。
+
+- [ ] Edit mode終了（バグ修正）
+  - Task: T-053
+- [ ] ズーム操作の改善
+  - Task: T-054
+- [ ] ノード上の折りたたみ / 展開ボタン
+  - Task: T-055
+- [ ] マインドマップファイル名の変更
+  - Task: T-056
+- [ ] マインドマップの削除
+  - Task: T-057
+- [ ] Library一覧のCRUD強化
+  - Task: T-058
+- [ ] Vaultフォルダの永続化と設定画面
+  - Task: T-059
+- [ ] Radial Layout Engine
+  - Task: T-060
+- [ ] 初回オンボーディング
+  - Task: T-061
+- [ ] Library一覧の検索とソート
+  - Task: T-062
+- [ ] マインドマップ画面のAppBar整理
+  - Task: T-063
+
+## Phase 10：Brand & Visual Identity
+
+アプリアイコン（紙質・パステル・レイヤー感）を正本に、ThemeとUI Surface、マインドマップキャンバスの見た目を統一する。詳細な完了条件は[tasks.md](tasks.md)のT-064以降を参照。
+
+- [x] App Icon
+  - Task: T-064
+- [x] Brand Color Palette & App Theme
+  - Task: T-065
+- [x] Paper-morphism Surface Styling
+  - Task: T-066
+- [x] Mind Map Canvas Brand Alignment
+  - Task: T-067

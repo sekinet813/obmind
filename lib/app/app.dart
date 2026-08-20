@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:obmind/app/obmind_theme.dart';
 import 'package:obmind/features/library/presentation/home_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
@@ -43,17 +44,8 @@ class ObmindApp extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('ja'),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: ObmindTheme.light(),
+      darkTheme: ObmindTheme.dark(),
       themeMode: ThemeMode.system,
       home: HomePage(
         createMarkdownInFolder: createMarkdownInFolder,

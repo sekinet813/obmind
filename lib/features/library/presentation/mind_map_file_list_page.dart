@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
@@ -27,18 +28,53 @@ class MindMapFileListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: Text(l10n.openMarkdown)),
       body: files.isEmpty
-          ? Center(child: Text(l10n.noMarkdownFiles))
+          ? Center(
+              child: PaperSurface(
+                margin: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  l10n.noMarkdownFiles,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            )
           : ListView.separated(
+              padding: const EdgeInsets.all(16),
               itemCount: files.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final file = files[index];
-                return ListTile(
-                  title: Text(file.displayName),
+                return PaperSurface(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   onTap: () => _openMindMap(context, file),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.description_outlined,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          file.displayName,
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
