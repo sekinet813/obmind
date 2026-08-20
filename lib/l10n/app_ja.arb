@@ -69,5 +69,9 @@
   "savingInProgress": "保存中",
   "layoutMenu": "レイアウト",
   "layoutHorizontal": "水平",
-  "layoutRadial": "放射"
+  "layoutRadial": "放射",
+  "designTemplateMenu": "デザイン",
+  "designTemplateMinimalRadial": "シンプル放射",
+  "designTemplateSoftHorizontal": "ソフト水平",
+  "designTemplateDarkRadial": "ダーク放射"
 }

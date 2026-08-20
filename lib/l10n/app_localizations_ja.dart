@@ -180,4 +180,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get layoutRadial => '放射';
+
+  @override
+  String get designTemplateMenu => 'デザイン';
+
+  @override
+  String get designTemplateMinimalRadial => 'シンプル放射';
+
+  @override
+  String get designTemplateSoftHorizontal => 'ソフト水平';
+
+  @override
+  String get designTemplateDarkRadial => 'ダーク放射';
 }

@@ -14,6 +14,21 @@ void main() {
     return MindNode(id: NodeId(id), text: id, children: children);
   }
 
+  double nodeRadius(WidgetTester tester, String text) {
+    final decorated = tester.widget<DecoratedBox>(
+      find
+          .descendant(
+            of: find.widgetWithText(MindNodeWidget, text),
+            matching: find.byType(DecoratedBox),
+          )
+          .first,
+    );
+    return (decorated.decoration as BoxDecoration).borderRadius!
+        .resolve(TextDirection.ltr)
+        .topLeft
+        .x;
+  }
+
   int nextId = 0;
 
   Widget app(MindMapDocument document, {NodeId? initialSelectedId}) {
@@ -381,5 +396,36 @@ void main() {
       viewer.transformationController!.value.getMaxScaleOnAxis(),
       closeTo(scaleBefore, 0.001),
     );
+  });
+
+  testWidgets('applies a design template theme and layout from the app bar', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('switchDesignTemplate')), findsOneWidget);
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-softHorizontal')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 18);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-darkRadial')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 14);
+    expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+    expect(find.byKey(const Key('switchLayout')), findsOneWidget);
   });
 }

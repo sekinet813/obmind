@@ -17,6 +17,7 @@ import 'package:obmind/features/mind_map/presentation/mind_map_context_actions.d
 import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_zoom_controls.dart';
 import 'package:obmind/features/mind_map/presentation/theme/mind_map_canvas_theme.dart';
+import 'package:obmind/features/mind_map/presentation/theme/mind_map_design_template.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 /// Canvas editing shell. Tree changes go through [MindMapTree].
@@ -416,6 +417,34 @@ class _MindMapPageState extends State<MindMapPage> {
     );
   }
 
+  void _applyDesignTemplate(MindMapDesignTemplate template) {
+    if (widget.readOnly || _externallyModified || template.matches(_document)) {
+      return;
+    }
+    final extra = Map<String, String>.of(_document.extraObmindFields)
+      ..remove('layout')
+      ..remove('theme');
+    _mutateDocument(
+      _document.copyWith(
+        theme: template.theme,
+        layout: template.layout,
+        extraObmindFields: extra,
+      ),
+    );
+  }
+
+  String _designTemplateLabel(
+    AppLocalizations l10n,
+    MindMapDesignTemplate template,
+  ) {
+    return switch (template.id) {
+      'minimalRadial' => l10n.designTemplateMinimalRadial,
+      'softHorizontal' => l10n.designTemplateSoftHorizontal,
+      'darkRadial' => l10n.designTemplateDarkRadial,
+      _ => template.id,
+    };
+  }
+
   void _fitToScreen() {
     final renderBox =
         _viewportKey.currentContext?.findRenderObject() as RenderBox?;
@@ -568,6 +597,27 @@ class _MindMapPageState extends State<MindMapPage> {
                 checked: _document.layout == LayoutType.radial,
                 child: Text(l10n.layoutRadial),
               ),
+            ],
+          ),
+          PopupMenuButton<String>(
+            key: const Key('switchDesignTemplate'),
+            tooltip: l10n.designTemplateMenu,
+            enabled: canEdit,
+            icon: const Icon(Icons.palette_outlined),
+            onSelected: (id) {
+              final template = MindMapDesignTemplate.byId(id);
+              if (template != null) {
+                _applyDesignTemplate(template);
+              }
+            },
+            itemBuilder: (context) => [
+              for (final template in MindMapDesignTemplate.values)
+                CheckedPopupMenuItem(
+                  key: Key('designTemplate-${template.id}'),
+                  value: template.id,
+                  checked: template.matches(_document),
+                  child: Text(_designTemplateLabel(l10n, template)),
+                ),
             ],
           ),
           if (canSave)
