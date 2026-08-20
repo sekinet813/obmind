@@ -499,14 +499,9 @@ class _MindMapPageState extends State<MindMapPage> {
       return;
     }
     final extra = Map<String, String>.of(_document.extraObmindFields)
-      ..remove('layout')
       ..remove('theme');
     _mutateDocument(
-      _document.copyWith(
-        theme: template.theme,
-        layout: template.layout,
-        extraObmindFields: extra,
-      ),
+      _document.copyWith(theme: template.theme, extraObmindFields: extra),
     );
   }
 
@@ -515,9 +510,9 @@ class _MindMapPageState extends State<MindMapPage> {
     MindMapDesignTemplate template,
   ) {
     return switch (template.id) {
-      'minimalRadial' => l10n.designTemplateMinimalRadial,
-      'softHorizontal' => l10n.designTemplateSoftHorizontal,
-      'darkRadial' => l10n.designTemplateDarkRadial,
+      'minimal' => l10n.designTemplateMinimal,
+      'soft' => l10n.designTemplateSoft,
+      'dark' => l10n.designTemplateDark,
       _ => template.id,
     };
   }

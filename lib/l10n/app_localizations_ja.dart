@@ -191,11 +191,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get designTemplateMenu => 'デザイン';
 
   @override
-  String get designTemplateMinimalRadial => 'シンプル放射';
+  String get designTemplateMinimal => 'ミニマル';
 
   @override
-  String get designTemplateSoftHorizontal => 'ソフト水平';
+  String get designTemplateSoft => 'ソフト';
 
   @override
-  String get designTemplateDarkRadial => 'ダーク放射';
+  String get designTemplateDark => 'ダーク';
 }

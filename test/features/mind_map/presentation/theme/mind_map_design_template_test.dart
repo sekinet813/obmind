@@ -9,22 +9,17 @@ import 'package:obmind/features/mind_map/presentation/theme/mind_map_canvas_them
 import 'package:obmind/features/mind_map/presentation/theme/mind_map_design_template.dart';
 
 void main() {
-  test('provides at least three visually distinct theme and layout pairs', () {
+  test('provides visually distinct themes without coupling layout', () {
     expect(MindMapDesignTemplate.values, hasLength(greaterThanOrEqualTo(3)));
     expect(
       MindMapDesignTemplate.values.map((template) => template.theme).toSet(),
-      hasLength(greaterThan(1)),
-    );
-    expect(
-      MindMapDesignTemplate.values.map((template) => template.layout).toSet(),
-      hasLength(greaterThan(1)),
+      hasLength(MindMapDesignTemplate.values.length),
     );
 
     final scheme = ObmindTheme.lightColorScheme;
     final looks = [
       for (final template in MindMapDesignTemplate.values)
         (
-          template.layout,
           mindMapCanvasThemeFor(template.theme, scheme).nodeRadius,
           mindMapCanvasThemeFor(template.theme, scheme).edgeColor,
         ),
@@ -32,18 +27,18 @@ void main() {
     expect(looks.toSet(), hasLength(MindMapDesignTemplate.values.length));
   });
 
-  test('serializes templates as existing theme and layout frontmatter', () {
+  test('applying a template keeps the current layout', () {
     final document = MindMapDocument(
       root: MindNode(id: const NodeId('root'), text: 'Root'),
+      layout: LayoutType.radial,
     );
-    final applied = document.copyWith(
-      theme: MindMapDesignTemplate.softHorizontal.theme,
-      layout: MindMapDesignTemplate.softHorizontal.layout,
-    );
+    final applied = document.copyWith(theme: MindMapDesignTemplate.soft.theme);
     final markdown = const MarkdownSerializer().serialize(applied);
 
+    expect(applied.layout, LayoutType.radial);
     expect(markdown, contains('theme: soft'));
-    expect(markdown, contains('layout: horizontal'));
-    expect(applied.layout, LayoutType.horizontal);
+    expect(markdown, contains('layout: radial'));
+    expect(MindMapDesignTemplate.soft.matches(applied), isTrue);
+    expect(MindMapDesignTemplate.soft.matches(document), isFalse);
   });
 }
