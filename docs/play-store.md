@@ -104,3 +104,52 @@ flutter build appbundle
 `key.properties`が無いと、releaseはdebug鍵のままになります。`flutter run --release`用のフォールバックであり、そのAABは提出しないでください。
 
 keystore未作成は人間作業の残課題です。CIのDebug APK手順は従来どおり[mobile-testing.md](mobile-testing.md)です。
+
+## Playの技術要件（確認日: 2026-08-20）
+
+DomainとMarkdown Formatは変更していません。Gradle / AGP / Kotlinの大規模アップグレードもしていません。Flutterがビルド時に出した「まもなく古い」警告は残しています。
+
+### 使用中のSDK
+
+| 項目 | 値 | 出所 |
+| --- | --- | --- |
+| Flutter | 3.47.0（framework `4cf2416426`、2026-08-11） | `flutter --version` |
+| compileSdk | 36（`flutter.compileSdkVersion`） | Flutter Gradle extension |
+| targetSdk | 36（`flutter.targetSdkVersion`） | 同上 |
+| minSdk | 24 | 同上 |
+| NDK | 28.2.13676358（`flutter.ndkVersion`） | 同上。r28系は16KBアラインが既定 |
+| AGP | 8.11.1 | `android/settings.gradle.kts` |
+| Gradle | 8.14 | `android/gradle/wrapper/gradle-wrapper.properties` |
+| Kotlin | 2.2.20 | `android/settings.gradle.kts` |
+| applicationId | `com.example.obmind`（開発用） | T-007未決 |
+
+### Playのtarget API
+
+[Playのtarget API要件](https://support.google.com/googleplay/android-developer/answer/11926878)では、2026-08-31以降の新規アプリと更新はAndroid 16（API 36）以上が必要です。本プロジェクトはtargetSdk 36なので、この項目は満たしています。不足時の上げ方は、まずFlutterチャネルを上げて`flutter.targetSdkVersion`に乗せる。`targetSdk`だけを手で上げない。判断が必要なら人間レビュー。
+
+### 16KBページサイズ
+
+[Androidの16KB案内](https://developer.android.com/guide/practices/page-sizes)とPlayの方針では、API 35以上の64bit向けにネイティブライブラリが16KBページをサポートする必要があります。更新のブロック期限は案内により2027-02-01頃。NDK r28以上が推奨です。
+
+確認（debug APK `build/app/outputs/flutter-apk/app-debug.apk`、2026-08-20）:
+
+1. `zipalign -c -P 16 -v 4` → Verification successful（build-tools 36.1.0）
+2. 含まれる`.so`のPT_LOAD `p_align`はいずれも`0x4000`（16KB）以上
+   - 64bit: `libflutter.so` / `libdatastore_shared_counter.so` / debug用`libVkLayer_khronos_validation.so`
+   - 32bit `armeabi-v7a`も同様に16KB以上だったが、Playが主に見るのは64bit
+
+Release AABはdebug APKと中身が違う（Vulkan validation層は通常入らない）。提出前に人間が`flutter build appbundle`の成果物で同じ確認をする。
+
+```bash
+# APKまたはunzipしたAAB内の .so に対して
+zipalign -c -P 16 -v 4 app-release.apk
+# ELFのLOAD Alignが 0x4000 以上であること（readelf -l または Androidのcheck_elf_alignment.sh）
+```
+
+不足していた場合の上げ方（今回は実施しない）: Flutterを上げて`ndkVersion = flutter.ndkVersion`を維持する。古いNDKを`build.gradle.kts`へ直書きしない。プラグインが古い`.so`を同梱していたらそのパッケージを更新する。AGP 9 / Gradle 9への一括上げはPlay要件の必須ではないため、警告があってもこのタスクでは触らない。
+
+### 残課題（人間作業）
+
+- 署名済みRelease AABでの16KB再確認
+- Play Consoleが提出時点で示すtarget API / page sizeの表示との突き合わせ
+

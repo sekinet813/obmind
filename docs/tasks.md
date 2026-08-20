@@ -1882,7 +1882,7 @@ Roadmap: Phase 14 Release署名とAAB
 
 ### T-093 Playの技術要件確認
 
-- [ ] 提出時点のtargetSdkと16KBページサイズ要件を満たすか確認し、docsに結果を残す
+- [x] 提出時点のtargetSdkと16KBページサイズ要件を満たすか確認し、docsに結果を残す
 
 背景:
 
