@@ -106,12 +106,6 @@ abstract class AppLocalizations {
   /// **'思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
 
-  /// No description provided for @pickFolderAndCreateMarkdown.
-  ///
-  /// In ja, this message translates to:
-  /// **'フォルダを選んでMarkdownを作成'**
-  String get pickFolderAndCreateMarkdown;
-
   /// No description provided for @folderPickCancelled.
   ///
   /// In ja, this message translates to:
@@ -129,12 +123,6 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'{fileName}を作成しました'**
   String markdownCreated(String fileName);
-
-  /// No description provided for @openMarkdown.
-  ///
-  /// In ja, this message translates to:
-  /// **'Markdownを開いて編集'**
-  String get openMarkdown;
 
   /// No description provided for @saveMarkdown.
   ///

@@ -124,4 +124,17 @@ void main() {
     expect(await useCase(), isNull);
     expect(storage.files, isEmpty);
   });
+
+  test('keeps the historical template when markdown is provided', () async {
+    final picker = _FakeFolderPicker(const MindMapLocation('tree-uri'));
+    final storage = _MemoryStorage();
+    final useCase = CreateMarkdownInFolder(picker: picker, storage: storage);
+
+    final file = await useCase(markdown: historicalTemplateMarkdown);
+
+    expect(file?.displayName, '新規マインドマップ.md');
+    final markdown = await storage.read(file!.location);
+    expect(markdown, contains('# Obmind\n'));
+    expect(MarkdownParser().parse(markdown).isSuccess, isTrue);
+  });
 }

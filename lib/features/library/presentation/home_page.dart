@@ -12,7 +12,6 @@ import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
-import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
 import 'package:obmind/features/settings/presentation/settings_page.dart';
@@ -22,7 +21,6 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     this.createMarkdownInFolder,
-    this.folderPicker,
     this.listMindMapFiles,
     this.loadMindMap,
     this.saveMindMap,
@@ -37,7 +35,6 @@ class HomePage extends StatefulWidget {
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
-  final MindMapFolderPicker? folderPicker;
   final ListMindMapFiles? listMindMapFiles;
   final LoadMindMap? loadMindMap;
   final SaveMindMap? saveMindMap;
@@ -141,11 +138,6 @@ class _HomePageState extends State<HomePage> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final createMarkdownInFolder = widget.createMarkdownInFolder;
-    final canOpen =
-        widget.folderPicker != null &&
-        widget.listMindMapFiles != null &&
-        widget.loadMindMap != null &&
-        widget.saveMindMap != null;
 
     if (_vault.isReady &&
         _libraryFiles != null &&
@@ -267,23 +259,6 @@ class _HomePageState extends State<HomePage> {
                 child: Text(l10n.changeVaultFolder),
               ),
             ],
-          ] else ...[
-            if (createMarkdownInFolder != null) ...[
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed: _busy
-                    ? null
-                    : () => _createMarkdown(createMarkdownInFolder),
-                child: Text(l10n.pickFolderAndCreateMarkdown),
-              ),
-            ],
-            if (canOpen) ...[
-              const SizedBox(height: 12),
-              OutlinedButton(
-                onPressed: _busy ? null : _openFileList,
-                child: Text(l10n.openMarkdown),
-              ),
-            ],
           ],
         ],
       ),
@@ -343,130 +318,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     await _loadVault();
-  }
-
-  Future<void> _createMarkdown(CreateMarkdownInFolder useCase) async {
-    setState(() => _busy = true);
-    final l10n = AppLocalizations.of(context)!;
-    try {
-      final file = await useCase(folder: _vault.folder);
-      if (!mounted) {
-        return;
-      }
-      if (file == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
-        return;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.markdownCreated(file.displayName))),
-      );
-      await _openMindMap(file);
-    } catch (error, stackTrace) {
-      appLogger.error(
-        'Failed to create Markdown in the picked folder',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      if (!mounted) {
-        return;
-      }
-      final message = _vault.kind == VaultFolderKind.revoked
-          ? l10n.vaultPermissionLost
-          : l10n.folderPickFailed;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-    } finally {
-      if (mounted) {
-        setState(() => _busy = false);
-      }
-    }
-  }
-
-  Future<void> _openFileList() async {
-    final picker = widget.folderPicker;
-    final listMindMapFiles = widget.listMindMapFiles;
-    final loadMindMap = widget.loadMindMap;
-    final saveMindMap = widget.saveMindMap;
-    if (listMindMapFiles == null ||
-        loadMindMap == null ||
-        saveMindMap == null) {
-      return;
-    }
-    setState(() => _busy = true);
-    final l10n = AppLocalizations.of(context)!;
-    try {
-      var folder = _vault.folder;
-      folder ??= await picker?.pickFolder();
-      if (!mounted) {
-        return;
-      }
-      if (folder == null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
-        return;
-      }
-      if (_vault.kind == VaultFolderKind.revoked) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.vaultPermissionLost)));
-        return;
-      }
-      final listed = await listMindMapFiles(folder);
-      if (!mounted) {
-        return;
-      }
-      await Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (context) => MindMapFileListPage(
-            files: listed,
-            loadMindMap: loadMindMap,
-            saveMindMap: saveMindMap,
-            recordRecentMindMap: widget.recordRecentMindMap,
-            removeRecentMindMap: widget.removeRecentMindMap,
-            renameMindMap: widget.renameMindMap,
-            deleteMindMap: widget.deleteMindMap,
-            viewModeRepository: widget.libraryViewModeRepository,
-          ),
-        ),
-      );
-      await _loadRecent();
-    } on MindMapStorageException catch (error, stackTrace) {
-      appLogger.error(
-        'Failed to list Markdown files',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      if (!mounted) {
-        return;
-      }
-      await _loadVault();
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.vaultPermissionLost)));
-    } catch (error, stackTrace) {
-      appLogger.error(
-        'Failed to list Markdown files',
-        error: error,
-        stackTrace: stackTrace,
-      );
-      if (!mounted) {
-        return;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.folderPickFailed)));
-    } finally {
-      if (mounted) {
-        setState(() => _busy = false);
-      }
-    }
   }
 
   Future<void> _openMindMap(MindMapFile file) async {

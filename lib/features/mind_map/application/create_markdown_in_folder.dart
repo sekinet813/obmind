@@ -20,8 +20,9 @@ obmind:
 ''';
 }
 
-/// Historical PoC template. New maps use [defaultNewMapMarkdown] instead.
-const pocMarkdownContents = '''
+/// Historical template kept for parse compatibility. New maps use
+/// [defaultNewMapMarkdown] instead.
+const historicalTemplateMarkdown = '''
 ---
 obmind:
   version: 1

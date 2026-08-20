@@ -15,9 +15,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get homeMessage => '思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。';
 
   @override
-  String get pickFolderAndCreateMarkdown => 'フォルダを選んでMarkdownを作成';
-
-  @override
   String get folderPickCancelled => 'フォルダ選択をキャンセルしました';
 
   @override
@@ -27,9 +24,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String markdownCreated(String fileName) {
     return '$fileNameを作成しました';
   }
-
-  @override
-  String get openMarkdown => 'Markdownを開いて編集';
 
   @override
   String get saveMarkdown => '保存';

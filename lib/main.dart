@@ -42,7 +42,6 @@ Future<Widget> _buildApp() async {
       picker: storage,
       storage: storage,
     ),
-    folderPicker: storage,
     listMindMapFiles: ListMindMapFiles(storage),
     loadMindMap: loadMindMap,
     saveMindMap: saveMindMap,

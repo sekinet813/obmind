@@ -56,7 +56,7 @@ Android実装を変えた場合は可能なら`flutter build apk --debug`、iOS�
 - Node追加
 - Node編集
 
-ホーム画面の表示も、識別子変更の回帰として維持します。フォルダ選択PoCのボタンは、Applicationへ注入したfakeでWidget Testします。SAFの実ダイアログはエミュレータまたは実機で確認します。
+ホーム画面の表示も、識別子変更の回帰として維持します。保存フォルダのオンボーディングとLibrary作成は、Applicationへ注入したfakeでWidget Testします。SAFの実ダイアログはエミュレータまたは実機で確認します。開発用の生Markdown編集画面は通常UIに出さず、テストから直接Widgetへ注入してよいです。
 
 ## 日付とID
 

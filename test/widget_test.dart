@@ -4,15 +4,35 @@ import 'package:obmind/app/app.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/markdown_file_service.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
+import 'package:obmind/features/mind_map/domain/repositories/vault_folder_repository.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 import 'package:obmind/features/mind_map/presentation/markdown_editor_page.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
+
+class _MemoryVault implements VaultFolderRepository {
+  MindMapLocation? folder;
+
+  @override
+  Future<MindMapLocation?> load() async => folder;
+
+  @override
+  Future<void> save(MindMapLocation location) async {
+    folder = location;
+  }
+
+  @override
+  Future<void> clear() async {
+    folder = null;
+  }
+}
 
 class _FakePicker implements MindMapFolderPicker {
   @override
@@ -107,7 +127,24 @@ class _FailingWriteStorage implements MindMapStorage {
   }
 }
 
-Widget _androidApp(_MemoryStorage storage) {
+Widget _androidApp(_MemoryStorage storage, {_MemoryVault? vault}) {
+  const serializer = MarkdownSerializer();
+  final picker = _FakePicker();
+  final vaultFolder = vault ?? _MemoryVault();
+  return ObmindApp(
+    createMarkdownInFolder: CreateMarkdownInFolder(
+      picker: picker,
+      storage: storage,
+    ),
+    listMindMapFiles: ListMindMapFiles(storage),
+    loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+    saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
+    loadVaultFolder: LoadVaultFolder(vault: vaultFolder, picker: picker),
+    selectVaultFolder: SelectVaultFolder(picker: picker, vault: vaultFolder),
+  );
+}
+
+Widget _storageWithoutVault(_MemoryStorage storage) {
   const serializer = MarkdownSerializer();
   final picker = _FakePicker();
   return ObmindApp(
@@ -115,7 +152,6 @@ Widget _androidApp(_MemoryStorage storage) {
       picker: picker,
       storage: storage,
     ),
-    folderPicker: picker,
     listMindMapFiles: ListMindMapFiles(storage),
     loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
     saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
@@ -133,6 +169,20 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
+    expect(find.text('Markdownを開いて編集'), findsNothing);
+  });
+
+  testWidgets('Vault未配線ならPoC用の作成・編集ボタンを出さない', (tester) async {
+    await tester.pumpWidget(_storageWithoutVault(_MemoryStorage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
+    expect(find.text('Markdownを開いて編集'), findsNothing);
+    expect(find.text('保存フォルダを選ぶ'), findsNothing);
+    expect(
+      find.text('思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('作成したMarkdownをマインドマップとして開いて保存する', (tester) async {
@@ -140,7 +190,9 @@ void main() {
     await tester.pumpWidget(_androidApp(storage));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('フォルダを選んでMarkdownを作成'));
+    await tester.tap(find.text('保存フォルダを選ぶ'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('createMindMapEmpty')));
     await tester.pumpAndSettle();
 
     expect(find.text('新規マインドマップ.mdを作成しました'), findsOneWidget);
