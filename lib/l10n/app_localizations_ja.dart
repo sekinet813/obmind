@@ -89,6 +89,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get fitToScreen => '全体表示';
 
   @override
+  String get zoomIn => '拡大';
+
+  @override
+  String get zoomOut => '縮小';
+
+  @override
   String get undoEdit => '元に戻す';
 
   @override

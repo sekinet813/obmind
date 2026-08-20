@@ -14,6 +14,7 @@ import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_context_actions.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
+import 'package:obmind/features/mind_map/presentation/mind_map_zoom_controls.dart';
 import 'package:obmind/features/mind_map/presentation/theme/mind_map_canvas_theme.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -393,6 +394,10 @@ class _MindMapPageState extends State<MindMapPage> {
     _viewportKey.currentState?.fitToScreen(renderBox.size);
   }
 
+  void _zoomIn() => _viewportKey.currentState?.zoomIn();
+
+  void _zoomOut() => _viewportKey.currentState?.zoomOut();
+
   Future<void> _save() async {
     final file = widget.file;
     if (file == null || widget.readOnly || _externallyModified) {
@@ -531,6 +536,14 @@ class _MindMapPageState extends State<MindMapPage> {
                   onNodeDragUpdate: canEdit ? _onNodeDragUpdate : null,
                   onNodeDragEnd: canEdit ? _onNodeDragEnd : null,
                   onEditingComplete: _commitEditing,
+                ),
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: MindMapZoomControls(
+                    onZoomIn: _zoomIn,
+                    onZoomOut: _zoomOut,
+                  ),
                 ),
                 if (showContextActions)
                   Positioned(

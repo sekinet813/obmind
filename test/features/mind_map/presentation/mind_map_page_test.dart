@@ -153,4 +153,67 @@ void main() {
     expect(find.byType(TextField), findsNothing);
     expect(find.text('編集'), findsOneWidget);
   });
+
+  testWidgets('zoom buttons change scale and stay within min and max', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    expect(find.byKey(const Key('zoomOut')), findsOneWidget);
+    expect(find.byTooltip('全体表示'), findsOneWidget);
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    final controller = viewer.transformationController!;
+    final initial = controller.value.getMaxScaleOnAxis();
+
+    await tester.tap(find.byKey(const Key('zoomIn')));
+    await tester.pump();
+    expect(controller.value.getMaxScaleOnAxis(), greaterThan(initial));
+
+    for (var i = 0; i < 12; i++) {
+      await tester.tap(find.byKey(const Key('zoomIn')));
+      await tester.pump();
+    }
+    expect(
+      controller.value.getMaxScaleOnAxis(),
+      closeTo(viewer.maxScale, 0.001),
+    );
+
+    for (var i = 0; i < 16; i++) {
+      await tester.tap(find.byKey(const Key('zoomOut')));
+      await tester.pump();
+    }
+    expect(
+      controller.value.getMaxScaleOnAxis(),
+      closeTo(viewer.minScale, 0.001),
+    );
+  });
+
+  testWidgets('zoom buttons remain available while editing a node', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.scaleEnabled, isTrue);
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    expect(find.byKey(const Key('zoomOut')), findsOneWidget);
+  });
 }

@@ -168,7 +168,41 @@ class MindMapViewportState extends State<MindMapViewport>
     final dy = (viewportSize.height - layout.height * scale) / 2;
     _transformationController.value = Matrix4.identity()
       ..translateByDouble(dx, dy, 0, 1)
-      ..scaleByDouble(scale, scale, 1, 1);
+      ..scaleByDouble(scale, scale, scale, 1);
+  }
+
+  static const zoomStep = 1.25;
+
+  /// Zooms in around the viewport center without storing coordinates in Domain.
+  void zoomIn() => zoomBy(zoomStep);
+
+  /// Zooms out around the viewport center without storing coordinates in Domain.
+  void zoomOut() => zoomBy(1 / zoomStep);
+
+  /// Multiplies the current scale by [factor] and clamps to min / max scale.
+  void zoomBy(double factor) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize || box.size.isEmpty) {
+      return;
+    }
+    final currentScale = _transformationController.value.getMaxScaleOnAxis();
+    if (currentScale <= 0) {
+      return;
+    }
+    final nextScale = (currentScale * factor).clamp(
+      widget.minScale,
+      widget.maxScale,
+    );
+    if ((nextScale - currentScale).abs() < 0.0001) {
+      return;
+    }
+    final cx = box.size.width / 2;
+    final cy = box.size.height / 2;
+    final sceneFocal = _transformationController.toScene(Offset(cx, cy));
+    _transformationController.value = Matrix4.identity()
+      ..translateByDouble(cx, cy, 0, 1)
+      ..scaleByDouble(nextScale, nextScale, nextScale, 1)
+      ..translateByDouble(-sceneFocal.dx, -sceneFocal.dy, 0, 1);
   }
 
   @override
@@ -195,6 +229,7 @@ class MindMapViewportState extends State<MindMapViewport>
             scaleEnabled: widget.scaleEnabled && widget.draggingId == null,
             minScale: widget.minScale,
             maxScale: widget.maxScale,
+            boundaryMargin: const EdgeInsets.all(double.infinity),
             constrained: false,
             child: SizedBox(
               key: _layoutKey,

@@ -250,6 +250,18 @@ abstract class AppLocalizations {
   /// **'全体表示'**
   String get fitToScreen;
 
+  /// No description provided for @zoomIn.
+  ///
+  /// In ja, this message translates to:
+  /// **'拡大'**
+  String get zoomIn;
+
+  /// No description provided for @zoomOut.
+  ///
+  /// In ja, this message translates to:
+  /// **'縮小'**
+  String get zoomOut;
+
   /// No description provided for @undoEdit.
   ///
   /// In ja, this message translates to:
