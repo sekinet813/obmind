@@ -65,5 +65,8 @@
   "searchMindMaps": "ファイル名で検索",
   "noSearchResults": "該当するMarkdownがありません",
   "autosaveEnabled": "自動保存",
-  "savingInProgress": "保存中"
+  "savingInProgress": "保存中",
+  "layoutMenu": "レイアウト",
+  "layoutHorizontal": "水平",
+  "layoutRadial": "放射"
 }

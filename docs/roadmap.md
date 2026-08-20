@@ -133,7 +133,7 @@ UIより先に安定させます。
   - Task: T-058
 - [x] Vaultフォルダの永続化と設定画面
   - Task: T-059
-- [ ] Radial Layout Engine
+- [x] Radial Layout Engine
   - Task: T-060
 - [x] 初回オンボーディング
   - Task: T-061

@@ -88,7 +88,7 @@ Layout EngineはWidgetから独立させ、`MindMapDocument`から`NodeLayout`�
 
 ノード操作、Load/Save、Undo/Redoなどのユースケースを置きます。UIの一時的なStateとDomain Stateを混ぜません。
 
-Layout Engineもここに置きます。Presentationが測った`NodeSize`を入力し、表示用の`MindMapLayout`を返します。`NodeLayout`の`x` / `y`は計算結果であり、DomainモデルやMarkdownへ保存しません。
+Layout Engineもここに置きます。Presentationが測った`NodeSize`を入力し、表示用の`MindMapLayout`を返します。`document.layout`に応じてHorizontal / Radialを切り替えます。`NodeLayout`の`x` / `y`は計算結果であり、DomainモデルやMarkdownへ保存しません。
 
 ```dart
 abstract interface class LayoutEngine {

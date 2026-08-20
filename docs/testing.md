@@ -43,9 +43,9 @@ Android実装を変えた場合は可能なら`flutter build apk --debug`、iOS�
 - DomainのNodeを変更しないこと
 - Nodeの識別は表示名ではなく`NodeId`であること
 
-### Layout（Phase 3）
+### Layout（Phase 3 / Phase 9）
 
-同一Inputに対して安定した`NodeLayout`になること。
+同一Inputに対して安定した`NodeLayout`になること。HorizontalとRadialの双方で、折りたたみ子孫を省けること。
 
 ## Widget Test
 

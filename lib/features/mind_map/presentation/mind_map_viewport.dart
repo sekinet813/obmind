@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:obmind/features/mind_map/application/layout/horizontal_layout_engine.dart';
 import 'package:obmind/features/mind_map/application/layout/layout_engine.dart';
+import 'package:obmind/features/mind_map/application/layout/layout_engines.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/presentation/layout_animation.dart';
@@ -16,7 +16,7 @@ class MindMapViewport extends StatefulWidget {
     super.key,
     required this.document,
     required this.canvasTheme,
-    this.layoutEngine = const HorizontalLayoutEngine(),
+    this.layoutEngine,
     this.nodeSizes = const {},
     this.panEnabled = true,
     this.scaleEnabled = true,
@@ -42,7 +42,9 @@ class MindMapViewport extends StatefulWidget {
 
   final MindMapDocument document;
   final MindMapCanvasTheme canvasTheme;
-  final LayoutEngine layoutEngine;
+
+  /// When null, the engine is chosen from [MindMapDocument.layout].
+  final LayoutEngine? layoutEngine;
   final Map<NodeId, NodeSize> nodeSizes;
   final bool panEnabled;
   final bool scaleEnabled;
@@ -88,7 +90,7 @@ class MindMapViewportState extends State<MindMapViewport>
     if (widget.transformationController == null) {
       _ownedController = TransformationController();
     }
-    _targetLayout = widget.layoutEngine.layout(
+    _targetLayout = _layoutEngine.layout(
       widget.document,
       nodeSizes: widget.nodeSizes,
     );
@@ -110,7 +112,7 @@ class MindMapViewportState extends State<MindMapViewport>
   @override
   void didUpdateWidget(MindMapViewport oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final nextLayout = widget.layoutEngine.layout(
+    final nextLayout = _layoutEngine.layout(
       widget.document,
       nodeSizes: widget.nodeSizes,
     );
@@ -139,9 +141,12 @@ class MindMapViewportState extends State<MindMapViewport>
     );
   }
 
+  LayoutEngine get _layoutEngine =>
+      widget.layoutEngine ?? layoutEngineFor(widget.document.layout);
+
   /// Current layout used for drag hit testing.
   MindMapLayout get currentLayout => _animatedLayout(
-    widget.layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
+    _layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
   );
 
   /// Converts a global pointer position into layout coordinates.
@@ -218,7 +223,7 @@ class MindMapViewportState extends State<MindMapViewport>
   @override
   Widget build(BuildContext context) {
     final layout = _animatedLayout(
-      widget.layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
+      _layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
     );
 
     return ColoredBox(

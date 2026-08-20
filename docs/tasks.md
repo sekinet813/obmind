@@ -1021,31 +1021,45 @@ Roadmap: Phase 9 Vault永続化と設定
 
 ### T-060 Radial Layout Engine
 
-- [ ] マインドマップが右方向ではなく、円状に広がるレイアウトを追加する
+- [x] マインドマップが右方向ではなく、円状に広がるレイアウトを追加する
 
-Status: BLOCKED
-Reason: レイアウト方式の追加はProduct判断であり、着手前に`docs/decisions/`へADRが必要。エージェントがADRなしで確定できない。
+背景:
+
+- 現状のLayout EngineはHorizontal（左→右）のみ。`LayoutType`も`horizontal`のみ
+- `MindMapViewport`は`HorizontalLayoutEngine`を既定で使う
+- Frontmatterの`layout`は値として`horizontal`のみ受け付ける（[markdown-format.md](markdown-format.md)）
+- 要件の自動レイアウト（Tree、座標はDomainへ保存しない）は維持する。自由配置やGraph化は対象外
 
 完了条件:
 
-- `LayoutType`にradial（名称は実装時に確定）を追加する
-- Radial Layout Engineが`MindMapLayout`を返す（DomainのNode座標は変更しない）
-- Frontmatterの`layout`でhorizontal / radialを切り替えられる
-- Parse → Serialize → Parseでlayoutが維持される
-- Collapse時に子孫をレイアウトから省ける
-- 100 Node程度でLayoutが安定する
-- Format v0.1の後方互換を壊さない（horizontalがデフォルトのまま）
+- `LayoutType`に`radial`を追加する。既定は`horizontal`のまま
+- Application層に`RadialLayoutEngine`（`LayoutEngine`実装）を追加する
+  - Rootを中心付近に置き、子を兄弟順で円周方向へ、孫以降を親の方向へ外側へ広げる
+  - 同一Inputに対して安定した`NodeLayout`になる
+  - DomainのNodeを変更せず、`x` / `y`をモデルへ持たせない
+  - `collapsed`の子孫をレイアウトから省ける
+- `MindMapViewport`（および呼び出し側）が`document.layout`に応じてHorizontal / Radialを切り替える
+- Frontmatterの`layout`が`horizontal` / `radial`を読み書きできる
+- Parse → Serialize → Parseで`layout`が維持される
+- 未知の`layout`値は黙って破棄せず、既存の未知キー保持方針に合わせる
+- 通常UIからlayoutを切り替えられる（Markdown手編集を要求しない）。切替はAutosave経由で保存される
+- 既存のHorizontal Layout、Edge描画、Pan / Zoom、Collapse、Animation、Drag（Reorder / Move Parent）を壊さない
+- 100 Node程度でRadial Layoutが安定するユニットテストがある
+- `docs/markdown-format.md`の`layout`許容値と、必要なら`docs/requirements.md`のレイアウト節を更新する
+- Format v0.1の後方互換を壊さない（未指定・既存ファイルはhorizontalのまま）
 
-備考:
+対象外:
 
-- レイアウト方式の追加はProduct判断に触れる。着手前に`docs/decisions/`へADRを追加する
+- 自由座標配置、TreeからGraphへの変更（ADR必須のまま）
+- Radial専用のEdge形状や課金ロック
 
 依存:
 
 - T-008
 - T-020
+- T-033
 
-Roadmap: Phase 9 Radial Layout
+Roadmap: Phase 9 Radial Layout Engine
 
 ### T-061 初回オンボーディング
 

@@ -63,6 +63,48 @@ obmind:
     ]);
   });
 
+  test('parses radial layout from frontmatter', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: radial
+---
+
+# Root <!-- obmind:id=root -->
+''';
+
+    final result = parser.parse(markdown);
+
+    expect(result.isSuccess, isTrue);
+    expect(result.issues, isEmpty);
+    expect(result.document!.layout, LayoutType.radial);
+  });
+
+  test('preserves unknown layout values without using them for display', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: honeycomb
+---
+
+# Root <!-- obmind:id=root -->
+''';
+
+    final result = parser.parse(markdown);
+
+    expect(result.document!.layout, LayoutType.horizontal);
+    expect(result.document!.extraObmindFields, {'layout': 'honeycomb'});
+    expect(
+      result.issues.map((issue) => issue.code),
+      contains(MarkdownParseIssueCode.unknownLayout),
+    );
+    expect(result.hasUnsupportedContent, isFalse);
+  });
+
   test('assigns ids to simple markdown without comments', () {
     const markdown = '''
 # Root
