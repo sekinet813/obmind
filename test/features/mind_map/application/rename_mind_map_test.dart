@@ -53,6 +53,11 @@ class _MemoryStorage implements MindMapStorage {
       displayName: newDisplayName,
     );
   }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
+  }
 }
 
 class _MemoryRecent implements RecentMindMapsRepository {

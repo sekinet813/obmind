@@ -44,6 +44,11 @@ class _MemoryStorage implements MindMapStorage {
   }
 
   @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     return files.entries
         .map(
@@ -79,6 +84,11 @@ class _FailingWriteStorage implements MindMapStorage {
     MindMapLocation location,
     String newDisplayName,
   ) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
     throw UnimplementedError();
   }
 

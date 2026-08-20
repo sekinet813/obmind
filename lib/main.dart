@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
@@ -43,6 +44,10 @@ Future<Widget> _buildApp() async {
       storage: storage,
       listRecentMindMaps: ListRecentMindMaps(recentRepository),
       recordRecentMindMap: RecordRecentMindMap(recentRepository),
+      removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    ),
+    deleteMindMap: DeleteMindMap(
+      storage: storage,
       removeRecentMindMap: RemoveRecentMindMap(recentRepository),
     ),
   );

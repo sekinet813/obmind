@@ -303,6 +303,24 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'同じ名前のファイルがあります'**
   String get renameMindMapDuplicateName;
+
+  /// No description provided for @deleteMindMap.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get deleteMindMap;
+
+  /// No description provided for @deleteMindMapConfirm.
+  ///
+  /// In ja, this message translates to:
+  /// **'{fileName}を削除しますか？この操作は取り消せません。'**
+  String deleteMindMapConfirm(String fileName);
+
+  /// No description provided for @deleteMindMapFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除できませんでした'**
+  String get deleteMindMapFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -135,6 +135,9 @@ abstract interface class MindMapStorage {
   Future<String> read(MindMapLocation location);
   Future<void> write(MindMapLocation location, String markdown);
   Future<List<MindMapFile>> list(MindMapLocation folder);
+  Future<MindMapFile> create(MindMapLocation folder, String displayName, {String markdown});
+  Future<MindMapFile> rename(MindMapLocation location, String newDisplayName);
+  Future<void> delete(MindMapLocation location);
 }
 ```
 

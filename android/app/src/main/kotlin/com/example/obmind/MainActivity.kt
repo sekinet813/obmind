@@ -22,6 +22,7 @@ class MainActivity : FlutterActivity() {
                     "writeMarkdown" -> writeMarkdown(call.arguments, result)
                     "listMarkdown" -> listMarkdown(call.arguments, result)
                     "renameMarkdown" -> renameMarkdown(call.arguments, result)
+                    "deleteMarkdown" -> deleteMarkdown(call.arguments, result)
                     else -> result.notImplemented()
                 }
             }
@@ -177,6 +178,21 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }.start()
+    }
+
+    private fun deleteMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val fileToken = (arguments as? Map<*, *>)?.get("fileToken") as? String
+        if (fileToken.isNullOrEmpty()) {
+            result.error("invalid_args", "fileToken is required", null)
+            return
+        }
+        runStorage(result) {
+            documentTreeAccess.deleteMarkdown(fileToken)
+            null
+        }
     }
 
     private fun runStorage(

@@ -117,4 +117,15 @@ void main() {
     expect(renamed.displayName, 'b.md');
     expect(renamed.location.token, 'content://doc/b.md');
   });
+
+  test('delete goes through the channel without exposing SAF types', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'deleteMarkdown');
+      expect(call.arguments['fileToken'], 'content://doc/a.md');
+      return null;
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    await storage.delete(const MindMapLocation('content://doc/a.md'));
+  });
 }

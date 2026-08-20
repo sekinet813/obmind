@@ -41,6 +41,14 @@ class _MemoryMindMapStorage implements MindMapStorage {
   }
 
   @override
+  Future<void> delete(MindMapLocation location) async {
+    if (!files.containsKey(location.token)) {
+      throw const MindMapStorageException('missing file');
+    }
+    files.remove(location.token);
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     return files.entries
         .map(
@@ -118,6 +126,20 @@ void main() {
       throwsA(isA<MindMapStorageException>()),
     );
     expect(await storage.read(file.location), '# B\n');
+  });
+
+  test('delete removes the file and fails when missing', () async {
+    final storage = _MemoryMindMapStorage();
+    const folder = MindMapLocation('maps');
+    final file = await storage.create(folder, 'idea.md', markdown: '# Root\n');
+
+    await storage.delete(file.location);
+
+    expect(() => storage.read(file.location), throwsA(isA<StateError>()));
+    expect(
+      () => storage.delete(file.location),
+      throwsA(isA<MindMapStorageException>()),
+    );
   });
 
   test('failed write does not empty existing markdown', () async {

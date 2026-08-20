@@ -152,6 +152,14 @@ internal class DocumentTreeAccess(
         return renamed.toString() to newDisplayName
     }
 
+    fun deleteMarkdown(fileUriString: String) {
+        val fileUri = Uri.parse(fileUriString)
+        val deleted = DocumentsContract.deleteDocument(contentResolver, fileUri)
+        if (!deleted) {
+            throw IOException("deleteDocument returned false")
+        }
+    }
+
     private fun treeRootDocumentUri(treeUriString: String): Uri {
         val treeUri = Uri.parse(treeUriString)
         return DocumentsContract.buildDocumentUriUsingTree(

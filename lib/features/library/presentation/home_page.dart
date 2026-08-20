@@ -3,6 +3,7 @@ import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/presentation/mind_map_file_list_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
@@ -25,6 +26,7 @@ class HomePage extends StatefulWidget {
     this.recordRecentMindMap,
     this.removeRecentMindMap,
     this.renameMindMap,
+    this.deleteMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -36,6 +38,7 @@ class HomePage extends StatefulWidget {
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
   final RenameMindMap? renameMindMap;
+  final DeleteMindMap? deleteMindMap;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -223,6 +226,7 @@ class _HomePageState extends State<HomePage> {
             recordRecentMindMap: widget.recordRecentMindMap,
             removeRecentMindMap: widget.removeRecentMindMap,
             renameMindMap: widget.renameMindMap,
+            deleteMindMap: widget.deleteMindMap,
           ),
         ),
       );

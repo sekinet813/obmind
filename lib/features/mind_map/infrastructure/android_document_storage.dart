@@ -97,6 +97,25 @@ final class AndroidDocumentStorage
   }
 
   @override
+  Future<void> delete(MindMapLocation location) async {
+    try {
+      await _channel.invokeMethod<void>('deleteMarkdown', {
+        'fileToken': location.token,
+      });
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown delete failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException(
+        error.message ?? 'failed to delete markdown',
+        cause: error,
+      );
+    }
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     try {
       final rows =

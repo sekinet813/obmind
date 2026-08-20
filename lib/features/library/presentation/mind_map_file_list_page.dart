@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
@@ -17,6 +18,7 @@ class MindMapFileListPage extends StatefulWidget {
     required this.loadMindMap,
     required this.saveMindMap,
     this.renameMindMap,
+    this.deleteMindMap,
     this.recordRecentMindMap,
     this.removeRecentMindMap,
   });
@@ -25,6 +27,7 @@ class MindMapFileListPage extends StatefulWidget {
   final LoadMindMap loadMindMap;
   final SaveMindMap saveMindMap;
   final RenameMindMap? renameMindMap;
+  final DeleteMindMap? deleteMindMap;
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
 
@@ -85,19 +88,28 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                           style: theme.textTheme.bodyLarge,
                         ),
                       ),
-                      if (widget.renameMindMap != null)
+                      if (widget.renameMindMap != null ||
+                          widget.deleteMindMap != null)
                         PopupMenuButton<String>(
                           key: Key('renameMenu-${file.displayName}'),
                           onSelected: (value) {
                             if (value == 'rename') {
                               _renameMindMap(file);
+                            } else if (value == 'delete') {
+                              _deleteMindMap(file);
                             }
                           },
                           itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 'rename',
-                              child: Text(l10n.renameMindMap),
-                            ),
+                            if (widget.renameMindMap != null)
+                              PopupMenuItem(
+                                value: 'rename',
+                                child: Text(l10n.renameMindMap),
+                              ),
+                            if (widget.deleteMindMap != null)
+                              PopupMenuItem(
+                                value: 'delete',
+                                child: Text(l10n.deleteMindMap),
+                              ),
                           ],
                         )
                       else
@@ -177,6 +189,61 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  Future<void> _deleteMindMap(MindMapFile file) async {
+    final deleteMindMap = widget.deleteMindMap;
+    if (deleteMindMap == null) {
+      return;
+    }
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.deleteMindMap),
+          content: Text(l10n.deleteMindMapConfirm(file.displayName)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            ),
+            TextButton(
+              key: const Key('confirmDeleteMindMap'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.deleteMindMap),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    try {
+      await deleteMindMap(file);
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _files = [
+          for (final entry in _files)
+            if (entry.location.token != file.location.token) entry,
+        ];
+      });
+    } on MindMapStorageException catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to delete mind map',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.deleteMindMapFailed)));
     }
   }
 

@@ -25,6 +25,11 @@ class _MemoryStorage implements MindMapStorage {
   }
 
   @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     return files.entries
         .where((entry) => entry.key.startsWith('${folder.token}/'))

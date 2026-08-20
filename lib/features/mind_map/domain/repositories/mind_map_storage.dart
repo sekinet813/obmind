@@ -82,4 +82,9 @@ abstract interface class MindMapStorage {
   /// Rejects empty names, illegal characters, and collisions. Must not
   /// overwrite an existing file.
   Future<MindMapFile> rename(MindMapLocation location, String newDisplayName);
+
+  /// Deletes the Markdown file at [location].
+  ///
+  /// Must not report success if the file still exists.
+  Future<void> delete(MindMapLocation location);
 }

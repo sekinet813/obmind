@@ -114,4 +114,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get renameMindMapDuplicateName => '同じ名前のファイルがあります';
+
+  @override
+  String get deleteMindMap => '削除';
+
+  @override
+  String deleteMindMapConfirm(String fileName) {
+    return '$fileNameを削除しますか？この操作は取り消せません。';
+  }
+
+  @override
+  String get deleteMindMapFailed => '削除できませんでした';
 }

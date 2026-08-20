@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:obmind/app/obmind_theme.dart';
 import 'package:obmind/features/library/presentation/home_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
@@ -23,6 +24,7 @@ class ObmindApp extends StatelessWidget {
     this.recordRecentMindMap,
     this.removeRecentMindMap,
     this.renameMindMap,
+    this.deleteMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -34,6 +36,7 @@ class ObmindApp extends StatelessWidget {
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
   final RenameMindMap? renameMindMap;
+  final DeleteMindMap? deleteMindMap;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +63,7 @@ class ObmindApp extends StatelessWidget {
         recordRecentMindMap: recordRecentMindMap,
         removeRecentMindMap: removeRecentMindMap,
         renameMindMap: renameMindMap,
+        deleteMindMap: deleteMindMap,
       ),
     );
   }

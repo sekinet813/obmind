@@ -32,6 +32,11 @@ class _CountingStorage implements MindMapStorage {
   }
 
   @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async => [];
 
   @override
