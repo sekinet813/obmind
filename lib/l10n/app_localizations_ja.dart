@@ -83,6 +83,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editNode => '編集';
 
   @override
+  String get doneEditingNode => '完了';
+
+  @override
   String get fitToScreen => '全体表示';
 
   @override

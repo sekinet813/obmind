@@ -31,6 +31,7 @@
   "collapseNode": "折りたたむ",
   "expandNode": "展開",
   "editNode": "編集",
+  "doneEditingNode": "完了",
   "fitToScreen": "全体表示",
   "undoEdit": "元に戻す",
   "redoEdit": "やり直す"

@@ -53,7 +53,9 @@ class MindNodeWidget extends StatelessWidget {
                       controller: controller,
                       focusNode: focusNode,
                       autofocus: true,
+                      minLines: 1,
                       maxLines: 3,
+                      textInputAction: TextInputAction.done,
                       style: TextStyle(
                         color: theme.onNodeText,
                         fontSize: theme.nodeFontSize,
@@ -64,7 +66,9 @@ class MindNodeWidget extends StatelessWidget {
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
                       ),
+                      onEditingComplete: onEditingComplete,
                       onSubmitted: (_) => onEditingComplete?.call(),
+                      onTapOutside: (_) => onEditingComplete?.call(),
                     )
                   : FittedBox(
                       fit: BoxFit.scaleDown,

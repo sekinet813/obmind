@@ -104,4 +104,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
   });
+
+  testWidgets('exits inline editing with the done action', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byKey(const Key('doneEditingNode')), findsOneWidget);
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.panEnabled, isTrue);
+    expect(viewer.scaleEnabled, isTrue);
+
+    await tester.enterText(find.byType(TextField), '更新後');
+    await tester.tap(find.byKey(const Key('doneEditingNode')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('更新後'), findsOneWidget);
+    expect(find.text('編集'), findsOneWidget);
+  });
+
+  testWidgets('exits inline editing when tapping another node', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(MindNodeWidget, 'root'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('編集'), findsOneWidget);
+  });
 }

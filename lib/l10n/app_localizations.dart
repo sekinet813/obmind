@@ -238,6 +238,12 @@ abstract class AppLocalizations {
   /// **'編集'**
   String get editNode;
 
+  /// No description provided for @doneEditingNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'完了'**
+  String get doneEditingNode;
+
   /// No description provided for @fitToScreen.
   ///
   /// In ja, this message translates to:

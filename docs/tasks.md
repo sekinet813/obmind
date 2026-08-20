@@ -871,7 +871,7 @@ Roadmap: Phase 8 Obsidian interoperability test
 
 ### T-053 Edit mode終了（バグ修正）
 
-- [ ] 編集開始後に表示モードへ戻れるようにする
+- [x] 編集開始後に表示モードへ戻れるようにする
 
 背景:
 

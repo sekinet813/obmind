@@ -463,10 +463,7 @@ class _MindMapPageState extends State<MindMapPage> {
       Theme.of(context).colorScheme,
     );
     final showContextActions =
-        canEdit &&
-        _selectedId != null &&
-        _editingId == null &&
-        _draggingId == null;
+        canEdit && _selectedId != null && _draggingId == null;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.file?.displayName ?? _document.title),
@@ -547,6 +544,7 @@ class _MindMapPageState extends State<MindMapPage> {
                       collapsed: selected?.collapsed == true,
                       canEdit: canEdit,
                       onEdit: () => _startEditing(_selectedId!),
+                      onDoneEditing: _editingId == null ? null : _commitEditing,
                       onAddChild: _addChild,
                       onAddSibling: _addSibling,
                       onDelete: _deleteSelected,

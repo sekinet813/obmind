@@ -112,4 +112,33 @@ void main() {
 
     expect(selected, const NodeId('child'));
   });
+
+  testWidgets('keeps pan and zoom enabled while a node is editing', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+            editingId: const NodeId('child'),
+            editingController: TextEditingController(text: 'child'),
+            onEditingComplete: () {},
+          ),
+        ),
+      ),
+    );
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.panEnabled, isTrue);
+    expect(viewer.scaleEnabled, isTrue);
+    expect(find.byType(TextField), findsOneWidget);
+  });
 }

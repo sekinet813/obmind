@@ -200,54 +200,61 @@ class MindMapViewportState extends State<MindMapViewport>
               key: _layoutKey,
               width: layout.width,
               height: layout.height,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  MindMapEdgeLayer(
-                    document: widget.document,
-                    layout: layout,
-                    color: widget.canvasTheme.edgeColor,
-                  ),
-                  for (final node in widget.document.root.depthFirst)
-                    if (layout[node.id] != null)
-                      Positioned(
-                        key: ValueKey(node.id.value),
-                        left: layout[node.id]!.x,
-                        top: layout[node.id]!.y,
-                        width: layout[node.id]!.width,
-                        height: layout[node.id]!.height,
-                        child: _NodeGestureTarget(
-                          enabled: widget.editingId == null,
-                          dragging: widget.draggingId == node.id,
-                          onTap: widget.onNodeSelected == null
-                              ? null
-                              : () => widget.onNodeSelected!(node.id),
-                          onLongPress: widget.onNodeLongPress == null
-                              ? null
-                              : () => widget.onNodeLongPress!(node.id),
-                          onDoubleTap: widget.onNodeDoubleTap == null
-                              ? null
-                              : () => widget.onNodeDoubleTap!(node.id),
-                          onDragStart: widget.onNodeDragStart == null
-                              ? null
-                              : () => widget.onNodeDragStart!(node.id),
-                          onDragUpdate: widget.onNodeDragUpdate,
-                          onDragEnd: widget.onNodeDragEnd,
-                          child: MindNodeWidget(
-                            text: node.text,
-                            theme: widget.canvasTheme,
-                            collapsed: node.collapsed,
-                            selected:
-                                widget.selectedId == node.id ||
-                                widget.dropTargetId == node.id,
-                            editing: widget.editingId == node.id,
-                            controller: widget.editingController,
-                            focusNode: widget.editingFocusNode,
-                            onEditingComplete: widget.onEditingComplete,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: widget.editingId == null
+                    ? null
+                    : widget.onEditingComplete,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    MindMapEdgeLayer(
+                      document: widget.document,
+                      layout: layout,
+                      color: widget.canvasTheme.edgeColor,
+                    ),
+                    for (final node in widget.document.root.depthFirst)
+                      if (layout[node.id] != null)
+                        Positioned(
+                          key: ValueKey(node.id.value),
+                          left: layout[node.id]!.x,
+                          top: layout[node.id]!.y,
+                          width: layout[node.id]!.width,
+                          height: layout[node.id]!.height,
+                          child: _NodeGestureTarget(
+                            tapEnabled: widget.editingId != node.id,
+                            dragEnabled: widget.editingId == null,
+                            dragging: widget.draggingId == node.id,
+                            onTap: widget.onNodeSelected == null
+                                ? null
+                                : () => widget.onNodeSelected!(node.id),
+                            onLongPress: widget.onNodeLongPress == null
+                                ? null
+                                : () => widget.onNodeLongPress!(node.id),
+                            onDoubleTap: widget.onNodeDoubleTap == null
+                                ? null
+                                : () => widget.onNodeDoubleTap!(node.id),
+                            onDragStart: widget.onNodeDragStart == null
+                                ? null
+                                : () => widget.onNodeDragStart!(node.id),
+                            onDragUpdate: widget.onNodeDragUpdate,
+                            onDragEnd: widget.onNodeDragEnd,
+                            child: MindNodeWidget(
+                              text: node.text,
+                              theme: widget.canvasTheme,
+                              collapsed: node.collapsed,
+                              selected:
+                                  widget.selectedId == node.id ||
+                                  widget.dropTargetId == node.id,
+                              editing: widget.editingId == node.id,
+                              controller: widget.editingController,
+                              focusNode: widget.editingFocusNode,
+                              onEditingComplete: widget.onEditingComplete,
+                            ),
                           ),
                         ),
-                      ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -260,7 +267,8 @@ class MindMapViewportState extends State<MindMapViewport>
 class _NodeGestureTarget extends StatelessWidget {
   const _NodeGestureTarget({
     required this.child,
-    required this.enabled,
+    required this.tapEnabled,
+    required this.dragEnabled,
     this.dragging = false,
     this.onTap,
     this.onLongPress,
@@ -271,7 +279,8 @@ class _NodeGestureTarget extends StatelessWidget {
   });
 
   final Widget child;
-  final bool enabled;
+  final bool tapEnabled;
+  final bool dragEnabled;
   final bool dragging;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
@@ -285,19 +294,19 @@ class _NodeGestureTarget extends StatelessWidget {
     final content = Opacity(opacity: dragging ? 0.65 : 1, child: child);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: enabled ? onTap : null,
-      onLongPress: enabled && onDragStart == null ? onLongPress : null,
-      onDoubleTap: enabled ? onDoubleTap : null,
-      onLongPressStart: enabled && onDragStart != null
+      onTap: tapEnabled ? onTap : null,
+      onLongPress: dragEnabled && onDragStart == null ? onLongPress : null,
+      onDoubleTap: dragEnabled ? onDoubleTap : null,
+      onLongPressStart: dragEnabled && onDragStart != null
           ? (_) => onDragStart!()
           : null,
-      onLongPressMoveUpdate: enabled && onDragUpdate != null
+      onLongPressMoveUpdate: dragEnabled && onDragUpdate != null
           ? (details) {
               final box = context.findRenderObject()! as RenderBox;
               onDragUpdate!(box.localToGlobal(details.localPosition));
             }
           : null,
-      onLongPressEnd: enabled && onDragEnd != null
+      onLongPressEnd: dragEnabled && onDragEnd != null
           ? (details) {
               final box = context.findRenderObject()! as RenderBox;
               onDragEnd!(box.localToGlobal(details.localPosition));
