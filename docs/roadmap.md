@@ -67,31 +67,52 @@ UIより先に安定させます。
 ## Phase 5：Persistence
 
 - [ ] Load / Save
+  - Task: T-033
 - [ ] Autosave（debounce / atomic write）
+  - Task: T-034
 - [ ] 外部変更の検知（上書き防止）
+  - Task: T-035
 - [ ] File list
+  - Task: T-036
 - [ ] Recent maps
+  - Task: T-037
 
 ## Phase 6：UX
 
 - [ ] Animation
+  - Task: T-038
 - [ ] Context Menu
+  - Task: T-039
 - [ ] Keyboard / Focus
+  - Task: T-040
 - [ ] Gesture競合の解消
+  - Task: T-041
 - [ ] Fit to Screen
+  - Task: T-042
 
 ## Phase 7：Design
 
 - [ ] MindMapTheme（Minimal / Soft / Dark）
+  - Task: T-043
 - [ ] Dark Mode
+  - Task: T-044
 - [ ] Typography
+  - Task: T-045
 - [ ] Node Styleの差し替え口
+  - Task: T-046
 - [ ] Home / Library UI
+  - Task: T-047
 
 ## Phase 8：Beta
 
 - [ ] Android実機
+  - Task: T-048
 - [ ] iPhone実機
+  - Task: T-049
+  - Status: Skip Reason: T-012依存
 - [ ] 大量Node Test
+  - Task: T-050
 - [ ] File corruption test
+  - Task: T-051
 - [ ] Obsidian interoperability test
+  - Task: T-052
