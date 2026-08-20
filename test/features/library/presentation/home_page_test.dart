@@ -119,6 +119,8 @@ void main() {
 
     expect(find.text('保存フォルダを選ぶ'), findsOneWidget);
     expect(find.text('思考の保存フォルダを選ぶ'), findsOneWidget);
+    expect(find.textContaining('Markdownファイルとして保存します'), findsOneWidget);
+    expect(find.textContaining('正本'), findsNothing);
     expect(find.textContaining('キャンセルしてもアプリは終了しません'), findsOneWidget);
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
 

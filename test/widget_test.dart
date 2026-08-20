@@ -129,7 +129,7 @@ void main() {
 
     expect(find.text('Obmind'), findsOneWidget);
     expect(
-      find.text('Markdownを正本とする、Local-firstなマインドマップアプリです。'),
+      find.text('思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。'),
       findsOneWidget,
     );
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);

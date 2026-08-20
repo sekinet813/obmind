@@ -1,7 +1,7 @@
 {
   "@@locale": "ja",
   "appTitle": "Obmind",
-  "homeMessage": "Markdownを正本とする、Local-firstなマインドマップアプリです。",
+  "homeMessage": "思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。",
   "pickFolderAndCreateMarkdown": "フォルダを選んでMarkdownを作成",
   "folderPickCancelled": "フォルダ選択をキャンセルしました",
   "folderPickFailed": "フォルダの選択または保存に失敗しました",
@@ -62,7 +62,7 @@
   "vaultNotConfigured": "保存フォルダが未設定です",
   "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください",
   "vaultOnboardingTitle": "思考の保存フォルダを選ぶ",
-  "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
+  "vaultOnboardingBody": "Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
   "searchMindMaps": "名前やノードで検索",
   "noSearchResults": "該当するMarkdownがありません",
   "libraryViewList": "リスト表示",

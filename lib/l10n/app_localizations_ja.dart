@@ -12,7 +12,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => 'Obmind';
 
   @override
-  String get homeMessage => 'Markdownを正本とする、Local-firstなマインドマップアプリです。';
+  String get homeMessage => '思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。';
 
   @override
   String get pickFolderAndCreateMarkdown => 'フォルダを選んでMarkdownを作成';
@@ -158,7 +158,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get vaultOnboardingBody =>
-      'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
+      'Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
 
   @override
   String get searchMindMaps => '名前やノードで検索';

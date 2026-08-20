@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeMessage.
   ///
   /// In ja, this message translates to:
-  /// **'Markdownを正本とする、Local-firstなマインドマップアプリです。'**
+  /// **'思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
 
   /// No description provided for @pickFolderAndCreateMarkdown.
@@ -385,7 +385,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultOnboardingBody.
   ///
   /// In ja, this message translates to:
-  /// **'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
+  /// **'Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
   String get vaultOnboardingBody;
 
   /// No description provided for @searchMindMaps.
