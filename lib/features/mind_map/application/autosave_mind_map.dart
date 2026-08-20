@@ -8,23 +8,35 @@ import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.da
 final class AutosaveMindMap {
   AutosaveMindMap({
     required this.saveMindMap,
+    required MindMapRevision initialRevision,
     this.debounce = const Duration(milliseconds: 800),
-  });
+    this.onConflict,
+  }) : _revision = initialRevision;
 
   final SaveMindMap saveMindMap;
   final Duration debounce;
+  final void Function()? onConflict;
 
+  MindMapRevision _revision;
   Timer? _timer;
   MindMapLocation? _pendingLocation;
   MindMapDocument? _pendingDocument;
   Future<void>? _inFlight;
+
+  MindMapRevision get revision => _revision;
 
   void schedule(MindMapLocation location, MindMapDocument document) {
     _pendingLocation = location;
     _pendingDocument = document;
     _timer?.cancel();
     _timer = Timer(debounce, () {
-      unawaited(_runSave());
+      unawaited(() async {
+        try {
+          await _runSave();
+        } on MindMapStorageConflictException {
+          // Handled through [onConflict].
+        }
+      }());
     });
   }
 
@@ -49,11 +61,24 @@ final class AutosaveMindMap {
       await _inFlight;
     }
 
-    _inFlight = saveMindMap(location, document);
+    _inFlight = _save(location, document);
     try {
       await _inFlight;
     } finally {
       _inFlight = null;
+    }
+  }
+
+  Future<void> _save(MindMapLocation location, MindMapDocument document) async {
+    try {
+      _revision = await saveMindMap(
+        location,
+        document,
+        ifUnchangedSince: _revision,
+      );
+    } on MindMapStorageConflictException {
+      onConflict?.call();
+      rethrow;
     }
   }
 

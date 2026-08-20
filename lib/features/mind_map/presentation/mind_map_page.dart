@@ -18,6 +18,7 @@ class MindMapPage extends StatefulWidget {
     required this.document,
     this.file,
     this.saveMindMap,
+    this.revision,
     this.readOnly = false,
     this.generateId,
   });
@@ -25,6 +26,7 @@ class MindMapPage extends StatefulWidget {
   final MindMapDocument document;
   final MindMapFile? file;
   final SaveMindMap? saveMindMap;
+  final MindMapRevision? revision;
   final bool readOnly;
   final NodeId Function()? generateId;
 
@@ -36,16 +38,31 @@ class _MindMapPageState extends State<MindMapPage> {
   late MindMapDocument _document;
   NodeId? _selectedId;
   var _saving = false;
+  var _externallyModified = false;
   AutosaveMindMap? _autosave;
+  MindMapRevision? _revision;
 
   @override
   void initState() {
     super.initState();
     _document = widget.document;
     _selectedId = _document.root.id;
+    _revision = widget.revision;
     final saveMindMap = widget.saveMindMap;
-    if (saveMindMap != null && widget.file != null && !widget.readOnly) {
-      _autosave = AutosaveMindMap(saveMindMap: saveMindMap);
+    final revision = _revision;
+    if (saveMindMap != null &&
+        widget.file != null &&
+        revision != null &&
+        !widget.readOnly) {
+      _autosave = AutosaveMindMap(
+        saveMindMap: saveMindMap,
+        initialRevision: revision,
+        onConflict: () {
+          if (mounted) {
+            _handleSaveConflict();
+          }
+        },
+      );
     }
   }
 
@@ -56,6 +73,9 @@ class _MindMapPageState extends State<MindMapPage> {
   }
 
   void _scheduleAutosave() {
+    if (_externallyModified) {
+      return;
+    }
     final file = widget.file;
     final autosave = _autosave;
     if (file == null || autosave == null || widget.readOnly) {
@@ -64,10 +84,20 @@ class _MindMapPageState extends State<MindMapPage> {
     autosave.schedule(file.location, _document);
   }
 
+  void _handleSaveConflict() {
+    _autosave?.dispose();
+    _autosave = null;
+    setState(() => _externallyModified = true);
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.mindMapExternalChangeBlocked)));
+  }
+
   NodeId _newId() => widget.generateId?.call() ?? NodeId(generateUuidV4());
 
   void _addChild() {
-    if (widget.readOnly) {
+    if (widget.readOnly || _externallyModified) {
       return;
     }
     final parentId = _selectedId;
@@ -84,7 +114,7 @@ class _MindMapPageState extends State<MindMapPage> {
   }
 
   void _addSibling() {
-    if (widget.readOnly) {
+    if (widget.readOnly || _externallyModified) {
       return;
     }
     final siblingId = _selectedId;
@@ -112,7 +142,7 @@ class _MindMapPageState extends State<MindMapPage> {
   }
 
   void _deleteSelected() {
-    if (widget.readOnly) {
+    if (widget.readOnly || _externallyModified) {
       return;
     }
     final id = _selectedId;
@@ -137,7 +167,7 @@ class _MindMapPageState extends State<MindMapPage> {
   }
 
   void _toggleCollapsed() {
-    if (widget.readOnly) {
+    if (widget.readOnly || _externallyModified) {
       return;
     }
     final id = _selectedId;
@@ -153,7 +183,7 @@ class _MindMapPageState extends State<MindMapPage> {
 
   Future<void> _save() async {
     final file = widget.file;
-    if (file == null || widget.readOnly) {
+    if (file == null || widget.readOnly || _externallyModified) {
       return;
     }
     final l10n = AppLocalizations.of(context)!;
@@ -162,8 +192,18 @@ class _MindMapPageState extends State<MindMapPage> {
       final autosave = _autosave;
       if (autosave != null) {
         await autosave.flush();
+        _revision = autosave.revision;
       } else {
-        await widget.saveMindMap!(file.location, _document);
+        final saveMindMap = widget.saveMindMap;
+        final revision = _revision;
+        if (saveMindMap == null || revision == null) {
+          return;
+        }
+        _revision = await saveMindMap(
+          file.location,
+          _document,
+          ifUnchangedSince: revision,
+        );
       }
       if (!mounted) {
         return;
@@ -171,6 +211,11 @@ class _MindMapPageState extends State<MindMapPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.markdownSaved)));
+    } on MindMapStorageConflictException {
+      if (!mounted) {
+        return;
+      }
+      _handleSaveConflict();
     } catch (error, stackTrace) {
       appLogger.error(
         'Failed to save mind map',
@@ -193,7 +238,7 @@ class _MindMapPageState extends State<MindMapPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final canEdit = !widget.readOnly;
+    final canEdit = !widget.readOnly && !_externallyModified;
     final canAddSibling =
         canEdit && _selectedId != null && _selectedId != _document.root.id;
     final canDelete = canAddSibling;
@@ -215,9 +260,13 @@ class _MindMapPageState extends State<MindMapPage> {
       ),
       body: Column(
         children: [
-          if (widget.readOnly)
+          if (widget.readOnly || _externallyModified)
             MaterialBanner(
-              content: Text(l10n.mindMapReadOnlyUnsupported),
+              content: Text(
+                _externallyModified
+                    ? l10n.mindMapExternalChangeBlocked
+                    : l10n.mindMapReadOnlyUnsupported,
+              ),
               actions: const [SizedBox.shrink()],
             ),
           Expanded(

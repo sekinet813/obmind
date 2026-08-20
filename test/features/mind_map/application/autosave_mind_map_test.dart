@@ -5,6 +5,7 @@ import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_revision.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 
 class _CountingStorage implements MindMapStorage {
@@ -46,9 +47,10 @@ void main() {
   const serializer = MarkdownSerializer();
 
   test('debounces repeated schedule calls into one save', () async {
-    final storage = _CountingStorage();
+    final storage = _CountingStorage()..files[location.token] = '';
     final autosave = AutosaveMindMap(
       saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
+      initialRevision: MarkdownRevision.fromMarkdown(''),
       debounce: const Duration(milliseconds: 50),
     );
     addTearDown(autosave.dispose);
@@ -64,9 +66,10 @@ void main() {
   });
 
   test('flush saves immediately without waiting for debounce', () async {
-    final storage = _CountingStorage();
+    final storage = _CountingStorage()..files[location.token] = '';
     final autosave = AutosaveMindMap(
       saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
+      initialRevision: MarkdownRevision.fromMarkdown(''),
       debounce: const Duration(seconds: 5),
     );
     addTearDown(autosave.dispose);

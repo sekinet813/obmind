@@ -19,6 +19,7 @@
   "markdownSaveFailed": "保存に失敗しました。元のファイルは空にしていません",
   "mindMapLoadFailed": "マインドマップとして読み込めませんでした",
   "mindMapReadOnlyUnsupported": "未対応のMarkdown内容があるため、上書き保存できません",
+  "mindMapExternalChangeBlocked": "ファイルが外部で変更されたため、上書き保存を停止しました",
   "noMarkdownFiles": "このフォルダにMarkdownがありません",
   "editMarkdownHint": "Markdown",
   "addChildNode": "子を追加",

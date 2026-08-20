@@ -166,6 +166,12 @@ abstract class AppLocalizations {
   /// **'未対応のMarkdown内容があるため、上書き保存できません'**
   String get mindMapReadOnlyUnsupported;
 
+  /// No description provided for @mindMapExternalChangeBlocked.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイルが外部で変更されたため、上書き保存を停止しました'**
+  String get mindMapExternalChangeBlocked;
+
   /// No description provided for @noMarkdownFiles.
   ///
   /// In ja, this message translates to:

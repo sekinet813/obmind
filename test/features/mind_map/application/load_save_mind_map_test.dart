@@ -7,6 +7,7 @@ import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_revision.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 
 class _MemoryStorage implements MindMapStorage {
@@ -56,6 +57,10 @@ void main() {
     expect(result.document.title, 'Root');
     expect(result.document.root.children.single.text, 'Child');
     expect(result.hasUnsupportedContent, isFalse);
+    expect(
+      result.revision,
+      MarkdownRevision.fromMarkdown(storage.files[location.token]!),
+    );
   });
 
   test('LoadMindMap throws when Markdown cannot be parsed', () async {
@@ -96,6 +101,25 @@ void main() {
     final markdown = storage.files[location.token]!;
     expect(markdown, contains('# Root'));
     expect(markdown, contains('obmind:'));
+  });
+
+  test('SaveMindMap rejects write when file changed externally', () async {
+    final storage = _MemoryStorage()..files[location.token] = '# Root\n';
+    final saveMindMap = SaveMindMap(storage: storage, serializer: serializer);
+    final loadedRevision = MarkdownRevision.fromMarkdown('# Root\n');
+    storage.files[location.token] = '# Changed externally\n';
+
+    await expectLater(
+      saveMindMap(
+        location,
+        MindMapDocument(
+          root: MindNode(id: NodeId('root'), text: 'Root'),
+        ),
+        ifUnchangedSince: loadedRevision,
+      ),
+      throwsA(isA<MindMapStorageConflictException>()),
+    );
+    expect(storage.files[location.token], '# Changed externally\n');
   });
 
   test('load then save round-trips tree structure', () async {

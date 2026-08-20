@@ -2,16 +2,19 @@ import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parse_issue.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_revision.dart';
 
 /// Outcome of loading a Markdown file into a [MindMapDocument].
 final class LoadMindMapResult {
   const LoadMindMapResult({
     required this.document,
+    required this.revision,
     this.issues = const [],
     this.hasUnsupportedContent = false,
   });
 
   final MindMapDocument document;
+  final MindMapRevision revision;
   final List<MarkdownParseIssue> issues;
   final bool hasUnsupportedContent;
 }
@@ -46,6 +49,7 @@ final class LoadMindMap {
     }
     return LoadMindMapResult(
       document: document,
+      revision: MarkdownRevision.fromMarkdown(markdown),
       issues: result.issues,
       hasUnsupportedContent: result.hasUnsupportedContent,
     );

@@ -47,6 +47,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mindMapReadOnlyUnsupported => '未対応のMarkdown内容があるため、上書き保存できません';
 
   @override
+  String get mindMapExternalChangeBlocked => 'ファイルが外部で変更されたため、上書き保存を停止しました';
+
+  @override
   String get noMarkdownFiles => 'このフォルダにMarkdownがありません';
 
   @override

@@ -24,6 +24,33 @@ final class MindMapFile {
   final String displayName;
 }
 
+/// Opaque revision captured when Markdown was last read successfully.
+final class MindMapRevision {
+  const MindMapRevision(this.token);
+
+  final String token;
+
+  @override
+  bool operator ==(Object other) {
+    return other is MindMapRevision && other.token == token;
+  }
+
+  @override
+  int get hashCode => token.hashCode;
+}
+
+/// Raised when a file changed externally since it was loaded.
+final class MindMapStorageConflictException implements Exception {
+  const MindMapStorageConflictException([
+    this.message = 'file changed externally',
+  ]);
+
+  final String message;
+
+  @override
+  String toString() => 'MindMapStorageConflictException: $message';
+}
+
 /// Failure from a storage operation. Does not carry OS types.
 final class MindMapStorageException implements Exception {
   const MindMapStorageException(this.message, {this.cause});

@@ -205,6 +205,7 @@ class _HomePageState extends State<HomePage> {
             file: file,
             document: loaded.document,
             saveMindMap: saveMindMap,
+            revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
           ),
         ),
