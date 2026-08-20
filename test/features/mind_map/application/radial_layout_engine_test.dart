@@ -91,6 +91,79 @@ void main() {
     expect(centerX(a1), greaterThan(centerX(a)));
   });
 
+  test('spreads root children around the root in sibling order', () {
+    final document = MindMapDocument(
+      root: node(
+        'root',
+        children: [node('a'), node('b'), node('c'), node('d')],
+      ),
+    );
+
+    final layout = engine.layout(document, nodeSizes: sizesFor(document));
+    final root = layout[const NodeId('root')]!;
+    final a = layout[const NodeId('a')]!;
+    final b = layout[const NodeId('b')]!;
+    final c = layout[const NodeId('c')]!;
+    final d = layout[const NodeId('d')]!;
+
+    expect(centerX(a), greaterThan(centerX(root)));
+    expect(centerY(b), greaterThan(centerY(root)));
+    expect(centerX(c), lessThan(centerX(root)));
+    expect(centerY(d), lessThan(centerY(root)));
+    expect(overlaps(a, b), isFalse);
+    expect(overlaps(b, c), isFalse);
+    expect(overlaps(c, d), isFalse);
+    expect(overlaps(d, a), isFalse);
+  });
+
+  test('keeps a heavy subtree from stealing the circle from a sibling', () {
+    final document = MindMapDocument(
+      root: node(
+        'root',
+        children: [
+          node('a', children: [for (var i = 0; i < 8; i++) node('a$i')]),
+          node('b'),
+        ],
+      ),
+    );
+
+    final layout = engine.layout(document, nodeSizes: sizesFor(document));
+    final root = layout[const NodeId('root')]!;
+    final a = layout[const NodeId('a')]!;
+    final b = layout[const NodeId('b')]!;
+
+    expect(centerX(a), greaterThan(centerX(root)));
+    expect(centerX(b), lessThan(centerX(root)));
+  });
+
+  test('grows grandchildren outward on the parent side of the root', () {
+    final document = MindMapDocument(
+      root: node(
+        'root',
+        children: [
+          node('a', children: [node('a1'), node('a2')]),
+          node('b', children: [node('b1')]),
+        ],
+      ),
+    );
+
+    final layout = engine.layout(document, nodeSizes: sizesFor(document));
+    final root = layout[const NodeId('root')]!;
+    final a = layout[const NodeId('a')]!;
+    final a1 = layout[const NodeId('a1')]!;
+    final a2 = layout[const NodeId('a2')]!;
+    final b = layout[const NodeId('b')]!;
+    final b1 = layout[const NodeId('b1')]!;
+
+    expect(centerX(a1), greaterThan(centerX(a)));
+    expect(centerX(a2), greaterThan(centerX(a)));
+    expect(distance(root, a1), greaterThan(distance(root, a)));
+    expect(distance(root, a2), greaterThan(distance(root, a)));
+    expect(centerX(b1), lessThan(centerX(b)));
+    expect(distance(root, b1), greaterThan(distance(root, b)));
+    expect(overlaps(a1, a2), isFalse);
+  });
+
   test('omits collapsed descendants from the layout', () {
     final document = MindMapDocument(
       root: node(
