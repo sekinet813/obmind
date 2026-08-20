@@ -220,7 +220,7 @@ Google Play提出のための準備。本番Application IDはT-007（人間が�
   - Task: T-089
 - [x] プライバシーポリシーとData safetyの下書き
   - Task: T-090
-- [ ] Play掲載用の文言とスクリーンショット手順
+- [x] Play掲載用の文言とスクリーンショット手順
   - Task: T-091
 - [ ] Release署名とApp Bundle
   - Task: T-092
