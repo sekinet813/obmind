@@ -157,6 +157,7 @@ void main() {
 
     final saved = storage.files.values.single;
     expect(saved, contains('# Obmind'));
+    expect(saved, contains('layout: radial'));
     expect(saved, contains('新しいノード'));
   });
 

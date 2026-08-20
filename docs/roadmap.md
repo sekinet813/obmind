@@ -159,7 +159,7 @@ UIより先に安定させます。
 
 Radialを日常利用の既定にし、開いたときにRootが中央へ来るようにする。自由配置やGraph化は対象外。詳細な完了条件は[tasks.md](tasks.md)のT-068以降を参照。
 
-- [ ] 新規地図の既定LayoutをRadialにする
+- [x] 新規地図の既定LayoutをRadialにする
   - Task: T-068
 - [ ] Root子ノードの周囲配置と子孫の一方向伸長
   - Task: T-069

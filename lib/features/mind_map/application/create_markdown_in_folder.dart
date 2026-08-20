@@ -3,7 +3,20 @@ import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.da
 
 const pocMarkdownFileName = 'obmind-poc.md';
 
-const pocMarkdownContents = '# Obmind\n';
+/// Default Markdown for maps created in the app.
+///
+/// Existing files without `layout` stay horizontal. Only new files write
+/// `layout: radial`.
+const pocMarkdownContents = '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: radial
+---
+
+# Obmind
+''';
 
 /// Picks a user folder and creates a Markdown file there.
 final class CreateMarkdownInFolder {

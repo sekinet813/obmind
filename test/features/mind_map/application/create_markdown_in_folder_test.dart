@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
 
 class _FakeFolderPicker implements MindMapFolderPicker {
   _FakeFolderPicker(this.folder);
@@ -69,6 +71,10 @@ void main() {
     expect(file?.displayName, pocMarkdownFileName);
     expect(await storage.read(file!.location), pocMarkdownContents);
     expect(picker.pickCount, 1);
+    final parsed = MarkdownParser().parse(pocMarkdownContents);
+    expect(parsed.isSuccess, isTrue);
+    expect(parsed.document!.layout, LayoutType.radial);
+    expect(pocMarkdownContents, contains('layout: radial'));
   });
 
   test('creates markdown in a provided folder without picking again', () async {

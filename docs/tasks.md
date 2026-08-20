@@ -1216,7 +1216,7 @@ Radial Layout（T-060）は実装済みだが、既定はHorizontalのままで�
 
 ### T-068 新規地図の既定LayoutをRadialにする
 
-- [ ] 新規作成したマインドマップは、切替操作なしでRadial Layoutになるようにする
+- [x] 新規作成したマインドマップは、切替操作なしでRadial Layoutになるようにする
 
 背景:
 
