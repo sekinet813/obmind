@@ -8,4 +8,6 @@ Layout EngineはWidgetから独立し、`MindMapDocument`から`NodeLayout`を�
 
 `LoadMindMap`と`SaveMindMap`はParser / Serializerと`MindMapStorage`を結び、マインドマップ画面とMarkdownファイルを往復します。
 
+`AutosaveMindMap`は`SaveMindMap`をdebounceし、編集のたびに即Disk Writeしません。atomic writeはInfrastructure側です。
+
 `HorizontalLayoutEngine`は左から右へ子を置き、折りたたまれた子孫はレイアウトから省きます。座標はDomainのNodeへ書き戻しません。

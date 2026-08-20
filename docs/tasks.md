@@ -534,7 +534,7 @@ Roadmap: Phase 5 Load / Save
 
 ### T-034 Autosave（debounce / atomic write）
 
-- [ ] 編集をdebounceし、atomic writeで自動保存する
+- [x] 編集をdebounceし、atomic writeで自動保存する
 
 完了条件:
 

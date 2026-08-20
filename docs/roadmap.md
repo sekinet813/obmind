@@ -68,7 +68,7 @@ UIより先に安定させます。
 
 - [x] Load / Save
   - Task: T-033
-- [ ] Autosave（debounce / atomic write）
+- [x] Autosave（debounce / atomic write）
   - Task: T-034
 - [ ] 外部変更の検知（上書き防止）
   - Task: T-035

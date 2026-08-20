@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/core/utils/uuid_v4.dart';
+import 'package:obmind/features/mind_map/application/autosave_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/mind_map_tree.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
@@ -35,12 +36,32 @@ class _MindMapPageState extends State<MindMapPage> {
   late MindMapDocument _document;
   NodeId? _selectedId;
   var _saving = false;
+  AutosaveMindMap? _autosave;
 
   @override
   void initState() {
     super.initState();
     _document = widget.document;
     _selectedId = _document.root.id;
+    final saveMindMap = widget.saveMindMap;
+    if (saveMindMap != null && widget.file != null && !widget.readOnly) {
+      _autosave = AutosaveMindMap(saveMindMap: saveMindMap);
+    }
+  }
+
+  @override
+  void dispose() {
+    _autosave?.dispose();
+    super.dispose();
+  }
+
+  void _scheduleAutosave() {
+    final file = widget.file;
+    final autosave = _autosave;
+    if (file == null || autosave == null || widget.readOnly) {
+      return;
+    }
+    autosave.schedule(file.location, _document);
   }
 
   NodeId _newId() => widget.generateId?.call() ?? NodeId(generateUuidV4());
@@ -59,6 +80,7 @@ class _MindMapPageState extends State<MindMapPage> {
       _document = MindMapTree.addChild(_document, parentId, child);
       _selectedId = child.id;
     });
+    _scheduleAutosave();
   }
 
   void _addSibling() {
@@ -75,6 +97,7 @@ class _MindMapPageState extends State<MindMapPage> {
       _document = MindMapTree.addSibling(_document, siblingId, sibling);
       _selectedId = sibling.id;
     });
+    _scheduleAutosave();
   }
 
   NodeId? _parentId(NodeId id) {
@@ -101,6 +124,7 @@ class _MindMapPageState extends State<MindMapPage> {
       _document = MindMapTree.delete(_document, id);
       _selectedId = parentId ?? _document.root.id;
     });
+    _scheduleAutosave();
   }
 
   MindNode? _node(NodeId id) {
@@ -124,18 +148,23 @@ class _MindMapPageState extends State<MindMapPage> {
     setState(() {
       _document = MindMapTree.setCollapsed(_document, id!, !node.collapsed);
     });
+    _scheduleAutosave();
   }
 
   Future<void> _save() async {
-    final saveMindMap = widget.saveMindMap;
     final file = widget.file;
-    if (saveMindMap == null || file == null || widget.readOnly) {
+    if (file == null || widget.readOnly) {
       return;
     }
     final l10n = AppLocalizations.of(context)!;
     setState(() => _saving = true);
     try {
-      await saveMindMap(file.location, _document);
+      final autosave = _autosave;
+      if (autosave != null) {
+        await autosave.flush();
+      } else {
+        await widget.saveMindMap!(file.location, _document);
+      }
       if (!mounted) {
         return;
       }
