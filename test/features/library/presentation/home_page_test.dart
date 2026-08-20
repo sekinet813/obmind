@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
@@ -122,15 +123,40 @@ void main() {
     await tester.tap(find.text('正本フォルダを選ぶ'));
     await tester.pumpAndSettle();
 
-    expect(find.text('このフォルダにMarkdownを作成'), findsOneWidget);
-    expect(find.text('Markdown一覧を開く'), findsOneWidget);
+    expect(find.text('このフォルダにMarkdownがありません'), findsOneWidget);
+    expect(find.text('Markdown一覧を開く'), findsNothing);
     expect(picker.pickCount, 1);
 
-    await tester.tap(find.text('このフォルダにMarkdownを作成'));
+    await tester.tap(find.byKey(const Key('createMindMapEmpty')));
     await tester.pumpAndSettle();
 
     expect(picker.pickCount, 1);
     expect(storage.files.keys.single, 'folder/obmind-poc.md');
+  });
+
+  testWidgets('shows vault files on launch when the folder is already set', (
+    tester,
+  ) async {
+    final storage = _MemoryStorage()..files['folder/idea.md'] = '# Root\n';
+    final picker = _FakePicker();
+    final vault = _MemoryVault()..folder = const MindMapLocation('folder');
+    await tester.pumpWidget(
+      ObmindApp(
+        folderPicker: picker,
+        listMindMapFiles: ListMindMapFiles(storage),
+        loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+        saveMindMap: SaveMindMap(
+          storage: storage,
+          serializer: const MarkdownSerializer(),
+        ),
+        loadVaultFolder: LoadVaultFolder(vault: vault, picker: picker),
+        selectVaultFolder: SelectVaultFolder(picker: picker, vault: vault),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('idea.md'), findsOneWidget);
+    expect(find.text('正本フォルダを選ぶ'), findsNothing);
   });
 
   testWidgets('shows a reason when vault access is revoked', (tester) async {

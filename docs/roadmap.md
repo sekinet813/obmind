@@ -129,7 +129,7 @@ UIより先に安定させます。
   - Task: T-056
 - [x] マインドマップの削除
   - Task: T-057
-- [ ] Library一覧のCRUD強化
+- [x] Library一覧のCRUD強化
   - Task: T-058
 - [x] Vaultフォルダの永続化と設定画面
   - Task: T-059

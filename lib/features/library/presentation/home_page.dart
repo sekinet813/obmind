@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
   var _busy = false;
   List<MindMapFile> _recentFiles = const [];
   VaultFolderStatus _vault = const VaultFolderStatus.unset();
+  List<MindMapFile>? _libraryFiles;
 
   @override
   void initState() {
@@ -70,9 +71,40 @@ class _HomePageState extends State<HomePage> {
     }
     try {
       final status = await loadVaultFolder();
-      if (mounted) {
-        setState(() => _vault = status);
+      if (!mounted) {
+        return;
       }
+      if (status.isReady &&
+          status.folder != null &&
+          widget.listMindMapFiles != null) {
+        try {
+          final listed = await widget.listMindMapFiles!(status.folder!);
+          if (mounted) {
+            setState(() {
+              _vault = status;
+              _libraryFiles = listed;
+            });
+          }
+          return;
+        } on MindMapStorageException catch (error, stackTrace) {
+          appLogger.error(
+            'Failed to list vault Markdown files',
+            error: error,
+            stackTrace: stackTrace,
+          );
+          if (mounted) {
+            setState(() {
+              _vault = VaultFolderStatus.revoked(status.folder!);
+              _libraryFiles = null;
+            });
+          }
+          return;
+        }
+      }
+      setState(() {
+        _vault = status;
+        _libraryFiles = null;
+      });
     } catch (error, stackTrace) {
       appLogger.error(
         'Failed to load vault folder',
@@ -111,6 +143,28 @@ class _HomePageState extends State<HomePage> {
         widget.listMindMapFiles != null &&
         widget.loadMindMap != null &&
         widget.saveMindMap != null;
+
+    if (_vault.isReady &&
+        _libraryFiles != null &&
+        widget.loadMindMap != null &&
+        widget.saveMindMap != null) {
+      return MindMapFileListPage(
+        files: _libraryFiles!,
+        loadMindMap: widget.loadMindMap!,
+        saveMindMap: widget.saveMindMap!,
+        renameMindMap: widget.renameMindMap,
+        deleteMindMap: widget.deleteMindMap,
+        createMarkdownInFolder: createMarkdownInFolder,
+        vaultFolder: _vault.folder,
+        asHome: true,
+        onOpenSettings:
+            widget.loadVaultFolder != null && widget.selectVaultFolder != null
+            ? _openSettings
+            : null,
+        recordRecentMindMap: widget.recordRecentMindMap,
+        removeRecentMindMap: widget.removeRecentMindMap,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -190,23 +244,6 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _busy ? null : _selectVault,
                 child: Text(l10n.changeVaultFolder),
               ),
-            ] else ...[
-              if (createMarkdownInFolder != null) ...[
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _busy
-                      ? null
-                      : () => _createMarkdown(createMarkdownInFolder),
-                  child: Text(l10n.createInVault),
-                ),
-              ],
-              if (canOpen) ...[
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: _busy ? null : _openFileList,
-                  child: Text(l10n.openVaultMindMaps),
-                ),
-              ],
             ],
           ] else ...[
             if (createMarkdownInFolder != null) ...[

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
@@ -19,6 +20,10 @@ class MindMapFileListPage extends StatefulWidget {
     required this.saveMindMap,
     this.renameMindMap,
     this.deleteMindMap,
+    this.createMarkdownInFolder,
+    this.vaultFolder,
+    this.onOpenSettings,
+    this.asHome = false,
     this.recordRecentMindMap,
     this.removeRecentMindMap,
   });
@@ -28,6 +33,10 @@ class MindMapFileListPage extends StatefulWidget {
   final SaveMindMap saveMindMap;
   final RenameMindMap? renameMindMap;
   final DeleteMindMap? deleteMindMap;
+  final CreateMarkdownInFolder? createMarkdownInFolder;
+  final MindMapLocation? vaultFolder;
+  final VoidCallback? onOpenSettings;
+  final bool asHome;
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
 
@@ -45,21 +54,61 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
   }
 
   @override
+  void didUpdateWidget(covariant MindMapFileListPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.files, oldWidget.files)) {
+      _files = List<MindMapFile>.from(widget.files);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.openMarkdown)),
+      appBar: AppBar(
+        title: Text(widget.asHome ? l10n.appTitle : l10n.openMarkdown),
+        actions: [
+          if (widget.onOpenSettings != null)
+            IconButton(
+              key: const Key('openSettings'),
+              tooltip: l10n.settingsTitle,
+              onPressed: widget.onOpenSettings,
+              icon: const Icon(Icons.settings_outlined),
+            ),
+        ],
+      ),
+      floatingActionButton: widget.createMarkdownInFolder == null
+          ? null
+          : FloatingActionButton(
+              key: const Key('createMindMap'),
+              tooltip: l10n.createInVault,
+              onPressed: _createMindMap,
+              child: const Icon(Icons.add),
+            ),
       body: _files.isEmpty
           ? Center(
               child: PaperSurface(
                 margin: const EdgeInsets.all(24),
                 padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.noMarkdownFiles,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.noMarkdownFiles,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                    if (widget.createMarkdownInFolder != null) ...[
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        key: const Key('createMindMapEmpty'),
+                        onPressed: _createMindMap,
+                        child: Text(l10n.createInVault),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             )
@@ -123,6 +172,43 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
               },
             ),
     );
+  }
+
+  Future<void> _createMindMap() async {
+    final createMarkdownInFolder = widget.createMarkdownInFolder;
+    if (createMarkdownInFolder == null) {
+      return;
+    }
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final file = await createMarkdownInFolder(folder: widget.vaultFolder);
+      if (!mounted) {
+        return;
+      }
+      if (file == null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
+        return;
+      }
+      setState(() => _files = [..._files, file]);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.markdownCreated(file.displayName))),
+      );
+      await _openMindMap(file);
+    } catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to create Markdown in the vault folder',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.folderPickFailed)));
+    }
   }
 
   Future<void> _renameMindMap(MindMapFile file) async {
