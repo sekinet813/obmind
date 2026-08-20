@@ -29,6 +29,7 @@ class MindMapPage extends StatefulWidget {
     this.readOnly = false,
     this.generateId,
     this.initialSelectedId,
+    this.onOpenSettings,
   });
 
   final MindMapDocument document;
@@ -38,6 +39,7 @@ class MindMapPage extends StatefulWidget {
   final bool readOnly;
   final NodeId Function()? generateId;
   final NodeId? initialSelectedId;
+  final VoidCallback? onOpenSettings;
 
   @override
   State<MindMapPage> createState() => _MindMapPageState();
@@ -474,7 +476,20 @@ class _MindMapPageState extends State<MindMapPage> {
         canEdit && _selectedId != null && _draggingId == null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.file?.displayName ?? _document.title),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.file?.displayName ?? _document.title,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (widget.file != null && !_externallyModified)
+              Text(
+                _saving ? l10n.savingInProgress : l10n.autosaveEnabled,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+          ],
+        ),
         actions: [
           if (canEdit) ...[
             IconButton(
@@ -493,6 +508,13 @@ class _MindMapPageState extends State<MindMapPage> {
             onPressed: _fitToScreen,
             icon: const Icon(Icons.fit_screen_outlined),
           ),
+          if (widget.onOpenSettings != null)
+            IconButton(
+              key: const Key('openMapSettings'),
+              tooltip: l10n.settingsTitle,
+              onPressed: widget.onOpenSettings,
+              icon: const Icon(Icons.settings_outlined),
+            ),
           if (canSave)
             TextButton(
               key: const Key('saveMindMap'),

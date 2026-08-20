@@ -139,7 +139,7 @@ UIより先に安定させます。
   - Task: T-061
 - [x] Library一覧の検索とソート
   - Task: T-062
-- [ ] マインドマップ画面のAppBar整理
+- [x] マインドマップ画面のAppBar整理
   - Task: T-063
 
 ## Phase 10：Brand & Visual Identity

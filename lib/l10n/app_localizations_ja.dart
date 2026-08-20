@@ -162,4 +162,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get noSearchResults => '該当するMarkdownがありません';
+
+  @override
+  String get autosaveEnabled => '自動保存';
+
+  @override
+  String get savingInProgress => '保存中';
 }

@@ -486,6 +486,11 @@ class _HomePageState extends State<HomePage> {
             saveMindMap: saveMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
+            onOpenSettings:
+                widget.loadVaultFolder != null &&
+                    widget.selectVaultFolder != null
+                ? _openSettings
+                : null,
           ),
         ),
       );

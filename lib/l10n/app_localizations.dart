@@ -393,6 +393,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'該当するMarkdownがありません'**
   String get noSearchResults;
+
+  /// No description provided for @autosaveEnabled.
+  ///
+  /// In ja, this message translates to:
+  /// **'自動保存'**
+  String get autosaveEnabled;
+
+  /// No description provided for @savingInProgress.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存中'**
+  String get savingInProgress;
 }
 
 class _AppLocalizationsDelegate

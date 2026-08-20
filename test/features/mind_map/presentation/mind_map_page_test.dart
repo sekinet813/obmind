@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
+import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'package:obmind/l10n/app_localizations.dart';
@@ -244,5 +245,34 @@ void main() {
     expect(viewer.scaleEnabled, isTrue);
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
     expect(find.byKey(const Key('zoomOut')), findsOneWidget);
+  });
+
+  testWidgets('shows the file name, autosave status, and settings action', (
+    tester,
+  ) async {
+    var openedSettings = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapPage(
+          document: MindMapDocument(root: node('root')),
+          file: const MindMapFile(
+            location: MindMapLocation('vault/idea.md'),
+            displayName: 'idea.md',
+          ),
+          onOpenSettings: () => openedSettings = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('idea.md'), findsOneWidget);
+    expect(find.text('自動保存'), findsOneWidget);
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('openMapSettings')));
+    await tester.pump();
+    expect(openedSettings, isTrue);
   });
 }
