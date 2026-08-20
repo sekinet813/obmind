@@ -14,10 +14,7 @@ void main() {
 
   int nextId = 0;
 
-  Widget app(
-    MindMapDocument document, {
-    NodeId? initialSelectedId,
-  }) {
+  Widget app(MindMapDocument document, {NodeId? initialSelectedId}) {
     nextId = 0;
     return MaterialApp(
       locale: const Locale('ja'),
