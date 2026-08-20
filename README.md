@@ -91,7 +91,14 @@ PRと`main`へのpush、手動実行で次が走ります。
 - `dart format --set-exit-if-changed .`
 - `flutter analyze`
 - `flutter test`
-- Debug APKのビルドとArtifactアップロード（Linux）
-- iOSの署名なしビルド確認（macOS）
+- Debug APKのビルドとArtifactアップロード（`main`へのpush時のみ）
 
-Flutter SDKバージョンは`.github/flutter-version`にピン固定しています。
+Flutter SDKバージョンは`.github/flutter-version`にピン固定しています。ローカルでも同じバージョンを使ってください。
+
+```bash
+# 例: SDKが /Volumes/ssd/development/flutter/sdk の場合
+cd /path/to/flutter
+git fetch --tags
+git switch --detach "$(tr -d '[:space:]' < /path/to/obmind/.github/flutter-version)"
+flutter --version
+```
