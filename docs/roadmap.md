@@ -171,7 +171,7 @@ Radialを日常利用の既定にし、開いたときにRootが中央へ来る�
   - Task: T-072
 - [x] Rootへ戻る操作とFit to Screenの役割分担
   - Task: T-073
-- [ ] ノード追加時に対象が見えるようViewportを保つ
+- [x] ノード追加時に対象が見えるようViewportを保つ
   - Task: T-074
 
 ## Phase 12：Library・編集UX・テンプレート

@@ -359,4 +359,46 @@ void main() {
     expect(after.dx, closeTo(before.dx, 8));
     expect(after.dy, closeTo(before.dy, 8));
   });
+
+  testWidgets('ensureNodeVisible pans a node back into the canvas', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(240, 240);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+    final viewportKey = GlobalKey<MindMapViewportState>();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            key: viewportKey,
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.drag(find.byType(InteractiveViewer), const Offset(-280, 0));
+    await tester.pump();
+
+    final size = tester.getSize(find.byType(MindMapViewport));
+    viewportKey.currentState!.ensureNodeVisible(const NodeId('child'), size);
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final childRect = tester.getRect(find.text('child'));
+    expect(viewport.overlaps(childRect), isTrue);
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
+  });
 }

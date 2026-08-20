@@ -291,6 +291,7 @@ class _MindMapPageState extends State<MindMapPage> {
       MindMapTree.addChild(_document, parentId, child),
       selectedId: child.id,
     );
+    _ensureAddedNodeVisible(child.id);
   }
 
   void _addSibling() {
@@ -307,6 +308,21 @@ class _MindMapPageState extends State<MindMapPage> {
       MindMapTree.addSibling(_document, siblingId, sibling),
       selectedId: sibling.id,
     );
+    _ensureAddedNodeVisible(sibling.id);
+  }
+
+  void _ensureAddedNodeVisible(NodeId id) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final renderBox =
+          _viewportKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null || !renderBox.hasSize) {
+        return;
+      }
+      _viewportKey.currentState?.ensureNodeVisible(id, renderBox.size);
+    });
   }
 
   NodeId? _parentId(NodeId id) {

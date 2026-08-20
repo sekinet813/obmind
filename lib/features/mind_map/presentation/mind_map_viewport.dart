@@ -200,6 +200,59 @@ class MindMapViewportState extends State<MindMapViewport>
       ..scaleByDouble(scale, scale, scale, 1);
   }
 
+  /// Pans just enough for [id] to sit inside the visible canvas.
+  ///
+  /// Does not change scale or persist coordinates.
+  void ensureNodeVisible(NodeId id, Size viewportSize) {
+    final layout = _targetLayout;
+    if (layout == null || viewportSize.isEmpty) {
+      return;
+    }
+    final node = layout[id];
+    if (node == null) {
+      return;
+    }
+    final origin = _originOf(layout);
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    if (scale <= 0) {
+      return;
+    }
+    final tx = _transformationController.value.storage[12];
+    final ty = _transformationController.value.storage[13];
+    final padding = widget.centerPadding;
+    const margin = 16.0;
+    final view = Rect.fromLTWH(
+      padding.left + margin,
+      padding.top + margin,
+      math.max(viewportSize.width - padding.horizontal - margin * 2, 1),
+      math.max(viewportSize.height - padding.vertical - margin * 2, 1),
+    );
+    final left = (node.x - origin.dx) * scale + tx;
+    final top = (node.y - origin.dy) * scale + ty;
+    final right = left + node.width * scale;
+    final bottom = top + node.height * scale;
+
+    var dx = 0.0;
+    var dy = 0.0;
+    if (left < view.left && right <= view.right) {
+      dx = view.left - left;
+    } else if (right > view.right && left >= view.left) {
+      dx = view.right - right;
+    }
+    if (top < view.top && bottom <= view.bottom) {
+      dy = view.top - top;
+    } else if (bottom > view.bottom && top >= view.top) {
+      dy = view.bottom - bottom;
+    }
+    if (dx == 0 && dy == 0) {
+      return;
+    }
+    final next = Matrix4.copy(_transformationController.value);
+    next.storage[12] += dx;
+    next.storage[13] += dy;
+    _transformationController.value = next;
+  }
+
   void _scheduleInitialCenter(Size viewportSize) {
     if (_didCenterOnOpen) {
       return;
