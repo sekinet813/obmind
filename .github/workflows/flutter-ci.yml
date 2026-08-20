@@ -63,29 +63,3 @@ jobs:
           path: build/app/outputs/flutter-apk/app-debug.apk
           if-no-files-found: error
           retention-days: 7
-
-  ios:
-    name: Build iOS without code signing
-    runs-on: macos-latest
-    timeout-minutes: 45
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-
-      - name: Read Flutter version
-        id: flutter-version
-        run: echo "version=$(tr -d '[:space:]' < .github/flutter-version)" >> "$GITHUB_OUTPUT"
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ steps.flutter-version.outputs.version }}
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build iOS
-        run: flutter build ios --debug --no-codesign
