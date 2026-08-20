@@ -114,7 +114,21 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.asHome ? l10n.appTitle : l10n.openMarkdown),
+        title: widget.asHome
+            ? Row(
+                children: [
+                  Image.asset(
+                    'assets/brand/app_icon.png',
+                    key: const Key('libraryAppIcon'),
+                    width: 28,
+                    height: 28,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(child: Text(l10n.appTitle)),
+                ],
+              )
+            : Text(l10n.openMarkdown),
         actions: [
           if (_files.isNotEmpty)
             IconButton(

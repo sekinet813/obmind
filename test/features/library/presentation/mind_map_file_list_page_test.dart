@@ -82,6 +82,31 @@ void main() {
     );
   }
 
+  testWidgets('shows the app icon beside the home title', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapFileListPage(
+          files: [file],
+          loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+          saveMindMap: SaveMindMap(
+            storage: storage,
+            serializer: const MarkdownSerializer(),
+          ),
+          asHome: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryAppIcon')), findsOneWidget);
+    expect(find.text('Obmind'), findsOneWidget);
+    expect(find.byKey(const Key('searchMindMaps')), findsOneWidget);
+    expect(find.byKey(const Key('toggleLibraryView')), findsOneWidget);
+  });
+
   testWidgets('asks for confirmation before deleting a mind map file', (
     tester,
   ) async {
