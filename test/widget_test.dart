@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/markdown_file_service.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
@@ -86,7 +87,7 @@ Widget _androidApp(_MemoryStorage storage) {
       storage: storage,
     ),
     folderPicker: picker,
-    markdownFiles: MarkdownFileService(storage),
+    listMindMapFiles: ListMindMapFiles(storage),
     loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
     saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
   );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/library/presentation/mind_map_file_list_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
-import 'package:obmind/features/mind_map/application/markdown_file_service.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
@@ -14,14 +15,14 @@ class HomePage extends StatefulWidget {
     super.key,
     this.createMarkdownInFolder,
     this.folderPicker,
-    this.markdownFiles,
+    this.listMindMapFiles,
     this.loadMindMap,
     this.saveMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
   final MindMapFolderPicker? folderPicker;
-  final MarkdownFileService? markdownFiles;
+  final ListMindMapFiles? listMindMapFiles;
   final LoadMindMap? loadMindMap;
   final SaveMindMap? saveMindMap;
 
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
     final createMarkdownInFolder = widget.createMarkdownInFolder;
     final canOpen =
         widget.folderPicker != null &&
-        widget.markdownFiles != null &&
+        widget.listMindMapFiles != null &&
         widget.loadMindMap != null &&
         widget.saveMindMap != null;
 
@@ -70,7 +71,7 @@ class _HomePageState extends State<HomePage> {
               if (canOpen) ...[
                 const SizedBox(height: 12),
                 OutlinedButton(
-                  onPressed: _busy ? null : _openMarkdown,
+                  onPressed: _busy ? null : _openFileList,
                   child: Text(l10n.openMarkdown),
                 ),
               ],
@@ -118,10 +119,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _openMarkdown() async {
+  Future<void> _openFileList() async {
     final picker = widget.folderPicker;
-    final files = widget.markdownFiles;
-    if (picker == null || files == null) {
+    final listMindMapFiles = widget.listMindMapFiles;
+    final loadMindMap = widget.loadMindMap;
+    final saveMindMap = widget.saveMindMap;
+    if (picker == null ||
+        listMindMapFiles == null ||
+        loadMindMap == null ||
+        saveMindMap == null) {
       return;
     }
     setState(() => _busy = true);
@@ -137,40 +143,22 @@ class _HomePageState extends State<HomePage> {
         ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
         return;
       }
-      final listed = await files.list(folder);
+      final listed = await listMindMapFiles(folder);
       if (!mounted) {
         return;
       }
-      if (listed.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(l10n.noMarkdownFiles)));
-        return;
-      }
-      final selected = listed.length == 1
-          ? listed.first
-          : await showDialog<MindMapFile>(
-              context: context,
-              builder: (context) {
-                return SimpleDialog(
-                  title: Text(l10n.openMarkdown),
-                  children: [
-                    for (final file in listed)
-                      SimpleDialogOption(
-                        onPressed: () => Navigator.pop(context, file),
-                        child: Text(file.displayName),
-                      ),
-                  ],
-                );
-              },
-            );
-      if (selected == null || !mounted) {
-        return;
-      }
-      await _openMindMap(selected);
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => MindMapFileListPage(
+            files: listed,
+            loadMindMap: loadMindMap,
+            saveMindMap: saveMindMap,
+          ),
+        ),
+      );
     } catch (error, stackTrace) {
       appLogger.error(
-        'Failed to open Markdown',
+        'Failed to list Markdown files',
         error: error,
         stackTrace: stackTrace,
       );

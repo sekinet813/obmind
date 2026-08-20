@@ -72,7 +72,7 @@ UIより先に安定させます。
   - Task: T-034
 - [x] 外部変更の検知（上書き防止）
   - Task: T-035
-- [ ] File list
+- [x] File list
   - Task: T-036
 - [ ] Recent maps
   - Task: T-037
