@@ -117,12 +117,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('正本フォルダを選ぶ'), findsOneWidget);
-    expect(find.text('思考の正本フォルダを選ぶ'), findsOneWidget);
+    expect(find.text('保存フォルダを選ぶ'), findsOneWidget);
+    expect(find.text('思考の保存フォルダを選ぶ'), findsOneWidget);
     expect(find.textContaining('キャンセルしてもアプリは終了しません'), findsOneWidget);
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
 
-    await tester.tap(find.text('正本フォルダを選ぶ'));
+    await tester.tap(find.text('保存フォルダを選ぶ'));
     await tester.pumpAndSettle();
 
     expect(find.text('このフォルダにMarkdownがありません'), findsOneWidget);
@@ -133,7 +133,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(picker.pickCount, 1);
-    expect(storage.files.keys.single, 'folder/obmind-poc.md');
+    expect(storage.files.keys.single, 'folder/新規マインドマップ.md');
   });
 
   testWidgets('shows vault files on launch when the folder is already set', (
@@ -158,7 +158,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('idea.md'), findsOneWidget);
-    expect(find.text('正本フォルダを選ぶ'), findsNothing);
+    expect(find.text('保存フォルダを選ぶ'), findsNothing);
+    expect(find.byKey(const Key('openSettings')), findsOneWidget);
+    expect(find.byKey(const Key('libraryAppIcon')), findsOneWidget);
   });
 
   testWidgets('shows a reason when vault access is revoked', (tester) async {

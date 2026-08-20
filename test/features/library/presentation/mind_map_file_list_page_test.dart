@@ -82,6 +82,31 @@ void main() {
     );
   }
 
+  testWidgets('shows the app icon beside the home title', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapFileListPage(
+          files: [file],
+          loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+          saveMindMap: SaveMindMap(
+            storage: storage,
+            serializer: const MarkdownSerializer(),
+          ),
+          asHome: true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryAppIcon')), findsOneWidget);
+    expect(find.text('Obmind'), findsOneWidget);
+    expect(find.byKey(const Key('searchMindMaps')), findsOneWidget);
+    expect(find.byKey(const Key('toggleLibraryView')), findsOneWidget);
+  });
+
   testWidgets('asks for confirmation before deleting a mind map file', (
     tester,
   ) async {
@@ -176,5 +201,66 @@ void main() {
 
     expect(find.text('zeta.md'), findsOneWidget);
     expect(find.text('alpha.md'), findsNothing);
+  });
+
+  testWidgets('filters the list by node text', (tester) async {
+    final notes = await storage.create(
+      const MindMapLocation('vault'),
+      'notes.md',
+      markdown: '# 買い物リスト\n\n- 牛乳\n',
+    );
+    final plan = await storage.create(
+      const MindMapLocation('vault'),
+      'plan.md',
+      markdown: '# Release\n',
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapFileListPage(
+          files: [notes, plan],
+          loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+          saveMindMap: SaveMindMap(
+            storage: storage,
+            serializer: const MarkdownSerializer(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('名前やノードで検索'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('searchMindMaps')), '牛乳');
+    await tester.pumpAndSettle();
+
+    expect(find.text('notes.md'), findsOneWidget);
+    expect(find.text('plan.md'), findsNothing);
+  });
+
+  testWidgets('switches between list and preview tiles', (tester) async {
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryTileGrid')), findsNothing);
+    expect(find.byKey(const Key('toggleLibraryView')), findsOneWidget);
+    expect(find.byKey(const Key('openSettings')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('toggleLibraryView')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryTileGrid')), findsOneWidget);
+    expect(
+      find.byKey(Key('mindMapPreview-${file.displayName}')),
+      findsOneWidget,
+    );
+    expect(find.text('idea.md'), findsOneWidget);
+    expect(find.byKey(Key('renameMenu-${file.displayName}')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('toggleLibraryView')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('libraryTileGrid')), findsNothing);
+    expect(find.text('idea.md'), findsOneWidget);
   });
 }

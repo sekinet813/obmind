@@ -17,6 +17,7 @@ import 'package:obmind/features/mind_map/presentation/mind_map_context_actions.d
 import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_zoom_controls.dart';
 import 'package:obmind/features/mind_map/presentation/theme/mind_map_canvas_theme.dart';
+import 'package:obmind/features/mind_map/presentation/theme/mind_map_design_template.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 /// Canvas editing shell. Tree changes go through [MindMapTree].
@@ -30,7 +31,6 @@ class MindMapPage extends StatefulWidget {
     this.readOnly = false,
     this.generateId,
     this.initialSelectedId,
-    this.onOpenSettings,
   });
 
   final MindMapDocument document;
@@ -40,7 +40,6 @@ class MindMapPage extends StatefulWidget {
   final bool readOnly;
   final NodeId Function()? generateId;
   final NodeId? initialSelectedId;
-  final VoidCallback? onOpenSettings;
 
   @override
   State<MindMapPage> createState() => _MindMapPageState();
@@ -291,6 +290,7 @@ class _MindMapPageState extends State<MindMapPage> {
       MindMapTree.addChild(_document, parentId, child),
       selectedId: child.id,
     );
+    _ensureAddedNodeVisible(child.id);
   }
 
   void _addSibling() {
@@ -307,6 +307,21 @@ class _MindMapPageState extends State<MindMapPage> {
       MindMapTree.addSibling(_document, siblingId, sibling),
       selectedId: sibling.id,
     );
+    _ensureAddedNodeVisible(sibling.id);
+  }
+
+  void _ensureAddedNodeVisible(NodeId id) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final renderBox =
+          _viewportKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null || !renderBox.hasSize) {
+        return;
+      }
+      _viewportKey.currentState?.ensureNodeVisible(id, renderBox.size);
+    });
   }
 
   NodeId? _parentId(NodeId id) {
@@ -402,6 +417,34 @@ class _MindMapPageState extends State<MindMapPage> {
     );
   }
 
+  void _applyDesignTemplate(MindMapDesignTemplate template) {
+    if (widget.readOnly || _externallyModified || template.matches(_document)) {
+      return;
+    }
+    final extra = Map<String, String>.of(_document.extraObmindFields)
+      ..remove('layout')
+      ..remove('theme');
+    _mutateDocument(
+      _document.copyWith(
+        theme: template.theme,
+        layout: template.layout,
+        extraObmindFields: extra,
+      ),
+    );
+  }
+
+  String _designTemplateLabel(
+    AppLocalizations l10n,
+    MindMapDesignTemplate template,
+  ) {
+    return switch (template.id) {
+      'minimalRadial' => l10n.designTemplateMinimalRadial,
+      'softHorizontal' => l10n.designTemplateSoftHorizontal,
+      'darkRadial' => l10n.designTemplateDarkRadial,
+      _ => template.id,
+    };
+  }
+
   void _fitToScreen() {
     final renderBox =
         _viewportKey.currentContext?.findRenderObject() as RenderBox?;
@@ -414,6 +457,15 @@ class _MindMapPageState extends State<MindMapPage> {
   void _zoomIn() => _viewportKey.currentState?.zoomIn();
 
   void _zoomOut() => _viewportKey.currentState?.zoomOut();
+
+  void _centerOnRoot() {
+    final renderBox =
+        _viewportKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.hasSize) {
+      return;
+    }
+    _viewportKey.currentState?.centerOnRoot(renderBox.size);
+  }
 
   Future<void> _save() async {
     final file = widget.file;
@@ -487,6 +539,7 @@ class _MindMapPageState extends State<MindMapPage> {
     final showContextActions =
         canEdit && _selectedId != null && _draggingId == null;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,13 +599,27 @@ class _MindMapPageState extends State<MindMapPage> {
               ),
             ],
           ),
-          if (widget.onOpenSettings != null)
-            IconButton(
-              key: const Key('openMapSettings'),
-              tooltip: l10n.settingsTitle,
-              onPressed: widget.onOpenSettings,
-              icon: const Icon(Icons.settings_outlined),
-            ),
+          PopupMenuButton<String>(
+            key: const Key('switchDesignTemplate'),
+            tooltip: l10n.designTemplateMenu,
+            enabled: canEdit,
+            icon: const Icon(Icons.palette_outlined),
+            onSelected: (id) {
+              final template = MindMapDesignTemplate.byId(id);
+              if (template != null) {
+                _applyDesignTemplate(template);
+              }
+            },
+            itemBuilder: (context) => [
+              for (final template in MindMapDesignTemplate.values)
+                CheckedPopupMenuItem(
+                  key: Key('designTemplate-${template.id}'),
+                  value: template.id,
+                  checked: template.matches(_document),
+                  child: Text(_designTemplateLabel(l10n, template)),
+                ),
+            ],
+          ),
           if (canSave)
             TextButton(
               key: const Key('saveMindMap'),
@@ -579,6 +646,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   key: _viewportKey,
                   document: _document,
                   canvasTheme: canvasTheme,
+                  centerPadding: const EdgeInsets.only(bottom: 80),
                   selectedId: _selectedId,
                   editingId: _editingId,
                   editingController: _editController,
@@ -607,6 +675,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   child: MindMapZoomControls(
                     onZoomIn: _zoomIn,
                     onZoomOut: _zoomOut,
+                    onCenterOnRoot: _centerOnRoot,
                   ),
                 ),
                 if (showContextActions)

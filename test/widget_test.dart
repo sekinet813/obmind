@@ -143,7 +143,7 @@ void main() {
     await tester.tap(find.text('フォルダを選んでMarkdownを作成'));
     await tester.pumpAndSettle();
 
-    expect(find.text('obmind-poc.mdを作成しました'), findsOneWidget);
+    expect(find.text('新規マインドマップ.mdを作成しました'), findsOneWidget);
     expect(find.byType(MindMapPage), findsOneWidget);
     expect(find.text('Obmind'), findsWidgets);
 
@@ -157,6 +157,7 @@ void main() {
 
     final saved = storage.files.values.single;
     expect(saved, contains('# Obmind'));
+    expect(saved, contains('layout: radial'));
     expect(saved, contains('新しいノード'));
   });
 

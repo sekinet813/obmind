@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/library/infrastructure/shared_preferences_library_view_mode_repository.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
@@ -32,6 +33,8 @@ Future<Widget> _buildApp() async {
   final recentRepository =
       await SharedPreferencesRecentMindMapsRepository.create();
   final vaultRepository = await SharedPreferencesVaultFolderRepository.create();
+  final libraryViewModeRepository =
+      await SharedPreferencesLibraryViewModeRepository.create();
   return ObmindApp(
     createMarkdownInFolder: CreateMarkdownInFolder(
       picker: storage,
@@ -59,5 +62,6 @@ Future<Widget> _buildApp() async {
       picker: storage,
       vault: vaultRepository,
     ),
+    libraryViewModeRepository: libraryViewModeRepository,
   );
 }

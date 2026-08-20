@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
 
 class _FakeFolderPicker implements MindMapFolderPicker {
   _FakeFolderPicker(this.folder);
@@ -47,7 +49,17 @@ class _MemoryStorage implements MindMapStorage {
   }
 
   @override
-  Future<List<MindMapFile>> list(MindMapLocation folder) async => [];
+  Future<List<MindMapFile>> list(MindMapLocation folder) async {
+    final prefix = '${folder.token}/';
+    return [
+      for (final token in files.keys)
+        if (token.startsWith(prefix))
+          MindMapFile(
+            location: MindMapLocation(token),
+            displayName: token.substring(prefix.length),
+          ),
+    ];
+  }
 
   @override
   Future<String> read(MindMapLocation location) async => files[location.token]!;
@@ -66,9 +78,13 @@ void main() {
 
     final file = await useCase();
 
-    expect(file?.displayName, pocMarkdownFileName);
+    expect(file?.displayName, '新規マインドマップ.md');
     expect(await storage.read(file!.location), pocMarkdownContents);
     expect(picker.pickCount, 1);
+    final parsed = MarkdownParser().parse(pocMarkdownContents);
+    expect(parsed.isSuccess, isTrue);
+    expect(parsed.document!.layout, LayoutType.radial);
+    expect(pocMarkdownContents, contains('layout: radial'));
   });
 
   test('creates markdown in a provided folder without picking again', () async {
@@ -78,8 +94,22 @@ void main() {
 
     final file = await useCase(folder: const MindMapLocation('tree-uri'));
 
-    expect(file?.displayName, pocMarkdownFileName);
+    expect(file?.displayName, '新規マインドマップ.md');
     expect(picker.pickCount, 0);
+  });
+
+  test('does not overwrite an existing default name', () async {
+    final picker = _FakeFolderPicker(const MindMapLocation('tree-uri'));
+    final storage = _MemoryStorage();
+    final useCase = CreateMarkdownInFolder(picker: picker, storage: storage);
+    const folder = MindMapLocation('tree-uri');
+
+    await useCase(folder: folder);
+    final second = await useCase(folder: folder);
+
+    expect(second?.displayName, '新規マインドマップ (1).md');
+    expect(storage.files.keys, contains('tree-uri/新規マインドマップ.md'));
+    expect(storage.files.keys, contains('tree-uri/新規マインドマップ (1).md'));
   });
 
   test('returns null when the user cancels the picker', () async {

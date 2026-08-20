@@ -5,12 +5,28 @@ import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
+import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 void main() {
   MindNode node(String id, {List<MindNode> children = const []}) {
     return MindNode(id: NodeId(id), text: id, children: children);
+  }
+
+  double nodeRadius(WidgetTester tester, String text) {
+    final decorated = tester.widget<DecoratedBox>(
+      find
+          .descendant(
+            of: find.widgetWithText(MindNodeWidget, text),
+            matching: find.byType(DecoratedBox),
+          )
+          .first,
+    );
+    return (decorated.decoration as BoxDecoration).borderRadius!
+        .resolve(TextDirection.ltr)
+        .topLeft
+        .x;
   }
 
   int nextId = 0;
@@ -195,6 +211,8 @@ void main() {
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
     expect(find.byKey(const Key('zoomOut')), findsOneWidget);
     expect(find.byTooltip('全体表示'), findsOneWidget);
+    expect(find.byKey(const Key('centerOnRoot')), findsOneWidget);
+    expect(find.byTooltip('中心へ戻る'), findsOneWidget);
 
     final viewer = tester.widget<InteractiveViewer>(
       find.byType(InteractiveViewer),
@@ -225,6 +243,36 @@ void main() {
     );
   });
 
+  testWidgets('center on root recenters without using fit-to-screen scale', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(InteractiveViewer), const Offset(120, 80));
+    await tester.pump();
+    final panned = tester.getCenter(
+      find.widgetWithText(MindNodeWidget, 'root'),
+    );
+
+    await tester.tap(find.byKey(const Key('centerOnRoot')));
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final centered = tester.getCenter(
+      find.widgetWithText(MindNodeWidget, 'root'),
+    );
+    expect(centered, isNot(panned));
+    expect(centered.dx, closeTo(viewport.center.dx, 48));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
+    expect(find.byTooltip('全体表示'), findsOneWidget);
+  });
+
   testWidgets('zoom buttons remain available while editing a node', (
     tester,
   ) async {
@@ -247,10 +295,9 @@ void main() {
     expect(find.byKey(const Key('zoomOut')), findsOneWidget);
   });
 
-  testWidgets('shows the file name, autosave status, and settings action', (
+  testWidgets('shows the file name and autosave status without settings', (
     tester,
   ) async {
-    var openedSettings = false;
     await tester.pumpWidget(
       MaterialApp(
         locale: const Locale('ja'),
@@ -262,7 +309,6 @@ void main() {
             location: MindMapLocation('vault/idea.md'),
             displayName: 'idea.md',
           ),
-          onOpenSettings: () => openedSettings = true,
         ),
       ),
     );
@@ -271,9 +317,9 @@ void main() {
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('自動保存'), findsOneWidget);
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
-    await tester.tap(find.byKey(const Key('openMapSettings')));
-    await tester.pump();
-    expect(openedSettings, isTrue);
+    expect(find.byKey(const Key('switchLayout')), findsOneWidget);
+    expect(find.byKey(const Key('openMapSettings')), findsNothing);
+    expect(find.byTooltip('設定'), findsNothing);
   });
 
   testWidgets('switches layout from the app bar and keeps nodes visible', (
@@ -304,5 +350,82 @@ void main() {
     expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
     expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+  });
+
+  testWidgets('keeps the editing node above the software keyboard', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('zoomIn')));
+    await tester.pump();
+    final scaleBefore = tester
+        .widget<InteractiveViewer>(find.byType(InteractiveViewer))
+        .transformationController!
+        .value
+        .getMaxScaleOnAxis();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 360);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pump();
+    await tester.pump();
+
+    final keyboardTop =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio - 360;
+    final field = tester.getRect(find.byType(TextField));
+    expect(field.bottom, lessThanOrEqualTo(keyboardTop));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(
+      viewer.transformationController!.value.getMaxScaleOnAxis(),
+      closeTo(scaleBefore, 0.001),
+    );
+  });
+
+  testWidgets('applies a design template theme and layout from the app bar', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('switchDesignTemplate')), findsOneWidget);
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-softHorizontal')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 18);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-darkRadial')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 14);
+    expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+    expect(find.byKey(const Key('switchLayout')), findsOneWidget);
   });
 }

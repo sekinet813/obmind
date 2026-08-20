@@ -38,6 +38,7 @@ class MindMapViewport extends StatefulWidget {
     this.onToggleCollapsed,
     this.animateLayout = true,
     this.transformationController,
+    this.centerPadding = EdgeInsets.zero,
   });
 
   final MindMapDocument document;
@@ -67,6 +68,12 @@ class MindMapViewport extends StatefulWidget {
   final bool animateLayout;
   final TransformationController? transformationController;
 
+  /// Insets of the visible canvas used when centering the root on open.
+  ///
+  /// AppBar is already outside this widget. Bottom context actions can be
+  /// reserved here so the root is not hidden behind them.
+  final EdgeInsets centerPadding;
+
   @override
   State<MindMapViewport> createState() => MindMapViewportState();
 }
@@ -80,6 +87,11 @@ class MindMapViewportState extends State<MindMapViewport>
   MindMapLayout? _targetLayout;
   TransformationController? _ownedController;
   final _layoutKey = GlobalKey();
+  var _didCenterOnOpen = false;
+  Offset _boundsOrigin = Offset.zero;
+  NodeId? _ensuredEditingId;
+  EdgeInsets _ensuredViewInsets = EdgeInsets.zero;
+  Size? _ensuredViewportSize;
 
   TransformationController get _transformationController =>
       widget.transformationController ?? _ownedController!;
@@ -94,6 +106,7 @@ class MindMapViewportState extends State<MindMapViewport>
       widget.document,
       nodeSizes: widget.nodeSizes,
     );
+    _boundsOrigin = _originOf(_targetLayout!);
     if (widget.animateLayout) {
       _layoutController = AnimationController(
         vsync: this,
@@ -105,6 +118,7 @@ class MindMapViewportState extends State<MindMapViewport>
 
   void _onLayoutTick() {
     if (mounted) {
+      _syncBoundsOrigin(_animatedLayout(_targetLayout!));
       setState(() {});
     }
   }
@@ -124,6 +138,7 @@ class MindMapViewportState extends State<MindMapViewport>
         ..forward();
     } else {
       _targetLayout = nextLayout;
+      _syncBoundsOrigin(nextLayout);
     }
   }
 
@@ -156,7 +171,151 @@ class MindMapViewportState extends State<MindMapViewport>
       return Offset.zero;
     }
     final box = context.findRenderObject()! as RenderBox;
-    return box.globalToLocal(global);
+    return box.globalToLocal(global) + _originOf(currentLayout);
+  }
+
+  /// Places the root node near the center of the visible canvas.
+  ///
+  /// Uses a readable scale of 1.0 (clamped to min / max). Does not shrink the
+  /// whole map. Pan / zoom are not persisted.
+  void centerOnRoot(Size viewportSize) {
+    final layout = _targetLayout;
+    if (layout == null || viewportSize.isEmpty) {
+      return;
+    }
+    final root = layout[widget.document.root.id];
+    if (root == null) {
+      return;
+    }
+    final padding = widget.centerPadding;
+    final availableWidth = math.max(viewportSize.width - padding.horizontal, 1);
+    final availableHeight = math.max(viewportSize.height - padding.vertical, 1);
+    final scale = 1.0.clamp(widget.minScale, widget.maxScale);
+    final origin = _originOf(layout);
+    final rootCenterX = root.x + root.width / 2 - origin.dx;
+    final rootCenterY = root.y + root.height / 2 - origin.dy;
+    final viewCenterX = padding.left + availableWidth / 2;
+    final viewCenterY = padding.top + availableHeight / 2;
+    final dx = viewCenterX - rootCenterX * scale;
+    final dy = viewCenterY - rootCenterY * scale;
+    _transformationController.value = Matrix4.identity()
+      ..translateByDouble(dx, dy, 0, 1)
+      ..scaleByDouble(scale, scale, scale, 1);
+  }
+
+  /// Pans just enough for [id] to sit inside the visible canvas.
+  ///
+  /// Does not change scale or persist coordinates. Keyboard overlap is
+  /// subtracted so an editing node stays above the IME.
+  void ensureNodeVisible(NodeId id, Size viewportSize) {
+    final layout = _targetLayout;
+    if (layout == null || viewportSize.isEmpty) {
+      return;
+    }
+    final node = layout[id];
+    if (node == null) {
+      return;
+    }
+    final origin = _originOf(layout);
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    if (scale <= 0) {
+      return;
+    }
+    final tx = _transformationController.value.storage[12];
+    final ty = _transformationController.value.storage[13];
+    final padding = widget.centerPadding;
+    final keyboardOverlap = _keyboardOverlap(viewportSize);
+    const margin = 16.0;
+    final view = Rect.fromLTWH(
+      padding.left + margin,
+      padding.top + margin,
+      math.max(viewportSize.width - padding.horizontal - margin * 2, 1),
+      math.max(
+        viewportSize.height - padding.vertical - keyboardOverlap - margin * 2,
+        1,
+      ),
+    );
+    final left = (node.x - origin.dx) * scale + tx;
+    final top = (node.y - origin.dy) * scale + ty;
+    final right = left + node.width * scale;
+    final bottom = top + node.height * scale;
+
+    var dx = 0.0;
+    var dy = 0.0;
+    if (left < view.left && right <= view.right) {
+      dx = view.left - left;
+    } else if (right > view.right && left >= view.left) {
+      dx = view.right - right;
+    }
+    if (top < view.top && bottom <= view.bottom) {
+      dy = view.top - top;
+    } else if (bottom > view.bottom && top >= view.top) {
+      dy = view.bottom - bottom;
+    }
+    if (dx == 0 && dy == 0) {
+      return;
+    }
+    final next = Matrix4.copy(_transformationController.value);
+    next.storage[12] += dx;
+    next.storage[13] += dy;
+    _transformationController.value = next;
+  }
+
+  /// How much of [viewportSize] is covered by the software keyboard.
+  ///
+  /// Scaffold may already shrink the body; this only counts remaining overlap.
+  double _keyboardOverlap(Size viewportSize) {
+    final box = context.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) {
+      return 0;
+    }
+    final view = View.of(context);
+    final keyboard = MediaQueryData.fromView(view).viewInsets.bottom;
+    if (keyboard <= 0) {
+      return 0;
+    }
+    final viewportBottom = box.localToGlobal(Offset(0, viewportSize.height)).dy;
+    final screenHeight = view.physicalSize.height / view.devicePixelRatio;
+    return math.max(0, viewportBottom - (screenHeight - keyboard));
+  }
+
+  void _scheduleInitialCenter(Size viewportSize) {
+    if (_didCenterOnOpen) {
+      return;
+    }
+    _didCenterOnOpen = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      centerOnRoot(viewportSize);
+    });
+  }
+
+  /// Pans the editing node above the keyboard without changing zoom.
+  void _scheduleEnsureEditingVisible(Size viewportSize) {
+    final id = widget.editingId;
+    final insets = MediaQueryData.fromView(View.of(context)).viewInsets;
+    if (id == null) {
+      _ensuredEditingId = null;
+      _ensuredViewInsets = insets;
+      _ensuredViewportSize = viewportSize;
+      return;
+    }
+    if (id == _ensuredEditingId &&
+        insets == _ensuredViewInsets &&
+        _ensuredViewportSize == viewportSize) {
+      return;
+    }
+    _ensuredEditingId = id;
+    _ensuredViewInsets = insets;
+    _ensuredViewportSize = viewportSize;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.editingId != id) {
+        return;
+      }
+      ensureNodeVisible(id, viewportSize);
+    });
   }
 
   /// Fits the full layout into the current viewport size.
@@ -212,6 +371,51 @@ class MindMapViewportState extends State<MindMapViewport>
       ..translateByDouble(-sceneFocal.dx, -sceneFocal.dy, 0, 1);
   }
 
+  void _syncBoundsOrigin(MindMapLayout layout) {
+    final origin = _originOf(layout);
+    if (_didCenterOnOpen && origin != _boundsOrigin) {
+      final scale = _transformationController.value.getMaxScaleOnAxis();
+      final matrix = Matrix4.copy(_transformationController.value);
+      matrix.storage[12] += (origin.dx - _boundsOrigin.dx) * scale;
+      matrix.storage[13] += (origin.dy - _boundsOrigin.dy) * scale;
+      _transformationController.value = matrix;
+    }
+    _boundsOrigin = origin;
+  }
+
+  static Offset _originOf(MindMapLayout layout) {
+    if (layout.nodes.isEmpty) {
+      return Offset.zero;
+    }
+    var minX = double.infinity;
+    var minY = double.infinity;
+    for (final node in layout.nodes.values) {
+      minX = math.min(minX, node.x);
+      minY = math.min(minY, node.y);
+    }
+    return Offset(minX, minY);
+  }
+
+  static MindMapLayout _shiftedLayout(MindMapLayout layout, Offset origin) {
+    if (origin == Offset.zero) {
+      return layout;
+    }
+    return MindMapLayout(
+      nodes: {
+        for (final entry in layout.nodes.entries)
+          entry.key: NodeLayout(
+            id: entry.value.id,
+            x: entry.value.x - origin.dx,
+            y: entry.value.y - origin.dy,
+            width: entry.value.width,
+            height: entry.value.height,
+          ),
+      },
+      width: layout.width,
+      height: layout.height,
+    );
+  }
+
   @override
   void dispose() {
     _layoutController?.removeListener(_onLayoutTick);
@@ -225,11 +429,24 @@ class MindMapViewportState extends State<MindMapViewport>
     final layout = _animatedLayout(
       _layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
     );
+    final origin = _originOf(layout);
+    final displayLayout = _shiftedLayout(layout, origin);
 
     return ColoredBox(
       color: widget.canvasTheme.canvasBackground,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          if (constraints.hasBoundedWidth &&
+              constraints.hasBoundedHeight &&
+              constraints.maxWidth > 0 &&
+              constraints.maxHeight > 0) {
+            final viewportSize = Size(
+              constraints.maxWidth,
+              constraints.maxHeight,
+            );
+            _scheduleInitialCenter(viewportSize);
+            _scheduleEnsureEditingVisible(viewportSize);
+          }
           return InteractiveViewer(
             transformationController: _transformationController,
             panEnabled: widget.panEnabled && widget.draggingId == null,
@@ -240,8 +457,8 @@ class MindMapViewportState extends State<MindMapViewport>
             constrained: false,
             child: SizedBox(
               key: _layoutKey,
-              width: layout.width,
-              height: layout.height,
+              width: displayLayout.width,
+              height: displayLayout.height,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: widget.editingId == null
@@ -252,17 +469,17 @@ class MindMapViewportState extends State<MindMapViewport>
                   children: [
                     MindMapEdgeLayer(
                       document: widget.document,
-                      layout: layout,
+                      layout: displayLayout,
                       color: widget.canvasTheme.edgeColor,
                     ),
                     for (final node in widget.document.root.depthFirst)
-                      if (layout[node.id] != null)
+                      if (displayLayout[node.id] != null)
                         Positioned(
                           key: ValueKey(node.id.value),
-                          left: layout[node.id]!.x,
-                          top: layout[node.id]!.y,
-                          width: layout[node.id]!.width,
-                          height: layout[node.id]!.height,
+                          left: displayLayout[node.id]!.x,
+                          top: displayLayout[node.id]!.y,
+                          width: displayLayout[node.id]!.width,
+                          height: displayLayout[node.id]!.height,
                           child: _NodeGestureTarget(
                             tapEnabled: widget.editingId != node.id,
                             dragEnabled: widget.editingId == null,

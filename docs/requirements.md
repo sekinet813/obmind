@@ -86,7 +86,7 @@ MVPのマインドマップはTreeです。各NodeのParentは最大1つです�
 
 ## レイアウト
 
-自動レイアウトを基本とします。ユーザーが自由座標へ置く方式は採用しません。NodeのDragは並び替えまたはParent変更として解釈します。既定のレイアウトはHorizontal Mind Mapです。放射（Radial）レイアウトも選択できます。Layout EngineはUI Widgetから独立させます。
+自動レイアウトを基本とします。ユーザーが自由座標へ置く方式は採用しません。NodeのDragは並び替えまたはParent変更として解釈します。アプリから新規作成した地図の既定レイアウトは放射（Radial）です。`layout`未指定の既存ファイルはHorizontalのままです。ユーザーはHorizontalへ切り替えられます。放射レイアウトでは、Rootの直接の子を兄弟順で円周方向へ置き、孫以降はその枝の外側へ一方向に伸ばします。Layout EngineはUI Widgetから独立させます。
 
 ## Pan / Zoomと編集画面
 

@@ -21,6 +21,51 @@ void main() {
     );
   });
 
+  test('matches node text as well as the file name', () {
+    final files = [file('notes.md'), file('plan.md'), file('other.md')];
+    final texts = {
+      'notes.md': ['買い物リスト'],
+      'plan.md': ['Release'],
+      'other.md': ['無関係'],
+    };
+
+    expect(
+      queryMindMapFiles(
+        files,
+        query: 'notes',
+        nodeTextsByToken: texts,
+      ).map((entry) => entry.displayName),
+      ['notes.md'],
+    );
+    expect(
+      queryMindMapFiles(
+        files,
+        query: '買い物',
+        nodeTextsByToken: texts,
+      ).map((entry) => entry.displayName),
+      ['notes.md'],
+    );
+    expect(
+      queryMindMapFiles(files, query: 'missing', nodeTextsByToken: texts),
+      isEmpty,
+    );
+  });
+
+  test('keeps a parse-failed file when the name still matches', () {
+    final files = [file('broken.md'), file('ok.md')];
+    expect(
+      queryMindMapFiles(
+        files,
+        query: 'broken',
+        nodeTextsByToken: const {
+          'broken.md': [],
+          'ok.md': ['Root'],
+        },
+      ).map((entry) => entry.displayName),
+      ['broken.md'],
+    );
+  });
+
   test('filters 200 files without writing markdown', () {
     final files = [
       for (var index = 200; index >= 1; index -= 1)

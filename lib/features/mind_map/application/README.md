@@ -10,4 +10,4 @@ Layout EngineはWidgetから独立し、`MindMapDocument`から`NodeLayout`を�
 
 `AutosaveMindMap`は`SaveMindMap`をdebounceし、編集のたびに即Disk Writeしません。atomic writeはInfrastructure側です。
 
-`HorizontalLayoutEngine`は左から右へ子を置き、折りたたまれた子孫はレイアウトから省きます。座標はDomainのNodeへ書き戻しません。
+`HorizontalLayoutEngine`は左から右へ子を置き、折りたたまれた子孫はレイアウトから省きます。`RadialLayoutEngine`はRootの子を円周へ等間隔に置き、孫以降はその枝の外側へ一方向に伸ばします。Root中心はLayout原点に固定し、子の増減でRoot座標が飛びません。座標はDomainのNodeへ書き戻しません。

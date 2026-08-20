@@ -250,6 +250,12 @@ abstract class AppLocalizations {
   /// **'全体表示'**
   String get fitToScreen;
 
+  /// No description provided for @centerOnRoot.
+  ///
+  /// In ja, this message translates to:
+  /// **'中心へ戻る'**
+  String get centerOnRoot;
+
   /// No description provided for @zoomIn.
   ///
   /// In ja, this message translates to:
@@ -331,7 +337,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectVaultFolder.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダを選ぶ'**
+  /// **'保存フォルダを選ぶ'**
   String get selectVaultFolder;
 
   /// No description provided for @openVaultMindMaps.
@@ -349,19 +355,19 @@ abstract class AppLocalizations {
   /// No description provided for @changeVaultFolder.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダを変更'**
+  /// **'保存フォルダを変更'**
   String get changeVaultFolder;
 
   /// No description provided for @vaultConfigured.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダは設定済みです'**
+  /// **'保存フォルダは設定済みです'**
   String get vaultConfigured;
 
   /// No description provided for @vaultNotConfigured.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダが未設定です'**
+  /// **'保存フォルダが未設定です'**
   String get vaultNotConfigured;
 
   /// No description provided for @vaultPermissionLost.
@@ -373,7 +379,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultOnboardingTitle.
   ///
   /// In ja, this message translates to:
-  /// **'思考の正本フォルダを選ぶ'**
+  /// **'思考の保存フォルダを選ぶ'**
   String get vaultOnboardingTitle;
 
   /// No description provided for @vaultOnboardingBody.
@@ -385,7 +391,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchMindMaps.
   ///
   /// In ja, this message translates to:
-  /// **'ファイル名で検索'**
+  /// **'名前やノードで検索'**
   String get searchMindMaps;
 
   /// No description provided for @noSearchResults.
@@ -393,6 +399,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'該当するMarkdownがありません'**
   String get noSearchResults;
+
+  /// No description provided for @libraryViewList.
+  ///
+  /// In ja, this message translates to:
+  /// **'リスト表示'**
+  String get libraryViewList;
+
+  /// No description provided for @libraryViewTiles.
+  ///
+  /// In ja, this message translates to:
+  /// **'タイル表示'**
+  String get libraryViewTiles;
 
   /// No description provided for @autosaveEnabled.
   ///
@@ -423,6 +441,30 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'放射'**
   String get layoutRadial;
+
+  /// No description provided for @designTemplateMenu.
+  ///
+  /// In ja, this message translates to:
+  /// **'デザイン'**
+  String get designTemplateMenu;
+
+  /// No description provided for @designTemplateMinimalRadial.
+  ///
+  /// In ja, this message translates to:
+  /// **'シンプル放射'**
+  String get designTemplateMinimalRadial;
+
+  /// No description provided for @designTemplateSoftHorizontal.
+  ///
+  /// In ja, this message translates to:
+  /// **'ソフト水平'**
+  String get designTemplateSoftHorizontal;
+
+  /// No description provided for @designTemplateDarkRadial.
+  ///
+  /// In ja, this message translates to:
+  /// **'ダーク放射'**
+  String get designTemplateDarkRadial;
 }
 
 class _AppLocalizationsDelegate

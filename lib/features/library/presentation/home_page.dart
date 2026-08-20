@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/library/domain/library_view_mode_repository.dart';
 import 'package:obmind/features/library/presentation/mind_map_file_list_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
@@ -32,6 +33,7 @@ class HomePage extends StatefulWidget {
     this.deleteMindMap,
     this.loadVaultFolder,
     this.selectVaultFolder,
+    this.libraryViewModeRepository,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -46,6 +48,7 @@ class HomePage extends StatefulWidget {
   final DeleteMindMap? deleteMindMap;
   final LoadVaultFolder? loadVaultFolder;
   final SelectVaultFolder? selectVaultFolder;
+  final LibraryViewModeRepository? libraryViewModeRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -163,6 +166,7 @@ class _HomePageState extends State<HomePage> {
             : null,
         recordRecentMindMap: widget.recordRecentMindMap,
         removeRecentMindMap: widget.removeRecentMindMap,
+        viewModeRepository: widget.libraryViewModeRepository,
       );
     }
 
@@ -425,6 +429,7 @@ class _HomePageState extends State<HomePage> {
             removeRecentMindMap: widget.removeRecentMindMap,
             renameMindMap: widget.renameMindMap,
             deleteMindMap: widget.deleteMindMap,
+            viewModeRepository: widget.libraryViewModeRepository,
           ),
         ),
       );
@@ -486,11 +491,6 @@ class _HomePageState extends State<HomePage> {
             saveMindMap: saveMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
-            onOpenSettings:
-                widget.loadVaultFolder != null &&
-                    widget.selectVaultFolder != null
-                ? _openSettings
-                : null,
           ),
         ),
       );
