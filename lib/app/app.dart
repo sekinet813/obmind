@@ -12,14 +12,12 @@ import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
-import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 class ObmindApp extends StatelessWidget {
   const ObmindApp({
     super.key,
     this.createMarkdownInFolder,
-    this.folderPicker,
     this.listMindMapFiles,
     this.loadMindMap,
     this.saveMindMap,
@@ -34,7 +32,6 @@ class ObmindApp extends StatelessWidget {
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
-  final MindMapFolderPicker? folderPicker;
   final ListMindMapFiles? listMindMapFiles;
   final LoadMindMap? loadMindMap;
   final SaveMindMap? saveMindMap;
@@ -64,7 +61,6 @@ class ObmindApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       home: HomePage(
         createMarkdownInFolder: createMarkdownInFolder,
-        folderPicker: folderPicker,
         listMindMapFiles: listMindMapFiles,
         loadMindMap: loadMindMap,
         saveMindMap: saveMindMap,

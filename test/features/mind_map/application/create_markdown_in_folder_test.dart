@@ -79,12 +79,15 @@ void main() {
     final file = await useCase();
 
     expect(file?.displayName, '新規マインドマップ.md');
-    expect(await storage.read(file!.location), pocMarkdownContents);
+    final markdown = await storage.read(file!.location);
+    expect(markdown, contains('# 新規マインドマップ\n'));
+    expect(markdown, isNot(contains('# Obmind')));
     expect(picker.pickCount, 1);
-    final parsed = MarkdownParser().parse(pocMarkdownContents);
+    final parsed = MarkdownParser().parse(markdown);
     expect(parsed.isSuccess, isTrue);
+    expect(parsed.document!.title, '新規マインドマップ');
     expect(parsed.document!.layout, LayoutType.radial);
-    expect(pocMarkdownContents, contains('layout: radial'));
+    expect(markdown, contains('layout: radial'));
   });
 
   test('creates markdown in a provided folder without picking again', () async {
@@ -110,6 +113,7 @@ void main() {
     expect(second?.displayName, '新規マインドマップ (1).md');
     expect(storage.files.keys, contains('tree-uri/新規マインドマップ.md'));
     expect(storage.files.keys, contains('tree-uri/新規マインドマップ (1).md'));
+    expect(await storage.read(second!.location), contains('# 新規マインドマップ (1)\n'));
   });
 
   test('returns null when the user cancels the picker', () async {
@@ -119,5 +123,18 @@ void main() {
 
     expect(await useCase(), isNull);
     expect(storage.files, isEmpty);
+  });
+
+  test('keeps the historical template when markdown is provided', () async {
+    final picker = _FakeFolderPicker(const MindMapLocation('tree-uri'));
+    final storage = _MemoryStorage();
+    final useCase = CreateMarkdownInFolder(picker: picker, storage: storage);
+
+    final file = await useCase(markdown: historicalTemplateMarkdown);
+
+    expect(file?.displayName, '新規マインドマップ.md');
+    final markdown = await storage.read(file!.location);
+    expect(markdown, contains('# Obmind\n'));
+    expect(MarkdownParser().parse(markdown).isSuccess, isTrue);
   });
 }

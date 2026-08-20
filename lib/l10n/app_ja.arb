@@ -1,8 +1,7 @@
 {
   "@@locale": "ja",
   "appTitle": "Obmind",
-  "homeMessage": "Markdownを正本とする、Local-firstなマインドマップアプリです。",
-  "pickFolderAndCreateMarkdown": "フォルダを選んでMarkdownを作成",
+  "homeMessage": "思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。",
   "folderPickCancelled": "フォルダ選択をキャンセルしました",
   "folderPickFailed": "フォルダの選択または保存に失敗しました",
   "markdownCreated": "{fileName}を作成しました",
@@ -13,7 +12,6 @@
       }
     }
   },
-  "openMarkdown": "Markdownを開いて編集",
   "saveMarkdown": "保存",
   "markdownSaved": "保存しました",
   "markdownSaveFailed": "保存に失敗しました。元のファイルは空にしていません",
@@ -62,7 +60,7 @@
   "vaultNotConfigured": "保存フォルダが未設定です",
   "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください",
   "vaultOnboardingTitle": "思考の保存フォルダを選ぶ",
-  "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
+  "vaultOnboardingBody": "Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
   "searchMindMaps": "名前やノードで検索",
   "noSearchResults": "該当するMarkdownがありません",
   "libraryViewList": "リスト表示",
@@ -73,7 +71,11 @@
   "layoutHorizontal": "水平",
   "layoutRadial": "放射",
   "designTemplateMenu": "デザイン",
-  "designTemplateMinimalRadial": "シンプル放射",
-  "designTemplateSoftHorizontal": "ソフト水平",
-  "designTemplateDarkRadial": "ダーク放射"
+  "designTemplatePaper": "ペーパー",
+  "designTemplateInkwell": "インク",
+  "designTemplateDark": "ダーク",
+  "designTemplateMinimal": "ミニマル",
+  "appAbout": "アプリ情報",
+  "openSourceLicenses": "オープンソースライセンス",
+  "privacyPolicyTitle": "プライバシーポリシー"
 }

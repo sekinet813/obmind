@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
@@ -316,6 +317,8 @@ void main() {
 
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('自動保存'), findsOneWidget);
+    expect(find.byKey(const Key('saveMindMap')), findsNothing);
+    expect(find.text('保存'), findsNothing);
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
     expect(find.byKey(const Key('switchLayout')), findsOneWidget);
     expect(find.byKey(const Key('openMapSettings')), findsNothing);
@@ -398,9 +401,7 @@ void main() {
     );
   });
 
-  testWidgets('applies a design template theme and layout from the app bar', (
-    tester,
-  ) async {
+  testWidgets('applies a design theme without changing layout', (tester) async {
     await tester.pumpWidget(
       app(MindMapDocument(root: node('root', children: [node('a')]))),
     );
@@ -411,7 +412,13 @@ void main() {
 
     await tester.tap(find.byKey(const Key('switchDesignTemplate')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('designTemplate-softHorizontal')));
+    expect(find.text('ペーパー'), findsOneWidget);
+    expect(find.text('インク'), findsOneWidget);
+    expect(find.text('ダーク'), findsOneWidget);
+    expect(find.text('ミニマル'), findsOneWidget);
+    expect(find.text('ソフト'), findsNothing);
+    expect(find.text('ソフト水平'), findsNothing);
+    await tester.tap(find.byKey(const Key('designTemplate-soft')));
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
@@ -419,13 +426,218 @@ void main() {
 
     await tester.tap(find.byKey(const Key('switchDesignTemplate')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('designTemplate-darkRadial')));
+    await tester.tap(find.byKey(const Key('designTemplate-dark')));
     await tester.pumpAndSettle();
 
-    expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
     expect(nodeRadius(tester, 'root'), 14);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-inkwell')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 6);
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
     expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
     expect(find.byKey(const Key('switchLayout')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('switchLayout')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('layoutRadial')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 6);
+  });
+
+  _titleSyncTests();
+}
+
+class _RenameStorage implements MindMapStorage {
+  _RenameStorage(this.files);
+
+  final Map<String, String> files;
+
+  @override
+  Future<MindMapFile> create(
+    MindMapLocation folder,
+    String displayName, {
+    String markdown = '',
+  }) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<MindMapFile>> list(MindMapLocation folder) async => [];
+
+  @override
+  Future<String> read(MindMapLocation location) async => files[location.token]!;
+
+  @override
+  Future<void> write(MindMapLocation location, String markdown) async {
+    files[location.token] = markdown;
+  }
+
+  @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    final markdown = files.remove(location.token);
+    if (markdown == null) {
+      throw const MindMapStorageException('missing file');
+    }
+    final slash = location.token.lastIndexOf('/');
+    final parent = slash == -1 ? '' : location.token.substring(0, slash);
+    final newToken = parent.isEmpty
+        ? newDisplayName
+        : '$parent/$newDisplayName';
+    if (files.containsKey(newToken)) {
+      files[location.token] = markdown;
+      throw const MindMapStorageException('name already exists');
+    }
+    files[newToken] = markdown;
+    return MindMapFile(
+      location: MindMapLocation(newToken),
+      displayName: newDisplayName,
+    );
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
+  }
+}
+
+void _titleSyncTests() {
+  Widget app({
+    required MindMapDocument document,
+    required MindMapFile file,
+    required RenameMindMap renameMindMap,
+  }) {
+    return MaterialApp(
+      locale: const Locale('ja'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: MindMapPage(
+        document: document,
+        file: file,
+        renameMindMap: renameMindMap,
+      ),
+    );
+  }
+
+  testWidgets('renames the file after root text is committed', (tester) async {
+    final storage = _RenameStorage({'vault/old.md': '# root\n'});
+    const file = MindMapFile(
+      location: MindMapLocation('vault/old.md'),
+      displayName: 'old.md',
+    );
+    await tester.pumpWidget(
+      app(
+        document: MindMapDocument(
+          root: MindNode(id: const NodeId('root'), text: 'root'),
+        ),
+        file: file,
+        renameMindMap: RenameMindMap(storage: storage),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '新しい題名');
+    await tester.tap(find.byKey(const Key('doneEditingNode')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('新しい題名.md'), findsOneWidget);
+    expect(storage.files.containsKey('vault/old.md'), isFalse);
+    expect(storage.files.keys.single, 'vault/新しい題名.md');
+  });
+
+  testWidgets('does not rename while root text is still being typed', (
+    tester,
+  ) async {
+    final storage = _RenameStorage({'vault/old.md': '# root\n'});
+    const file = MindMapFile(
+      location: MindMapLocation('vault/old.md'),
+      displayName: 'old.md',
+    );
+    await tester.pumpWidget(
+      app(
+        document: MindMapDocument(
+          root: MindNode(id: const NodeId('root'), text: 'root'),
+        ),
+        file: file,
+        renameMindMap: RenameMindMap(storage: storage),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '途中');
+    await tester.pump();
+
+    expect(storage.files.keys.single, 'vault/old.md');
+    expect(find.text('old.md'), findsOneWidget);
+  });
+
+  testWidgets('keeps the file when the committed root name is illegal', (
+    tester,
+  ) async {
+    final storage = _RenameStorage({'vault/old.md': '# root\n'});
+    const file = MindMapFile(
+      location: MindMapLocation('vault/old.md'),
+      displayName: 'old.md',
+    );
+    await tester.pumpWidget(
+      app(
+        document: MindMapDocument(
+          root: MindNode(id: const NodeId('root'), text: 'root'),
+        ),
+        file: file,
+        renameMindMap: RenameMindMap(storage: storage),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'a/b');
+    await tester.tap(find.byKey(const Key('doneEditingNode')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('a/b'), findsOneWidget);
+    expect(find.text('使えないファイル名です'), findsOneWidget);
+    expect(storage.files.keys.single, 'vault/old.md');
+    expect(find.text('old.md'), findsOneWidget);
+  });
+
+  testWidgets('does not rename a mismatched file that is only opened', (
+    tester,
+  ) async {
+    final storage = _RenameStorage({'vault/notes.md': '# Different\n'});
+    const file = MindMapFile(
+      location: MindMapLocation('vault/notes.md'),
+      displayName: 'notes.md',
+    );
+    await tester.pumpWidget(
+      app(
+        document: MindMapDocument(
+          root: MindNode(id: const NodeId('root'), text: 'Different'),
+        ),
+        file: file,
+        renameMindMap: RenameMindMap(storage: storage),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(storage.files, {'vault/notes.md': '# Different\n'});
+    expect(find.text('notes.md'), findsOneWidget);
+    expect(find.text('Different'), findsOneWidget);
   });
 }

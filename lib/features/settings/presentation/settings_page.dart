@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:obmind/app/app_info.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
+import 'package:obmind/features/settings/presentation/privacy_policy_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -10,10 +12,14 @@ class SettingsPage extends StatefulWidget {
     super.key,
     required this.loadVaultFolder,
     required this.selectVaultFolder,
+    this.appName = AppInfo.name,
+    this.versionName = AppInfo.versionName,
   });
 
   final LoadVaultFolder loadVaultFolder;
   final SelectVaultFolder selectVaultFolder;
+  final String appName;
+  final String versionName;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -63,6 +69,47 @@ class _SettingsPageState extends State<SettingsPage> {
               _status.kind == VaultFolderKind.unset
                   ? l10n.selectVaultFolder
                   : l10n.changeVaultFolder,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Text(l10n.appAbout, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          PaperSurface(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.appName, style: theme.textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text(
+                  widget.versionName,
+                  key: const Key('appInfo'),
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  key: const Key('openLicenses'),
+                  onPressed: () {
+                    showLicensePage(
+                      context: context,
+                      applicationName: widget.appName,
+                      applicationVersion: widget.versionName,
+                    );
+                  },
+                  child: Text(l10n.openSourceLicenses),
+                ),
+                TextButton(
+                  key: const Key('openPrivacyPolicy'),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const PrivacyPolicyPage(),
+                      ),
+                    );
+                  },
+                  child: Text(l10n.privacyPolicyTitle),
+                ),
+              ],
             ),
           ),
         ],

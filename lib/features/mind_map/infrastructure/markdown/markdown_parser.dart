@@ -330,6 +330,7 @@ final class MarkdownParser {
                 line: lineNumber,
               ),
             );
+            extra['theme'] = value;
           } else {
             theme = parsedTheme;
           }
@@ -457,6 +458,7 @@ final class MarkdownParser {
       'minimal' => MindMapThemeId.minimal,
       'soft' => MindMapThemeId.soft,
       'dark' => MindMapThemeId.dark,
+      'inkwell' => MindMapThemeId.inkwell,
       _ => null,
     };
   }

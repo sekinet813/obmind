@@ -103,14 +103,8 @@ abstract class AppLocalizations {
   /// No description provided for @homeMessage.
   ///
   /// In ja, this message translates to:
-  /// **'Markdownを正本とする、Local-firstなマインドマップアプリです。'**
+  /// **'思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
-
-  /// No description provided for @pickFolderAndCreateMarkdown.
-  ///
-  /// In ja, this message translates to:
-  /// **'フォルダを選んでMarkdownを作成'**
-  String get pickFolderAndCreateMarkdown;
 
   /// No description provided for @folderPickCancelled.
   ///
@@ -129,12 +123,6 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'{fileName}を作成しました'**
   String markdownCreated(String fileName);
-
-  /// No description provided for @openMarkdown.
-  ///
-  /// In ja, this message translates to:
-  /// **'Markdownを開いて編集'**
-  String get openMarkdown;
 
   /// No description provided for @saveMarkdown.
   ///
@@ -385,7 +373,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultOnboardingBody.
   ///
   /// In ja, this message translates to:
-  /// **'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
+  /// **'Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
   String get vaultOnboardingBody;
 
   /// No description provided for @searchMindMaps.
@@ -448,23 +436,47 @@ abstract class AppLocalizations {
   /// **'デザイン'**
   String get designTemplateMenu;
 
-  /// No description provided for @designTemplateMinimalRadial.
+  /// No description provided for @designTemplatePaper.
   ///
   /// In ja, this message translates to:
-  /// **'シンプル放射'**
-  String get designTemplateMinimalRadial;
+  /// **'ペーパー'**
+  String get designTemplatePaper;
 
-  /// No description provided for @designTemplateSoftHorizontal.
+  /// No description provided for @designTemplateInkwell.
   ///
   /// In ja, this message translates to:
-  /// **'ソフト水平'**
-  String get designTemplateSoftHorizontal;
+  /// **'インク'**
+  String get designTemplateInkwell;
 
-  /// No description provided for @designTemplateDarkRadial.
+  /// No description provided for @designTemplateDark.
   ///
   /// In ja, this message translates to:
-  /// **'ダーク放射'**
-  String get designTemplateDarkRadial;
+  /// **'ダーク'**
+  String get designTemplateDark;
+
+  /// No description provided for @designTemplateMinimal.
+  ///
+  /// In ja, this message translates to:
+  /// **'ミニマル'**
+  String get designTemplateMinimal;
+
+  /// No description provided for @appAbout.
+  ///
+  /// In ja, this message translates to:
+  /// **'アプリ情報'**
+  String get appAbout;
+
+  /// No description provided for @openSourceLicenses.
+  ///
+  /// In ja, this message translates to:
+  /// **'オープンソースライセンス'**
+  String get openSourceLicenses;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'プライバシーポリシー'**
+  String get privacyPolicyTitle;
 }
 
 class _AppLocalizationsDelegate

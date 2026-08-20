@@ -35,20 +35,23 @@ Future<Widget> _buildApp() async {
   final vaultRepository = await SharedPreferencesVaultFolderRepository.create();
   final libraryViewModeRepository =
       await SharedPreferencesLibraryViewModeRepository.create();
+  final loadMindMap = LoadMindMap(storage: storage, parser: MarkdownParser());
+  final saveMindMap = SaveMindMap(storage: storage, serializer: serializer);
   return ObmindApp(
     createMarkdownInFolder: CreateMarkdownInFolder(
       picker: storage,
       storage: storage,
     ),
-    folderPicker: storage,
     listMindMapFiles: ListMindMapFiles(storage),
-    loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
-    saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
+    loadMindMap: loadMindMap,
+    saveMindMap: saveMindMap,
     listRecentMindMaps: ListRecentMindMaps(recentRepository),
     recordRecentMindMap: RecordRecentMindMap(recentRepository),
     removeRecentMindMap: RemoveRecentMindMap(recentRepository),
     renameMindMap: RenameMindMap(
       storage: storage,
+      loadMindMap: loadMindMap,
+      saveMindMap: saveMindMap,
       listRecentMindMaps: ListRecentMindMaps(recentRepository),
       recordRecentMindMap: RecordRecentMindMap(recentRepository),
       removeRecentMindMap: RemoveRecentMindMap(recentRepository),

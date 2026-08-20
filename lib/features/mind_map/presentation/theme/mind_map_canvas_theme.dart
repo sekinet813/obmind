@@ -88,5 +88,20 @@ MindMapCanvasTheme mindMapCanvasThemeFor(
         nodeFontSize: 14,
         nodeLineHeight: 1.3,
       );
+    case MindMapThemeId.inkwell:
+      return const MindMapCanvasTheme(
+        canvasBackground: Color(0xFF1A1B1E),
+        nodeBackground: Color(0xFF25262B),
+        nodeSelectedBackground: Color(0xFF2F3340),
+        nodeBorder: Color(0xFF3A3D46),
+        nodeSelectedBorder: Color(0xFF7F9BB3),
+        edgeColor: Color(0xFF6B7380),
+        onNodeText: Color(0xFFE6E8EC),
+        collapsedIconColor: Color(0xFF9AA3B2),
+        nodeRadius: 6,
+        nodePadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        nodeFontSize: 14,
+        nodeLineHeight: 1.35,
+      );
   }
 }

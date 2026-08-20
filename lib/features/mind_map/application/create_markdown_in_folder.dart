@@ -5,8 +5,24 @@ import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.da
 /// Default Markdown for maps created in the app.
 ///
 /// Existing files without `layout` stay horizontal. Only new files write
-/// `layout: radial`.
-const pocMarkdownContents = '''
+/// `layout: radial`. Root text matches [title] so it stays aligned with the
+/// file name chosen at creation.
+String defaultNewMapMarkdown(String title) {
+  return '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: radial
+---
+
+# $title
+''';
+}
+
+/// Historical template kept for parse compatibility. New maps use
+/// [defaultNewMapMarkdown] instead.
+const historicalTemplateMarkdown = '''
 ---
 obmind:
   version: 1
@@ -27,7 +43,7 @@ final class CreateMarkdownInFolder {
   Future<MindMapFile?> call({
     MindMapLocation? folder,
     String? displayName,
-    String markdown = pocMarkdownContents,
+    String? markdown,
   }) async {
     final target = folder ?? await picker.pickFolder();
     if (target == null) {
@@ -38,6 +54,8 @@ final class CreateMarkdownInFolder {
             (await storage.list(target)).map((file) => file.displayName),
           )
         : MindMapFileName.normalize(displayName);
-    return storage.create(target, name, markdown: markdown);
+    final contents =
+        markdown ?? defaultNewMapMarkdown(MindMapFileName.stem(name));
+    return storage.create(target, name, markdown: contents);
   }
 }

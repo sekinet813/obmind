@@ -146,4 +146,24 @@ obmind:
     expect(markdown, contains('layout: honeycomb'));
     expect(markdown, isNot(contains('layout: horizontal')));
   });
+
+  test('writes inkwell theme into frontmatter', () {
+    final document = MindMapDocument(
+      theme: MindMapThemeId.inkwell,
+      root: node('root', text: 'Root'),
+    );
+
+    expect(serializer.serialize(document), contains('theme: inkwell'));
+  });
+
+  test('writes an unknown theme value back instead of replacing it', () {
+    final document = MindMapDocument(
+      extraObmindFields: const {'theme': 'neon'},
+      root: node('root', text: 'Root'),
+    );
+
+    final markdown = serializer.serialize(document);
+    expect(markdown, contains('theme: neon'));
+    expect(markdown, isNot(contains('theme: minimal')));
+  });
 }

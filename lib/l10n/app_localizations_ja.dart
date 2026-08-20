@@ -12,10 +12,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appTitle => 'Obmind';
 
   @override
-  String get homeMessage => 'Markdownを正本とする、Local-firstなマインドマップアプリです。';
-
-  @override
-  String get pickFolderAndCreateMarkdown => 'フォルダを選んでMarkdownを作成';
+  String get homeMessage => '思考はMarkdownファイルとして残る、Local-firstなマインドマップアプリです。';
 
   @override
   String get folderPickCancelled => 'フォルダ選択をキャンセルしました';
@@ -27,9 +24,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String markdownCreated(String fileName) {
     return '$fileNameを作成しました';
   }
-
-  @override
-  String get openMarkdown => 'Markdownを開いて編集';
 
   @override
   String get saveMarkdown => '保存';
@@ -158,7 +152,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get vaultOnboardingBody =>
-      'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
+      'Obmindは思考をMarkdownファイルとして保存します。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
 
   @override
   String get searchMindMaps => '名前やノードで検索';
@@ -191,11 +185,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get designTemplateMenu => 'デザイン';
 
   @override
-  String get designTemplateMinimalRadial => 'シンプル放射';
+  String get designTemplatePaper => 'ペーパー';
 
   @override
-  String get designTemplateSoftHorizontal => 'ソフト水平';
+  String get designTemplateInkwell => 'インク';
 
   @override
-  String get designTemplateDarkRadial => 'ダーク放射';
+  String get designTemplateDark => 'ダーク';
+
+  @override
+  String get designTemplateMinimal => 'ミニマル';
+
+  @override
+  String get appAbout => 'アプリ情報';
+
+  @override
+  String get openSourceLicenses => 'オープンソースライセンス';
+
+  @override
+  String get privacyPolicyTitle => 'プライバシーポリシー';
 }

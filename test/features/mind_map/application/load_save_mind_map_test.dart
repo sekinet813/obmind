@@ -163,4 +163,15 @@ void main() {
     final reloaded = await loadMindMap(location);
     expect(reloaded.document.root.children.map((n) => n.text), ['A', 'B', 'C']);
   });
+
+  test('loading a mismatched file does not rename or rewrite it', () async {
+    final storage = _MemoryStorage()
+      ..files[location.token] = '# Different Title\n';
+    final loadMindMap = LoadMindMap(storage: storage, parser: MarkdownParser());
+
+    final result = await loadMindMap(location);
+
+    expect(result.document.title, 'Different Title');
+    expect(storage.files, {'file': '# Different Title\n'});
+  });
 }

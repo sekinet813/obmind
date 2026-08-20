@@ -104,7 +104,6 @@ void main() {
           picker: picker,
           storage: storage,
         ),
-        folderPicker: picker,
         listMindMapFiles: ListMindMapFiles(storage),
         loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
         saveMindMap: SaveMindMap(
@@ -119,8 +118,11 @@ void main() {
 
     expect(find.text('保存フォルダを選ぶ'), findsOneWidget);
     expect(find.text('思考の保存フォルダを選ぶ'), findsOneWidget);
+    expect(find.textContaining('Markdownファイルとして保存します'), findsOneWidget);
+    expect(find.textContaining('正本'), findsNothing);
     expect(find.textContaining('キャンセルしてもアプリは終了しません'), findsOneWidget);
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
+    expect(find.text('Markdownを開いて編集'), findsNothing);
 
     await tester.tap(find.text('保存フォルダを選ぶ'));
     await tester.pumpAndSettle();
@@ -144,7 +146,6 @@ void main() {
     final vault = _MemoryVault()..folder = const MindMapLocation('folder');
     await tester.pumpWidget(
       ObmindApp(
-        folderPicker: picker,
         listMindMapFiles: ListMindMapFiles(storage),
         loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
         saveMindMap: SaveMindMap(
@@ -169,7 +170,6 @@ void main() {
     final vault = _MemoryVault()..folder = const MindMapLocation('folder');
     await tester.pumpWidget(
       ObmindApp(
-        folderPicker: picker,
         listMindMapFiles: ListMindMapFiles(storage),
         loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
         saveMindMap: SaveMindMap(

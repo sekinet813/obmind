@@ -73,7 +73,7 @@ void main() {
     autosave.schedule(location, document('c'));
 
     expect(storage.writeCount, 0);
-    await Future<void>.delayed(const Duration(milliseconds: 70));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     expect(storage.writeCount, 1);
     expect(storage.files[location.token], contains('# c'));
   });

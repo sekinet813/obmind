@@ -1,41 +1,37 @@
-import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_theme_id.dart';
 
-/// Presentation preset that pairs a canvas theme with a layout.
+/// Presentation preset for canvas colors and node / edge style.
 ///
-/// Stored in Markdown as existing `theme` / `layout` Frontmatter, not as a
-/// new identifier.
+/// Layout is independent. Stored in Markdown as the existing `theme`
+/// Frontmatter key, not as a new identifier.
 final class MindMapDesignTemplate {
-  const MindMapDesignTemplate({
-    required this.id,
-    required this.theme,
-    required this.layout,
-  });
+  const MindMapDesignTemplate({required this.id, required this.theme});
 
   final String id;
   final MindMapThemeId theme;
-  final LayoutType layout;
 
-  static const minimalRadial = MindMapDesignTemplate(
-    id: 'minimalRadial',
-    theme: MindMapThemeId.minimal,
-    layout: LayoutType.radial,
-  );
-
-  static const softHorizontal = MindMapDesignTemplate(
-    id: 'softHorizontal',
+  static const paper = MindMapDesignTemplate(
+    id: 'soft',
     theme: MindMapThemeId.soft,
-    layout: LayoutType.horizontal,
   );
 
-  static const darkRadial = MindMapDesignTemplate(
-    id: 'darkRadial',
+  static const inkwell = MindMapDesignTemplate(
+    id: 'inkwell',
+    theme: MindMapThemeId.inkwell,
+  );
+
+  static const dark = MindMapDesignTemplate(
+    id: 'dark',
     theme: MindMapThemeId.dark,
-    layout: LayoutType.radial,
   );
 
-  static const values = [minimalRadial, softHorizontal, darkRadial];
+  static const minimal = MindMapDesignTemplate(
+    id: 'minimal',
+    theme: MindMapThemeId.minimal,
+  );
+
+  static const values = [paper, inkwell, dark, minimal];
 
   static MindMapDesignTemplate? byId(String id) {
     for (final template in values) {
@@ -46,7 +42,5 @@ final class MindMapDesignTemplate {
     return null;
   }
 
-  bool matches(MindMapDocument document) {
-    return document.theme == theme && document.layout == layout;
-  }
+  bool matches(MindMapDocument document) => document.theme == theme;
 }

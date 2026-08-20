@@ -25,6 +25,11 @@ abstract final class MindMapFileName {
     return name;
   }
 
+  /// Display title without `.md` / `.markdown`, preserving the original case.
+  static String stem(String displayName) {
+    return _stemFromNormalized(normalize(displayName));
+  }
+
   /// Picks `新規マインドマップ.md`, then `(1)` `(2)` … using the first free number.
   static String nextNewMapName(Iterable<String> existingDisplayNames) {
     final taken = <String>{
@@ -46,11 +51,14 @@ abstract final class MindMapFileName {
   }
 
   static String _comparableStem(String normalizedOrRaw) {
-    final normalized = normalize(normalizedOrRaw);
+    return _stemFromNormalized(normalize(normalizedOrRaw)).toLowerCase();
+  }
+
+  static String _stemFromNormalized(String normalized) {
     final lower = normalized.toLowerCase();
     if (lower.endsWith('.markdown')) {
-      return lower.substring(0, lower.length - '.markdown'.length);
+      return normalized.substring(0, normalized.length - '.markdown'.length);
     }
-    return lower.substring(0, lower.length - '.md'.length);
+    return normalized.substring(0, normalized.length - '.md'.length);
   }
 }

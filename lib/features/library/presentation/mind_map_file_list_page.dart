@@ -128,7 +128,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                   Flexible(child: Text(l10n.appTitle)),
                 ],
               )
-            : Text(l10n.openMarkdown),
+            : Text(l10n.appTitle),
         actions: [
           if (_files.isNotEmpty)
             IconButton(
@@ -523,6 +523,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
             file: file,
             document: loaded.document,
             saveMindMap: widget.saveMindMap,
+            renameMindMap: widget.renameMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
           ),
