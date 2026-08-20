@@ -49,7 +49,17 @@ class _MemoryStorage implements MindMapStorage {
   }
 
   @override
-  Future<List<MindMapFile>> list(MindMapLocation folder) async => [];
+  Future<List<MindMapFile>> list(MindMapLocation folder) async {
+    final prefix = '${folder.token}/';
+    return [
+      for (final token in files.keys)
+        if (token.startsWith(prefix))
+          MindMapFile(
+            location: MindMapLocation(token),
+            displayName: token.substring(prefix.length),
+          ),
+    ];
+  }
 
   @override
   Future<String> read(MindMapLocation location) async => files[location.token]!;
@@ -68,7 +78,7 @@ void main() {
 
     final file = await useCase();
 
-    expect(file?.displayName, pocMarkdownFileName);
+    expect(file?.displayName, '新規マインドマップ.md');
     expect(await storage.read(file!.location), pocMarkdownContents);
     expect(picker.pickCount, 1);
     final parsed = MarkdownParser().parse(pocMarkdownContents);
@@ -84,8 +94,22 @@ void main() {
 
     final file = await useCase(folder: const MindMapLocation('tree-uri'));
 
-    expect(file?.displayName, pocMarkdownFileName);
+    expect(file?.displayName, '新規マインドマップ.md');
     expect(picker.pickCount, 0);
+  });
+
+  test('does not overwrite an existing default name', () async {
+    final picker = _FakeFolderPicker(const MindMapLocation('tree-uri'));
+    final storage = _MemoryStorage();
+    final useCase = CreateMarkdownInFolder(picker: picker, storage: storage);
+    const folder = MindMapLocation('tree-uri');
+
+    await useCase(folder: folder);
+    final second = await useCase(folder: folder);
+
+    expect(second?.displayName, '新規マインドマップ (1).md');
+    expect(storage.files.keys, contains('tree-uri/新規マインドマップ.md'));
+    expect(storage.files.keys, contains('tree-uri/新規マインドマップ (1).md'));
   });
 
   test('returns null when the user cancels the picker', () async {

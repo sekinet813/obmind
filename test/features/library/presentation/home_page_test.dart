@@ -133,7 +133,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(picker.pickCount, 1);
-    expect(storage.files.keys.single, 'folder/obmind-poc.md');
+    expect(storage.files.keys.single, 'folder/新規マインドマップ.md');
   });
 
   testWidgets('shows vault files on launch when the folder is already set', (

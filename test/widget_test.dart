@@ -143,7 +143,7 @@ void main() {
     await tester.tap(find.text('フォルダを選んでMarkdownを作成'));
     await tester.pumpAndSettle();
 
-    expect(find.text('obmind-poc.mdを作成しました'), findsOneWidget);
+    expect(find.text('新規マインドマップ.mdを作成しました'), findsOneWidget);
     expect(find.byType(MindMapPage), findsOneWidget);
     expect(find.text('Obmind'), findsWidgets);
 

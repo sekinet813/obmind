@@ -1,7 +1,6 @@
+import 'package:obmind/features/mind_map/domain/mind_map_file_name.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
-
-const pocMarkdownFileName = 'obmind-poc.md';
 
 /// Default Markdown for maps created in the app.
 ///
@@ -27,13 +26,18 @@ final class CreateMarkdownInFolder {
 
   Future<MindMapFile?> call({
     MindMapLocation? folder,
-    String displayName = pocMarkdownFileName,
+    String? displayName,
     String markdown = pocMarkdownContents,
   }) async {
     final target = folder ?? await picker.pickFolder();
     if (target == null) {
       return null;
     }
-    return storage.create(target, displayName, markdown: markdown);
+    final name = displayName == null
+        ? MindMapFileName.nextNewMapName(
+            (await storage.list(target)).map((file) => file.displayName),
+          )
+        : MindMapFileName.normalize(displayName);
+    return storage.create(target, name, markdown: markdown);
   }
 }
