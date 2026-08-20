@@ -83,11 +83,89 @@ class AppLocalizationsJa extends AppLocalizations {
   String get editNode => '編集';
 
   @override
+  String get doneEditingNode => '完了';
+
+  @override
   String get fitToScreen => '全体表示';
+
+  @override
+  String get zoomIn => '拡大';
+
+  @override
+  String get zoomOut => '縮小';
 
   @override
   String get undoEdit => '元に戻す';
 
   @override
   String get redoEdit => 'やり直す';
+
+  @override
+  String get renameMindMap => '名前を変更';
+
+  @override
+  String get renameMindMapHint => 'ファイル名';
+
+  @override
+  String get renameMindMapFailed => '名前を変更できませんでした';
+
+  @override
+  String get renameMindMapInvalidName => '使えないファイル名です';
+
+  @override
+  String get renameMindMapDuplicateName => '同じ名前のファイルがあります';
+
+  @override
+  String get deleteMindMap => '削除';
+
+  @override
+  String deleteMindMapConfirm(String fileName) {
+    return '$fileNameを削除しますか？この操作は取り消せません。';
+  }
+
+  @override
+  String get deleteMindMapFailed => '削除できませんでした';
+
+  @override
+  String get settingsTitle => '設定';
+
+  @override
+  String get selectVaultFolder => '正本フォルダを選ぶ';
+
+  @override
+  String get openVaultMindMaps => 'Markdown一覧を開く';
+
+  @override
+  String get createInVault => 'このフォルダにMarkdownを作成';
+
+  @override
+  String get changeVaultFolder => '正本フォルダを変更';
+
+  @override
+  String get vaultConfigured => '正本フォルダは設定済みです';
+
+  @override
+  String get vaultNotConfigured => '正本フォルダが未設定です';
+
+  @override
+  String get vaultPermissionLost => 'フォルダへのアクセス権限がありません。設定から選び直してください';
+
+  @override
+  String get vaultOnboardingTitle => '思考の正本フォルダを選ぶ';
+
+  @override
+  String get vaultOnboardingBody =>
+      'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
+
+  @override
+  String get searchMindMaps => 'ファイル名で検索';
+
+  @override
+  String get noSearchResults => '該当するMarkdownがありません';
+
+  @override
+  String get autosaveEnabled => '自動保存';
+
+  @override
+  String get savingInProgress => '保存中';
 }

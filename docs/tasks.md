@@ -865,5 +865,336 @@ Roadmap: Phase 8 File corruption test
 
 Roadmap: Phase 8 Obsidian interoperability test
 
+## P1: Phase 9 UX改善（ユーザーフィードバック）
+
+スマートフォンでの日常利用を前提に、操作の分かりやすさとLibrary体験を強化する。既存のHorizontal LayoutやMarkdown v0.1互換を壊さない。
+
+### T-053 Edit mode終了（バグ修正）
+
+- [x] 編集開始後に表示モードへ戻れるようにする
+
+背景:
+
+- 「編集」を押すと元に戻れなくなる、という報告がある
+
+完了条件:
+
+- ノード編集開始後、編集完了操作（Done、キャンバス外Tap、選択解除など）で編集モードを終了できる
+- 編集モード中もPan / Zoomが必要な範囲で使える（Gesture競合を再発させない）
+- 編集内容はAutosave経由で保存される
+- Widgetテストまたは既存Gestureテストを更新する
+
+依存:
+
+- T-030
+- T-041
+
+Roadmap: Phase 9 Edit mode終了
+
+### T-054 ズーム操作の改善
+
+- [x] 拡大縮小をより使いやすくする
+
+背景:
+
+- Pinch Zoom（T-024）は実装済みだが、発見しにくい、または期待どおり動かない可能性がある
+
+完了条件:
+
+- Pinch Zoomが編集モードを含めて期待どおり動く（不具合があれば修正する）
+- ズームイン / ズームアウト、Fit to Screenへ到達できるUI（ツールバーまたはFAB等）がある
+- min / max scaleが維持される
+- Domainへ座標を保存しない
+
+依存:
+
+- T-024
+- T-042
+- T-053
+
+Roadmap: Phase 9 ズーム操作
+
+### T-055 ノード上の折りたたみ / 展開ボタン
+
+- [x] 子を持つNodeに+ / -ボタンを表示し、折りたたみ / 展開できるようにする
+
+背景:
+
+- 下部のContext Menuだけでは操作が分かりにくい
+
+完了条件:
+
+- 子を持つNodeに+（展開）または-（折りたたみ）ボタンが表示される
+- ボタンTapでCollapse / Expandができる（DomainのTree操作を通す）
+- 下部メニューからも従来どおり操作できる（後方互換）
+- 選択状態とcollapsedをMarkdownへ余計に保存しない
+- Gesture競合（Node選択、Pan、Drag）を壊さない
+
+依存:
+
+- T-029
+- T-041
+
+Roadmap: Phase 9 ノード折りたたみボタン
+
+### T-056 マインドマップファイル名の変更
+
+- [x] Libraryまたはマインドマップ画面からファイル名（表示名）を変更できる
+
+完了条件:
+
+- `MindMapStorage`経由でrenameできる（PresentationがOS APIを直接呼ばない）
+- 重複名・空名・不正文字は拒否し、既存ファイルを上書きしない
+- rename後もRecent一覧と開いている地図の参照が整合する
+- Markdown内容は変えず、ファイル名のみ変更する
+- ユニットテストがある
+
+依存:
+
+- T-006
+- T-033
+
+Roadmap: Phase 9 ファイル名変更
+
+### T-057 マインドマップの削除
+
+- [x] 一覧からマインドマップ（Markdownファイル）を削除できる
+
+完了条件:
+
+- 確認Dialog付きで削除できる（Data Loss防止）
+- `MindMapStorage`経由でdeleteできる
+- 削除後、Recent一覧からも除去される
+- 削除失敗時に黙って成功扱いにしない
+- ユニットテストがある
+
+依存:
+
+- T-006
+- T-037
+
+Roadmap: Phase 9 マインドマップ削除
+
+### T-058 Library一覧のCRUD強化
+
+- [x] マインドマップ一覧を主画面として、追加・編集（開く）・削除ができるようにする
+
+背景:
+
+- 一覧画面とHome / Library UI（T-047）はあるが、毎回フォルダ選択が必要で、一覧からの追加・削除・名前変更が弱い
+
+完了条件:
+
+- Vault（正本フォルダ）設定済み時、起動後すぐマインドマップ一覧が見える
+- 一覧から新規作成、開く、名前変更（T-056）、削除（T-057）ができる
+- 空のVaultには空状態UIと新規作成導線がある
+- PresentationがSAF / Document Pickerを直接呼ばない
+
+依存:
+
+- T-047
+- T-056
+- T-057
+- T-059
+
+Roadmap: Phase 9 Library一覧CRUD
+
+### T-059 Vaultフォルダの永続化と設定画面
+
+- [x] 一度選んだフォルダを正本として保持し、通常画面からフォルダ選択UIを外す
+
+完了条件:
+
+- 初回またはVault未設定時のみフォルダ選択を促す
+- 選択したフォルダlocationをInfrastructure（Preferences等）へ永続化する
+- パスやContent URIをDomainモデルへ載せない
+- 設定画面を追加し、Vault変更・権限失効時の再選択ができる
+- 権限失効時にアプリが落ちず、ユーザーへ理由を示す
+- Home / Libraryから「毎回フォルダを選ぶ」UIを外す（T-058と整合）
+
+依存:
+
+- T-010
+- T-047
+
+Roadmap: Phase 9 Vault永続化と設定
+
+### T-060 Radial Layout Engine
+
+- [ ] マインドマップが右方向ではなく、円状に広がるレイアウトを追加する
+
+Status: BLOCKED
+Reason: レイアウト方式の追加はProduct判断であり、着手前に`docs/decisions/`へADRが必要。エージェントがADRなしで確定できない。
+
+完了条件:
+
+- `LayoutType`にradial（名称は実装時に確定）を追加する
+- Radial Layout Engineが`MindMapLayout`を返す（DomainのNode座標は変更しない）
+- Frontmatterの`layout`でhorizontal / radialを切り替えられる
+- Parse → Serialize → Parseでlayoutが維持される
+- Collapse時に子孫をレイアウトから省ける
+- 100 Node程度でLayoutが安定する
+- Format v0.1の後方互換を壊さない（horizontalがデフォルトのまま）
+
+備考:
+
+- レイアウト方式の追加はProduct判断に触れる。着手前に`docs/decisions/`へADRを追加する
+
+依存:
+
+- T-008
+- T-020
+
+Roadmap: Phase 9 Radial Layout
+
+### T-061 初回オンボーディング
+
+- [x] Vault未設定時の初回起動フローを整える
+
+完了条件:
+
+- Vault未設定時、正本フォルダ選択の目的と手順が分かる画面またはDialogがある
+- 選択完了後はT-058の一覧画面へ遷移する
+- スキップ不可（Local-firstの正本が無いと使えない）だが、キャンセルでアプリが落ちない
+
+依存:
+
+- T-059
+
+Roadmap: Phase 9 初回オンボーディング
+
+### T-062 Library一覧の検索とソート
+
+- [x] マインドマップが増えたときに一覧から探しやすくする
+
+完了条件:
+
+- ファイル名での検索（フィルタ）ができる
+- 名前順、更新日時順など最低1種類のソートができる
+- 検索・ソート状態をMarkdown正本へ書かない
+- 200件程度の一覧で操作が破綻しない
+
+依存:
+
+- T-058
+
+Roadmap: Phase 9 Library検索・ソート
+
+### T-063 マインドマップ画面のAppBar整理
+
+- [x] 編集画面の上部に地図名、保存状態、設定への導線を置く
+
+完了条件:
+
+- 開いているマインドマップのファイル名がAppBar等で確認できる
+- Autosave / 外部変更検知の状態が過剰にうるさくない範囲で分かる
+- 設定画面（T-059）へ遷移できる
+- ズームUI（T-054）と役割が重複しない
+
+依存:
+
+- T-033
+- T-059
+
+Roadmap: Phase 9 マインドマップAppBar
+
+## P1: Phase 10 Brand & Visual Identity
+
+アプリアイコン（紙質・パステル・レイヤー感）を正本とし、Material Themeとマインドマップキャンバスの見た目を統一する。課金実装や新機能は含めない。
+
+### T-064 App Icon
+
+- [x] 提供されたアイコンをAndroid / iOSのLauncher Iconとして設定する
+
+背景:
+
+- 紙質テクスチャとパステル配色（クリーム、サーモン、マスタード、セージ）のブランドアイコンが用意されている
+- 現状はFlutterテンプレート由来のプレースホルダアイコンのまま
+
+完了条件:
+
+- マスター画像を`assets/brand/app_icon.png`（1024×1024相当）としてリポジトリに置く
+- Androidの`mipmap-*`とiOSの`AppIcon.appiconset`へ必要サイズを反映する
+- ホーム画面・App SwitcherでObmindアイコンが表示される
+- Adaptive Icon（Android）の前景 / 背景がアイコンと整合する
+- 新規パッケージを使う場合は理由をPR説明に残す（例: `flutter_launcher_icons`）
+
+依存:
+
+- なし（T-007本番IDとは独立。開発用Bundle IDのままで可）
+
+Roadmap: Phase 10 App Icon
+
+### T-065 Brand Color Palette & App Theme
+
+- [x] アイコンの配色に合わせてMaterial 3のApp Themeを定義する
+
+背景:
+
+- 現状の`ThemeData`は`Colors.deepPurple`のseedColor由来で、アイコンと無関係
+- アイコンのクリーム背景、サーモン / マスタード / セージのアクセントをアプリ全体の基調にしたい
+
+完了条件:
+
+- `lib/app/`にBrand Color定数（クリーム背景、パステルアクセント、テキスト色）がある
+- Light / Dark双方で`ColorScheme`がアイコン由来のパレットから生成される
+- `ObmindApp`がdeepPurple seedに依存しない
+- DomainがFlutter Themeに依存しない（Presentation / app層のみ）
+- コントラスト比がMaterial 3の可読性基準を大きく下回らない
+
+依存:
+
+- T-064（視覚確認のため。実装自体は並行可能）
+
+Roadmap: Phase 10 Brand Color Palette
+
+### T-066 Paper-morphism Surface Styling
+
+- [x] Library・設定・Dialog等のSurfaceをアイコンに合わせた紙質・レイヤー表現にする
+
+背景:
+
+- アイコンは紙の層、柔らかい影、大きめの角丸が特徴
+- T-047のLibrary UIは機能はあるが、フラットなMaterialデフォルトに近い
+
+完了条件:
+
+- 共通のSurface Style（角丸、ソフトシャドウ、余白）が`lib/app/`またはPresentation共有Widgetとして定義される
+- Library一覧のListTile / Card、空状態、FAB、AppBarが新Styleを使う
+- 過度なテクスチャやパフォーマンスを損なう全画面ノイズは入れない（必要なら軽量なOverlayに留める）
+- Dark Modeでも破綻しない
+- Domainが描画Styleを知らない
+
+依存:
+
+- T-065
+- T-047
+
+Roadmap: Phase 10 Paper-morphism Surface
+
+### T-067 Mind Map Canvas Brand Alignment
+
+- [x] マインドマップキャンバス（Node / Edge / 背景）をBrand Paletteに合わせる
+
+背景:
+
+- T-043のMinimal / Soft / Darkテーマはあるが、アイコンのパステル配色・紙質感とは未連動
+- キャンバスがアプリの顔であるため、アイコンとの一体感を優先する
+
+完了条件:
+
+- キャンバス背景がBrand Paletteのクリーム系（Dark時は対応する暗色）になる
+- Node / Edgeのデフォルト色がサーモン / マスタード / セージ等のアクセントと調和する
+- 既存の`MindMapThemeId`（Minimal / Soft / Dark）を維持し、Markdown互換を壊さない
+- 選択・編集中のContrastが落ちない
+- 既存のTheme / Canvasテストを更新する
+
+依存:
+
+- T-043
+- T-065
+
+Roadmap: Phase 10 Mind Map Canvas Brand
+
 
 

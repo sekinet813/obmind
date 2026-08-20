@@ -14,6 +14,7 @@ import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_context_actions.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
+import 'package:obmind/features/mind_map/presentation/mind_map_zoom_controls.dart';
 import 'package:obmind/features/mind_map/presentation/theme/mind_map_canvas_theme.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -28,6 +29,7 @@ class MindMapPage extends StatefulWidget {
     this.readOnly = false,
     this.generateId,
     this.initialSelectedId,
+    this.onOpenSettings,
   });
 
   final MindMapDocument document;
@@ -37,6 +39,7 @@ class MindMapPage extends StatefulWidget {
   final bool readOnly;
   final NodeId Function()? generateId;
   final NodeId? initialSelectedId;
+  final VoidCallback? onOpenSettings;
 
   @override
   State<MindMapPage> createState() => _MindMapPageState();
@@ -340,16 +343,19 @@ class _MindMapPageState extends State<MindMapPage> {
     return null;
   }
 
-  void _toggleCollapsed() {
+  void _toggleCollapsed([NodeId? id]) {
     if (widget.readOnly || _externallyModified) {
       return;
     }
-    final id = _selectedId;
-    final node = id == null ? null : _node(id);
+    final targetId = id ?? _selectedId;
+    final node = targetId == null ? null : _node(targetId);
     if (node == null || node.children.isEmpty) {
       return;
     }
-    _mutateDocument(MindMapTree.setCollapsed(_document, id!, !node.collapsed));
+    _mutateDocument(
+      MindMapTree.setCollapsed(_document, targetId!, !node.collapsed),
+      selectedId: targetId,
+    );
   }
 
   void _startEditing(NodeId id) {
@@ -392,6 +398,10 @@ class _MindMapPageState extends State<MindMapPage> {
     }
     _viewportKey.currentState?.fitToScreen(renderBox.size);
   }
+
+  void _zoomIn() => _viewportKey.currentState?.zoomIn();
+
+  void _zoomOut() => _viewportKey.currentState?.zoomOut();
 
   Future<void> _save() async {
     final file = widget.file;
@@ -463,13 +473,23 @@ class _MindMapPageState extends State<MindMapPage> {
       Theme.of(context).colorScheme,
     );
     final showContextActions =
-        canEdit &&
-        _selectedId != null &&
-        _editingId == null &&
-        _draggingId == null;
+        canEdit && _selectedId != null && _draggingId == null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.file?.displayName ?? _document.title),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.file?.displayName ?? _document.title,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (widget.file != null && !_externallyModified)
+              Text(
+                _saving ? l10n.savingInProgress : l10n.autosaveEnabled,
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+          ],
+        ),
         actions: [
           if (canEdit) ...[
             IconButton(
@@ -488,6 +508,13 @@ class _MindMapPageState extends State<MindMapPage> {
             onPressed: _fitToScreen,
             icon: const Icon(Icons.fit_screen_outlined),
           ),
+          if (widget.onOpenSettings != null)
+            IconButton(
+              key: const Key('openMapSettings'),
+              tooltip: l10n.settingsTitle,
+              onPressed: widget.onOpenSettings,
+              icon: const Icon(Icons.settings_outlined),
+            ),
           if (canSave)
             TextButton(
               key: const Key('saveMindMap'),
@@ -534,6 +561,15 @@ class _MindMapPageState extends State<MindMapPage> {
                   onNodeDragUpdate: canEdit ? _onNodeDragUpdate : null,
                   onNodeDragEnd: canEdit ? _onNodeDragEnd : null,
                   onEditingComplete: _commitEditing,
+                  onToggleCollapsed: canEdit ? _toggleCollapsed : null,
+                ),
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: MindMapZoomControls(
+                    onZoomIn: _zoomIn,
+                    onZoomOut: _zoomOut,
+                  ),
                 ),
                 if (showContextActions)
                   Positioned(
@@ -547,6 +583,7 @@ class _MindMapPageState extends State<MindMapPage> {
                       collapsed: selected?.collapsed == true,
                       canEdit: canEdit,
                       onEdit: () => _startEditing(_selectedId!),
+                      onDoneEditing: _editingId == null ? null : _commitEditing,
                       onAddChild: _addChild,
                       onAddSibling: _addSibling,
                       onDelete: _deleteSelected,

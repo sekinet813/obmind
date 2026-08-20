@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/infrastructure/android_document_storage.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 import 'package:obmind/features/mind_map/infrastructure/shared_preferences_recent_mind_maps_repository.dart';
+import 'package:obmind/features/mind_map/infrastructure/shared_preferences_vault_folder_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +31,7 @@ Future<Widget> _buildApp() async {
   const serializer = MarkdownSerializer();
   final recentRepository =
       await SharedPreferencesRecentMindMapsRepository.create();
+  final vaultRepository = await SharedPreferencesVaultFolderRepository.create();
   return ObmindApp(
     createMarkdownInFolder: CreateMarkdownInFolder(
       picker: storage,
@@ -38,5 +44,20 @@ Future<Widget> _buildApp() async {
     listRecentMindMaps: ListRecentMindMaps(recentRepository),
     recordRecentMindMap: RecordRecentMindMap(recentRepository),
     removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    renameMindMap: RenameMindMap(
+      storage: storage,
+      listRecentMindMaps: ListRecentMindMaps(recentRepository),
+      recordRecentMindMap: RecordRecentMindMap(recentRepository),
+      removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    ),
+    deleteMindMap: DeleteMindMap(
+      storage: storage,
+      removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    ),
+    loadVaultFolder: LoadVaultFolder(vault: vaultRepository, picker: storage),
+    selectVaultFolder: SelectVaultFolder(
+      picker: storage,
+      vault: vaultRepository,
+    ),
   );
 }

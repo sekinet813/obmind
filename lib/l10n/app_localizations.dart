@@ -238,11 +238,29 @@ abstract class AppLocalizations {
   /// **'編集'**
   String get editNode;
 
+  /// No description provided for @doneEditingNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'完了'**
+  String get doneEditingNode;
+
   /// No description provided for @fitToScreen.
   ///
   /// In ja, this message translates to:
   /// **'全体表示'**
   String get fitToScreen;
+
+  /// No description provided for @zoomIn.
+  ///
+  /// In ja, this message translates to:
+  /// **'拡大'**
+  String get zoomIn;
+
+  /// No description provided for @zoomOut.
+  ///
+  /// In ja, this message translates to:
+  /// **'縮小'**
+  String get zoomOut;
 
   /// No description provided for @undoEdit.
   ///
@@ -255,6 +273,138 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'やり直す'**
   String get redoEdit;
+
+  /// No description provided for @renameMindMap.
+  ///
+  /// In ja, this message translates to:
+  /// **'名前を変更'**
+  String get renameMindMap;
+
+  /// No description provided for @renameMindMapHint.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイル名'**
+  String get renameMindMapHint;
+
+  /// No description provided for @renameMindMapFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'名前を変更できませんでした'**
+  String get renameMindMapFailed;
+
+  /// No description provided for @renameMindMapInvalidName.
+  ///
+  /// In ja, this message translates to:
+  /// **'使えないファイル名です'**
+  String get renameMindMapInvalidName;
+
+  /// No description provided for @renameMindMapDuplicateName.
+  ///
+  /// In ja, this message translates to:
+  /// **'同じ名前のファイルがあります'**
+  String get renameMindMapDuplicateName;
+
+  /// No description provided for @deleteMindMap.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get deleteMindMap;
+
+  /// No description provided for @deleteMindMapConfirm.
+  ///
+  /// In ja, this message translates to:
+  /// **'{fileName}を削除しますか？この操作は取り消せません。'**
+  String deleteMindMapConfirm(String fileName);
+
+  /// No description provided for @deleteMindMapFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除できませんでした'**
+  String get deleteMindMapFailed;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'設定'**
+  String get settingsTitle;
+
+  /// No description provided for @selectVaultFolder.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダを選ぶ'**
+  String get selectVaultFolder;
+
+  /// No description provided for @openVaultMindMaps.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdown一覧を開く'**
+  String get openVaultMindMaps;
+
+  /// No description provided for @createInVault.
+  ///
+  /// In ja, this message translates to:
+  /// **'このフォルダにMarkdownを作成'**
+  String get createInVault;
+
+  /// No description provided for @changeVaultFolder.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダを変更'**
+  String get changeVaultFolder;
+
+  /// No description provided for @vaultConfigured.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダは設定済みです'**
+  String get vaultConfigured;
+
+  /// No description provided for @vaultNotConfigured.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダが未設定です'**
+  String get vaultNotConfigured;
+
+  /// No description provided for @vaultPermissionLost.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダへのアクセス権限がありません。設定から選び直してください'**
+  String get vaultPermissionLost;
+
+  /// No description provided for @vaultOnboardingTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'思考の正本フォルダを選ぶ'**
+  String get vaultOnboardingTitle;
+
+  /// No description provided for @vaultOnboardingBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
+  String get vaultOnboardingBody;
+
+  /// No description provided for @searchMindMaps.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイル名で検索'**
+  String get searchMindMaps;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In ja, this message translates to:
+  /// **'該当するMarkdownがありません'**
+  String get noSearchResults;
+
+  /// No description provided for @autosaveEnabled.
+  ///
+  /// In ja, this message translates to:
+  /// **'自動保存'**
+  String get autosaveEnabled;
+
+  /// No description provided for @savingInProgress.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存中'**
+  String get savingInProgress;
 }
 
 class _AppLocalizationsDelegate

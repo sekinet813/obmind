@@ -33,7 +33,7 @@ lib/
 │   │   ├── domain/
 │   │   ├── application/
 │   │   └── presentation/
-│   └── settings/            # 将来
+│   └── settings/            # 設定・Vault変更
 └── main.dart
 ```
 
@@ -135,12 +135,17 @@ abstract interface class MindMapStorage {
   Future<String> read(MindMapLocation location);
   Future<void> write(MindMapLocation location, String markdown);
   Future<List<MindMapFile>> list(MindMapLocation folder);
+  Future<MindMapFile> create(MindMapLocation folder, String displayName, {String markdown});
+  Future<MindMapFile> rename(MindMapLocation location, String newDisplayName);
+  Future<void> delete(MindMapLocation location);
 }
 ```
 
 `MindMapLocation`はパス文字列やContent URIをDomainへ漏らさないための値です。実体のURIやsecurity-scoped bookmarkはInfrastructureが持ちます。
 
 フォルダ選択は`MindMapFolderPicker`です。Androidの`ACTION_OPEN_DOCUMENT_TREE`は`AndroidDocumentStorage`だけが呼びます。PresentationはApplicationの`CreateMarkdownInFolder`を通します。
+
+選んだ正本フォルダ（Vault）のtokenは`VaultFolderRepository`がInfrastructureのPreferencesへ永続化します。パスやContent URIをDomainモデルのフィールドとしては持ちません。権限失効時は`hasAccess`がfalseを返し、設定画面から選び直せます。
 
 Autosaveはdebounceとatomic writeを前提にします。保存直前に外部変更を検知できるよう、読み込み時のファイル情報（更新時刻やハッシュ）をInfrastructure側で保持し、無条件上書きしません。高度なConflict ResolutionはMVP対象外です。
 

@@ -19,6 +19,9 @@ class _FakePicker implements MindMapFolderPicker {
   Future<MindMapLocation?> pickFolder() async {
     return const MindMapLocation('folder');
   }
+
+  @override
+  Future<bool> hasAccess(MindMapLocation folder) async => true;
 }
 
 class _MemoryStorage implements MindMapStorage {
@@ -33,6 +36,19 @@ class _MemoryStorage implements MindMapStorage {
     final location = MindMapLocation('${folder.token}/$displayName');
     files[location.token] = markdown;
     return MindMapFile(location: location, displayName: displayName);
+  }
+
+  @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
   }
 
   @override
@@ -63,6 +79,19 @@ class _FailingWriteStorage implements MindMapStorage {
     String displayName, {
     String markdown = '',
   }) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
     throw UnimplementedError();
   }
 

@@ -17,10 +17,13 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "pickFolder" -> pickFolder(result)
+                    "hasFolderAccess" -> hasFolderAccess(call.arguments, result)
                     "createMarkdown" -> createMarkdown(call.arguments, result)
                     "readMarkdown" -> readMarkdown(call.arguments, result)
                     "writeMarkdown" -> writeMarkdown(call.arguments, result)
                     "listMarkdown" -> listMarkdown(call.arguments, result)
+                    "renameMarkdown" -> renameMarkdown(call.arguments, result)
+                    "deleteMarkdown" -> deleteMarkdown(call.arguments, result)
                     else -> result.notImplemented()
                 }
             }
@@ -72,6 +75,18 @@ class MainActivity : FlutterActivity() {
                 addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
             }
         startActivityForResult(intent, REQUEST_OPEN_TREE)
+    }
+
+    private fun hasFolderAccess(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val folderToken = (arguments as? Map<*, *>)?.get("folderToken") as? String
+        if (folderToken.isNullOrEmpty()) {
+            result.error("invalid_args", "folderToken is required", null)
+            return
+        }
+        runStorage(result) { documentTreeAccess.hasFolderAccess(folderToken) }
     }
 
     private fun createMarkdown(
@@ -146,6 +161,51 @@ class MainActivity : FlutterActivity() {
             return
         }
         runStorage(result) { documentTreeAccess.listMarkdown(folderToken) }
+    }
+
+    private fun renameMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val args = arguments as? Map<*, *>
+        val fileToken = args?.get("fileToken") as? String
+        val displayName = args?.get("displayName") as? String
+        if (fileToken.isNullOrEmpty() || displayName.isNullOrEmpty()) {
+            result.error("invalid_args", "fileToken and displayName are required", null)
+            return
+        }
+        Thread {
+            try {
+                val renamed = documentTreeAccess.renameMarkdown(fileToken, displayName)
+                runOnUiThread {
+                    result.success(
+                        hashMapOf(
+                            "uri" to renamed.first,
+                            "displayName" to renamed.second,
+                        ),
+                    )
+                }
+            } catch (error: Exception) {
+                runOnUiThread {
+                    result.error("rename_failed", error.message, null)
+                }
+            }
+        }.start()
+    }
+
+    private fun deleteMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val fileToken = (arguments as? Map<*, *>)?.get("fileToken") as? String
+        if (fileToken.isNullOrEmpty()) {
+            result.error("invalid_args", "fileToken is required", null)
+            return
+        }
+        runStorage(result) {
+            documentTreeAccess.deleteMarkdown(fileToken)
+            null
+        }
     }
 
     private fun runStorage(

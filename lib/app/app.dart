@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:obmind/app/obmind_theme.dart';
 import 'package:obmind/features/library/presentation/home_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
+import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -20,6 +25,10 @@ class ObmindApp extends StatelessWidget {
     this.listRecentMindMaps,
     this.recordRecentMindMap,
     this.removeRecentMindMap,
+    this.renameMindMap,
+    this.deleteMindMap,
+    this.loadVaultFolder,
+    this.selectVaultFolder,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -30,6 +39,10 @@ class ObmindApp extends StatelessWidget {
   final ListRecentMindMaps? listRecentMindMaps;
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
+  final RenameMindMap? renameMindMap;
+  final DeleteMindMap? deleteMindMap;
+  final LoadVaultFolder? loadVaultFolder;
+  final SelectVaultFolder? selectVaultFolder;
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +56,8 @@ class ObmindApp extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('ja'),
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: ObmindTheme.light(),
+      darkTheme: ObmindTheme.dark(),
       themeMode: ThemeMode.system,
       home: HomePage(
         createMarkdownInFolder: createMarkdownInFolder,
@@ -64,6 +68,10 @@ class ObmindApp extends StatelessWidget {
         listRecentMindMaps: listRecentMindMaps,
         recordRecentMindMap: recordRecentMindMap,
         removeRecentMindMap: removeRecentMindMap,
+        renameMindMap: renameMindMap,
+        deleteMindMap: deleteMindMap,
+        loadVaultFolder: loadVaultFolder,
+        selectVaultFolder: selectVaultFolder,
       ),
     );
   }

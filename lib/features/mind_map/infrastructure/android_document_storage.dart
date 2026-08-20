@@ -34,18 +34,37 @@ final class AndroidDocumentStorage
   }
 
   @override
+  Future<bool> hasAccess(MindMapLocation folder) async {
+    try {
+      final granted = await _channel.invokeMethod<bool>('hasFolderAccess', {
+        'folderToken': folder.token,
+      });
+      return granted ?? false;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android folder access check failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
+  @override
   Future<MindMapFile> create(
     MindMapLocation folder,
     String displayName, {
     String markdown = '',
   }) async {
     try {
-      final result = await _channel
-          .invokeMapMethod<String, Object?>('createMarkdown', {
-            'folderToken': folder.token,
-            'displayName': displayName,
-            'markdown': markdown,
-          });
+      final result = await _channel.invokeMapMethod<String, Object?>(
+        'createMarkdown',
+        {
+          'folderToken': folder.token,
+          'displayName': displayName,
+          'markdown': markdown,
+        },
+      );
       final uri = result?['uri'] as String?;
       final name = result?['displayName'] as String? ?? displayName;
       if (uri == null || uri.isEmpty) {
@@ -61,6 +80,56 @@ final class AndroidDocumentStorage
         stackTrace: stackTrace,
       );
       throw MindMapStorageException('failed to create markdown', cause: error);
+    }
+  }
+
+  @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    try {
+      final result = await _channel.invokeMapMethod<String, Object?>(
+        'renameMarkdown',
+        {'fileToken': location.token, 'displayName': newDisplayName},
+      );
+      final uri = result?['uri'] as String?;
+      final name = result?['displayName'] as String? ?? newDisplayName;
+      if (uri == null || uri.isEmpty) {
+        throw const MindMapStorageException('failed to rename markdown');
+      }
+      return MindMapFile(location: MindMapLocation(uri), displayName: name);
+    } on MindMapStorageException {
+      rethrow;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown rename failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException(
+        error.message ?? 'failed to rename markdown',
+        cause: error,
+      );
+    }
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
+    try {
+      await _channel.invokeMethod<void>('deleteMarkdown', {
+        'fileToken': location.token,
+      });
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown delete failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException(
+        error.message ?? 'failed to delete markdown',
+        cause: error,
+      );
     }
   }
 

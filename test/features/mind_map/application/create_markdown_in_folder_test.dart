@@ -14,6 +14,9 @@ class _FakeFolderPicker implements MindMapFolderPicker {
     pickCount += 1;
     return folder;
   }
+
+  @override
+  Future<bool> hasAccess(MindMapLocation folder) async => folder == this.folder;
 }
 
 class _MemoryStorage implements MindMapStorage {
@@ -28,6 +31,19 @@ class _MemoryStorage implements MindMapStorage {
     final location = MindMapLocation('${folder.token}/$displayName');
     files[location.token] = markdown;
     return MindMapFile(location: location, displayName: displayName);
+  }
+
+  @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> delete(MindMapLocation location) async {
+    throw UnimplementedError();
   }
 
   @override
@@ -53,6 +69,17 @@ void main() {
     expect(file?.displayName, pocMarkdownFileName);
     expect(await storage.read(file!.location), pocMarkdownContents);
     expect(picker.pickCount, 1);
+  });
+
+  test('creates markdown in a provided folder without picking again', () async {
+    final picker = _FakeFolderPicker(const MindMapLocation('tree-uri'));
+    final storage = _MemoryStorage();
+    final useCase = CreateMarkdownInFolder(picker: picker, storage: storage);
+
+    final file = await useCase(folder: const MindMapLocation('tree-uri'));
+
+    expect(file?.displayName, pocMarkdownFileName);
+    expect(picker.pickCount, 0);
   });
 
   test('returns null when the user cancels the picker', () async {

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
+import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'package:obmind/l10n/app_localizations.dart';
@@ -103,5 +104,175 @@ void main() {
     await tester.tap(find.text('展開'));
     await tester.pumpAndSettle();
     expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+  });
+
+  testWidgets('toggles collapse from the node plus minus button', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(
+          root: node(
+            'root',
+            children: [
+              node('a', children: [node('a1')]),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('collapseToggle-a')));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsNothing);
+    expect(find.byKey(const Key('toggleCollapsedNode')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('collapseToggle-a')));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+  });
+
+  testWidgets('exits inline editing with the done action', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsOneWidget);
+    expect(find.byKey(const Key('doneEditingNode')), findsOneWidget);
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.panEnabled, isTrue);
+    expect(viewer.scaleEnabled, isTrue);
+
+    await tester.enterText(find.byType(TextField), '更新後');
+    await tester.tap(find.byKey(const Key('doneEditingNode')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('更新後'), findsOneWidget);
+    expect(find.text('編集'), findsOneWidget);
+  });
+
+  testWidgets('exits inline editing when tapping another node', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(MindNodeWidget, 'root'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('編集'), findsOneWidget);
+  });
+
+  testWidgets('zoom buttons change scale and stay within min and max', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    expect(find.byKey(const Key('zoomOut')), findsOneWidget);
+    expect(find.byTooltip('全体表示'), findsOneWidget);
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    final controller = viewer.transformationController!;
+    final initial = controller.value.getMaxScaleOnAxis();
+
+    await tester.tap(find.byKey(const Key('zoomIn')));
+    await tester.pump();
+    expect(controller.value.getMaxScaleOnAxis(), greaterThan(initial));
+
+    for (var i = 0; i < 12; i++) {
+      await tester.tap(find.byKey(const Key('zoomIn')));
+      await tester.pump();
+    }
+    expect(
+      controller.value.getMaxScaleOnAxis(),
+      closeTo(viewer.maxScale, 0.001),
+    );
+
+    for (var i = 0; i < 16; i++) {
+      await tester.tap(find.byKey(const Key('zoomOut')));
+      await tester.pump();
+    }
+    expect(
+      controller.value.getMaxScaleOnAxis(),
+      closeTo(viewer.minScale, 0.001),
+    );
+  });
+
+  testWidgets('zoom buttons remain available while editing a node', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.scaleEnabled, isTrue);
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    expect(find.byKey(const Key('zoomOut')), findsOneWidget);
+  });
+
+  testWidgets('shows the file name, autosave status, and settings action', (
+    tester,
+  ) async {
+    var openedSettings = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapPage(
+          document: MindMapDocument(root: node('root')),
+          file: const MindMapFile(
+            location: MindMapLocation('vault/idea.md'),
+            displayName: 'idea.md',
+          ),
+          onOpenSettings: () => openedSettings = true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('idea.md'), findsOneWidget);
+    expect(find.text('自動保存'), findsOneWidget);
+    expect(find.byKey(const Key('zoomIn')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('openMapSettings')));
+    await tester.pump();
+    expect(openedSettings, isTrue);
   });
 }

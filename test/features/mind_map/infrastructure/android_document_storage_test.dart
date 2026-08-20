@@ -34,6 +34,21 @@ void main() {
     expect(await storage.pickFolder(), isNull);
   });
 
+  test('hasAccess checks the folder through the channel', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'hasFolderAccess');
+      expect(call.arguments['folderToken'], 'content://tree/primary');
+      return true;
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+
+    expect(
+      await storage.hasAccess(const MindMapLocation('content://tree/primary')),
+      isTrue,
+    );
+  });
+
   test('create returns a file location without exposing SAF types', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       expect(call.method, 'createMarkdown');
@@ -98,5 +113,34 @@ void main() {
     expect(files, hasLength(1));
     expect(files.single.displayName, 'a.md');
     expect(files.single.location.token, 'content://doc/a.md');
+  });
+
+  test('rename maps a new display name without exposing SAF types', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'renameMarkdown');
+      expect(call.arguments['fileToken'], 'content://doc/a.md');
+      expect(call.arguments['displayName'], 'b.md');
+      return {'uri': 'content://doc/b.md', 'displayName': 'b.md'};
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    final renamed = await storage.rename(
+      const MindMapLocation('content://doc/a.md'),
+      'b.md',
+    );
+
+    expect(renamed.displayName, 'b.md');
+    expect(renamed.location.token, 'content://doc/b.md');
+  });
+
+  test('delete goes through the channel without exposing SAF types', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'deleteMarkdown');
+      expect(call.arguments['fileToken'], 'content://doc/a.md');
+      return null;
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    await storage.delete(const MindMapLocation('content://doc/a.md'));
   });
 }
