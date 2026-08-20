@@ -163,7 +163,7 @@ Radialを日常利用の既定にし、開いたときにRootが中央へ来る�
   - Task: T-068
 - [x] Root子ノードの周囲配置と子孫の一方向伸長
   - Task: T-069
-- [ ] 地図を開いたときにRootを中央表示する
+- [x] 地図を開いたときにRootを中央表示する
   - Task: T-070
 - [ ] Radial LayoutのRoot原点を安定させる
   - Task: T-071

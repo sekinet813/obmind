@@ -579,6 +579,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   key: _viewportKey,
                   document: _document,
                   canvasTheme: canvasTheme,
+                  centerPadding: const EdgeInsets.only(bottom: 80),
                   selectedId: _selectedId,
                   editingId: _editingId,
                   editingController: _editController,

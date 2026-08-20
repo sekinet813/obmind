@@ -1273,7 +1273,7 @@ Roadmap: Phase 11 Root周囲配置と一方向伸長
 
 ### T-070 地図を開いたときにRootを中央表示する
 
-- [ ] マインドマップを開いた直後、Root NodeがViewportの中央付近に見えるようにする
+- [x] マインドマップを開いた直後、Root NodeがViewportの中央付近に見えるようにする
 
 背景:
 

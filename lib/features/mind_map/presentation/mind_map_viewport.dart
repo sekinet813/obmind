@@ -38,6 +38,7 @@ class MindMapViewport extends StatefulWidget {
     this.onToggleCollapsed,
     this.animateLayout = true,
     this.transformationController,
+    this.centerPadding = EdgeInsets.zero,
   });
 
   final MindMapDocument document;
@@ -67,6 +68,12 @@ class MindMapViewport extends StatefulWidget {
   final bool animateLayout;
   final TransformationController? transformationController;
 
+  /// Insets of the visible canvas used when centering the root on open.
+  ///
+  /// AppBar is already outside this widget. Bottom context actions can be
+  /// reserved here so the root is not hidden behind them.
+  final EdgeInsets centerPadding;
+
   @override
   State<MindMapViewport> createState() => MindMapViewportState();
 }
@@ -80,6 +87,7 @@ class MindMapViewportState extends State<MindMapViewport>
   MindMapLayout? _targetLayout;
   TransformationController? _ownedController;
   final _layoutKey = GlobalKey();
+  var _didCenterOnOpen = false;
 
   TransformationController get _transformationController =>
       widget.transformationController ?? _ownedController!;
@@ -159,6 +167,47 @@ class MindMapViewportState extends State<MindMapViewport>
     return box.globalToLocal(global);
   }
 
+  /// Places the root node near the center of the visible canvas.
+  ///
+  /// Uses a readable scale of 1.0 (clamped to min / max). Does not shrink the
+  /// whole map. Pan / zoom are not persisted.
+  void centerOnRoot(Size viewportSize) {
+    final layout = _targetLayout;
+    if (layout == null || viewportSize.isEmpty) {
+      return;
+    }
+    final root = layout[widget.document.root.id];
+    if (root == null) {
+      return;
+    }
+    final padding = widget.centerPadding;
+    final availableWidth = math.max(viewportSize.width - padding.horizontal, 1);
+    final availableHeight = math.max(viewportSize.height - padding.vertical, 1);
+    final scale = 1.0.clamp(widget.minScale, widget.maxScale);
+    final rootCenterX = root.x + root.width / 2;
+    final rootCenterY = root.y + root.height / 2;
+    final viewCenterX = padding.left + availableWidth / 2;
+    final viewCenterY = padding.top + availableHeight / 2;
+    final dx = viewCenterX - rootCenterX * scale;
+    final dy = viewCenterY - rootCenterY * scale;
+    _transformationController.value = Matrix4.identity()
+      ..translateByDouble(dx, dy, 0, 1)
+      ..scaleByDouble(scale, scale, scale, 1);
+  }
+
+  void _scheduleInitialCenter(Size viewportSize) {
+    if (_didCenterOnOpen) {
+      return;
+    }
+    _didCenterOnOpen = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      centerOnRoot(viewportSize);
+    });
+  }
+
   /// Fits the full layout into the current viewport size.
   void fitToScreen(Size viewportSize) {
     final layout = _targetLayout;
@@ -230,6 +279,14 @@ class MindMapViewportState extends State<MindMapViewport>
       color: widget.canvasTheme.canvasBackground,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          if (constraints.hasBoundedWidth &&
+              constraints.hasBoundedHeight &&
+              constraints.maxWidth > 0 &&
+              constraints.maxHeight > 0) {
+            _scheduleInitialCenter(
+              Size(constraints.maxWidth, constraints.maxHeight),
+            );
+          }
           return InteractiveViewer(
             transformationController: _transformationController,
             panEnabled: widget.panEnabled && widget.draggingId == null,

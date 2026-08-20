@@ -204,4 +204,116 @@ void main() {
     expect(find.text('b'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('centers the root in the viewport when a map is opened', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final rootCenter = tester.getCenter(find.text('root'));
+    expect(rootCenter.dx, closeTo(viewport.center.dx, 24));
+    expect(rootCenter.dy, closeTo(viewport.center.dy, 24));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
+  });
+
+  testWidgets('centers the root for radial layout without shrinking', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      layout: LayoutType.radial,
+      root: node('root', children: [for (var i = 0; i < 12; i++) node('n$i')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final rootCenter = tester.getCenter(find.text('root'));
+    expect(rootCenter.dx, closeTo(viewport.center.dx, 24));
+    expect(rootCenter.dy, closeTo(viewport.center.dy, 24));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
+  });
+
+  testWidgets('keeps a user pan after the initial root centering', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      root: node('root', children: [node('child')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.drag(find.byType(InteractiveViewer), const Offset(80, 50));
+    await tester.pump();
+    final afterPan = tester.getCenter(find.text('root'));
+
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(tester.getCenter(find.text('root')), afterPan);
+  });
+
+  testWidgets('reserves bottom padding so root stays in the canvas', (
+    tester,
+  ) async {
+    final document = MindMapDocument(root: node('root'));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+            centerPadding: const EdgeInsets.only(bottom: 80),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final rootCenter = tester.getCenter(find.text('root'));
+    final expectedY = viewport.top + (viewport.height - 80) / 2;
+    expect(rootCenter.dx, closeTo(viewport.center.dx, 24));
+    expect(rootCenter.dy, closeTo(expectedY, 24));
+    expect(rootCenter.dy, lessThan(viewport.bottom - 80));
+  });
 }
