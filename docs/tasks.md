@@ -1301,7 +1301,7 @@ Roadmap: Phase 11 開いたときにRootを中央表示
 
 ### T-071 Radial LayoutのRoot原点を安定させる
 
-- [ ] 子の追加・削除・折りたたみでRootのLayout座標が飛び、画面上のRootがずれないようにする
+- [x] 子の追加・削除・折りたたみでRootのLayout座標が飛び、画面上のRootがずれないようにする
 
 背景:
 

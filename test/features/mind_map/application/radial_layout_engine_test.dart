@@ -217,19 +217,42 @@ void main() {
     expect(document.root.children, hasLength(2));
   });
 
-  test('keeps coordinates non-negative', () {
+  test('keeps a finite bounding box while allowing negative coordinates', () {
     final document = MindMapDocument(
       root: node('root', children: [node('a'), node('b'), node('c')]),
     );
 
     final layout = engine.layout(document, nodeSizes: sizesFor(document));
+    final root = layout[const NodeId('root')]!;
 
-    for (final nodeLayout in layout.nodes.values) {
-      expect(nodeLayout.x, greaterThanOrEqualTo(0));
-      expect(nodeLayout.y, greaterThanOrEqualTo(0));
-    }
+    expect(centerX(root), closeTo(0, 0.001));
+    expect(centerY(root), closeTo(0, 0.001));
+    expect(layout.width, greaterThan(0));
+    expect(layout.height, greaterThan(0));
     expect(layout.width.isFinite, isTrue);
     expect(layout.height.isFinite, isTrue);
+  });
+
+  test('keeps the root center at the origin when children are added', () {
+    final oneChild = MindMapDocument(root: node('root', children: [node('a')]));
+    final twoChildren = MindMapDocument(
+      root: node('root', children: [node('a'), node('b')]),
+    );
+
+    final first = engine.layout(oneChild, nodeSizes: sizesFor(oneChild));
+    final second = engine.layout(twoChildren, nodeSizes: sizesFor(twoChildren));
+    final firstRoot = first[const NodeId('root')]!;
+    final secondRoot = second[const NodeId('root')]!;
+
+    expect(centerX(firstRoot), closeTo(0, 0.001));
+    expect(centerY(firstRoot), closeTo(0, 0.001));
+    expect(centerX(secondRoot), closeTo(centerX(firstRoot), 0.001));
+    expect(centerY(secondRoot), closeTo(centerY(firstRoot), 0.001));
+    expect(
+      centerX(second[const NodeId('a')]!),
+      greaterThan(centerX(secondRoot)),
+    );
+    expect(centerX(second[const NodeId('b')]!), lessThan(centerX(secondRoot)));
   });
 
   test('layouts about 100 nodes stably without overlapping siblings', () {

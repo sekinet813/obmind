@@ -316,4 +316,47 @@ void main() {
     expect(rootCenter.dy, closeTo(expectedY, 24));
     expect(rootCenter.dy, lessThan(viewport.bottom - 80));
   });
+
+  testWidgets('keeps the root on screen when radial children are added', (
+    tester,
+  ) async {
+    final viewportKey = GlobalKey<MindMapViewportState>();
+
+    Widget app(MindMapDocument document) {
+      return MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            key: viewportKey,
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(
+          layout: LayoutType.radial,
+          root: node('root', children: [node('a')]),
+        ),
+      ),
+    );
+    await tester.pump();
+    final before = tester.getCenter(find.text('root'));
+
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(
+          layout: LayoutType.radial,
+          root: node('root', children: [node('a'), node('b')]),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final after = tester.getCenter(find.text('root'));
+    expect(after.dx, closeTo(before.dx, 8));
+    expect(after.dy, closeTo(before.dy, 8));
+  });
 }

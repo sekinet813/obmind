@@ -88,6 +88,7 @@ class MindMapViewportState extends State<MindMapViewport>
   TransformationController? _ownedController;
   final _layoutKey = GlobalKey();
   var _didCenterOnOpen = false;
+  Offset _boundsOrigin = Offset.zero;
 
   TransformationController get _transformationController =>
       widget.transformationController ?? _ownedController!;
@@ -102,6 +103,7 @@ class MindMapViewportState extends State<MindMapViewport>
       widget.document,
       nodeSizes: widget.nodeSizes,
     );
+    _boundsOrigin = _originOf(_targetLayout!);
     if (widget.animateLayout) {
       _layoutController = AnimationController(
         vsync: this,
@@ -113,6 +115,7 @@ class MindMapViewportState extends State<MindMapViewport>
 
   void _onLayoutTick() {
     if (mounted) {
+      _syncBoundsOrigin(_animatedLayout(_targetLayout!));
       setState(() {});
     }
   }
@@ -132,6 +135,7 @@ class MindMapViewportState extends State<MindMapViewport>
         ..forward();
     } else {
       _targetLayout = nextLayout;
+      _syncBoundsOrigin(nextLayout);
     }
   }
 
@@ -164,7 +168,7 @@ class MindMapViewportState extends State<MindMapViewport>
       return Offset.zero;
     }
     final box = context.findRenderObject()! as RenderBox;
-    return box.globalToLocal(global);
+    return box.globalToLocal(global) + _originOf(currentLayout);
   }
 
   /// Places the root node near the center of the visible canvas.
@@ -184,8 +188,9 @@ class MindMapViewportState extends State<MindMapViewport>
     final availableWidth = math.max(viewportSize.width - padding.horizontal, 1);
     final availableHeight = math.max(viewportSize.height - padding.vertical, 1);
     final scale = 1.0.clamp(widget.minScale, widget.maxScale);
-    final rootCenterX = root.x + root.width / 2;
-    final rootCenterY = root.y + root.height / 2;
+    final origin = _originOf(layout);
+    final rootCenterX = root.x + root.width / 2 - origin.dx;
+    final rootCenterY = root.y + root.height / 2 - origin.dy;
     final viewCenterX = padding.left + availableWidth / 2;
     final viewCenterY = padding.top + availableHeight / 2;
     final dx = viewCenterX - rootCenterX * scale;
@@ -261,6 +266,51 @@ class MindMapViewportState extends State<MindMapViewport>
       ..translateByDouble(-sceneFocal.dx, -sceneFocal.dy, 0, 1);
   }
 
+  void _syncBoundsOrigin(MindMapLayout layout) {
+    final origin = _originOf(layout);
+    if (_didCenterOnOpen && origin != _boundsOrigin) {
+      final scale = _transformationController.value.getMaxScaleOnAxis();
+      final matrix = Matrix4.copy(_transformationController.value);
+      matrix.storage[12] += (origin.dx - _boundsOrigin.dx) * scale;
+      matrix.storage[13] += (origin.dy - _boundsOrigin.dy) * scale;
+      _transformationController.value = matrix;
+    }
+    _boundsOrigin = origin;
+  }
+
+  static Offset _originOf(MindMapLayout layout) {
+    if (layout.nodes.isEmpty) {
+      return Offset.zero;
+    }
+    var minX = double.infinity;
+    var minY = double.infinity;
+    for (final node in layout.nodes.values) {
+      minX = math.min(minX, node.x);
+      minY = math.min(minY, node.y);
+    }
+    return Offset(minX, minY);
+  }
+
+  static MindMapLayout _shiftedLayout(MindMapLayout layout, Offset origin) {
+    if (origin == Offset.zero) {
+      return layout;
+    }
+    return MindMapLayout(
+      nodes: {
+        for (final entry in layout.nodes.entries)
+          entry.key: NodeLayout(
+            id: entry.value.id,
+            x: entry.value.x - origin.dx,
+            y: entry.value.y - origin.dy,
+            width: entry.value.width,
+            height: entry.value.height,
+          ),
+      },
+      width: layout.width,
+      height: layout.height,
+    );
+  }
+
   @override
   void dispose() {
     _layoutController?.removeListener(_onLayoutTick);
@@ -274,6 +324,8 @@ class MindMapViewportState extends State<MindMapViewport>
     final layout = _animatedLayout(
       _layoutEngine.layout(widget.document, nodeSizes: widget.nodeSizes),
     );
+    final origin = _originOf(layout);
+    final displayLayout = _shiftedLayout(layout, origin);
 
     return ColoredBox(
       color: widget.canvasTheme.canvasBackground,
@@ -297,8 +349,8 @@ class MindMapViewportState extends State<MindMapViewport>
             constrained: false,
             child: SizedBox(
               key: _layoutKey,
-              width: layout.width,
-              height: layout.height,
+              width: displayLayout.width,
+              height: displayLayout.height,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: widget.editingId == null
@@ -309,17 +361,17 @@ class MindMapViewportState extends State<MindMapViewport>
                   children: [
                     MindMapEdgeLayer(
                       document: widget.document,
-                      layout: layout,
+                      layout: displayLayout,
                       color: widget.canvasTheme.edgeColor,
                     ),
                     for (final node in widget.document.root.depthFirst)
-                      if (layout[node.id] != null)
+                      if (displayLayout[node.id] != null)
                         Positioned(
                           key: ValueKey(node.id.value),
-                          left: layout[node.id]!.x,
-                          top: layout[node.id]!.y,
-                          width: layout[node.id]!.width,
-                          height: layout[node.id]!.height,
+                          left: displayLayout[node.id]!.x,
+                          top: displayLayout[node.id]!.y,
+                          width: displayLayout[node.id]!.width,
+                          height: displayLayout[node.id]!.height,
                           child: _NodeGestureTarget(
                             tapEnabled: widget.editingId != node.id,
                             dragEnabled: widget.editingId == null,

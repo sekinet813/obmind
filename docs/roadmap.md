@@ -165,7 +165,7 @@ Radialを日常利用の既定にし、開いたときにRootが中央へ来る�
   - Task: T-069
 - [x] 地図を開いたときにRootを中央表示する
   - Task: T-070
-- [ ] Radial LayoutのRoot原点を安定させる
+- [x] Radial LayoutのRoot原点を安定させる
   - Task: T-071
 - [ ] Radial Layout向けEdge接続
   - Task: T-072

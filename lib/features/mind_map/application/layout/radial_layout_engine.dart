@@ -8,8 +8,11 @@ import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 /// Radial mind map layout.
 ///
 /// Root children are spaced evenly around the root. Deeper nodes grow outward
-/// in that child's direction, like a rotated horizontal branch. Coordinates
-/// stay in [MindMapLayout]. Domain nodes are not mutated.
+/// in that child's direction, like a rotated horizontal branch. The root
+/// center stays at the layout origin `(0, 0)` so adding children does not
+/// jump the root. Coordinates may be negative; [MindMapLayout.width] /
+/// [MindMapLayout.height] remain the positive bounding-box size. Domain nodes
+/// are not mutated.
 final class RadialLayoutEngine implements LayoutEngine {
   const RadialLayoutEngine({
     this.radialGap = 48,
@@ -56,34 +59,21 @@ final class RadialLayoutEngine implements LayoutEngine {
       }
     }
 
-    var minX = 0.0;
-    var minY = 0.0;
+    var minX = double.infinity;
+    var minY = double.infinity;
+    var maxX = double.negativeInfinity;
+    var maxY = double.negativeInfinity;
     for (final node in placed.values) {
       minX = math.min(minX, node.x);
       minY = math.min(minY, node.y);
-    }
-
-    final shifted = <NodeId, NodeLayout>{};
-    var width = 0.0;
-    var height = 0.0;
-    for (final entry in placed.entries) {
-      final node = entry.value;
-      final layout = NodeLayout(
-        id: node.id,
-        x: node.x - minX,
-        y: node.y - minY,
-        width: node.width,
-        height: node.height,
-      );
-      shifted[entry.key] = layout;
-      width = math.max(width, layout.x + layout.width);
-      height = math.max(height, layout.y + layout.height);
+      maxX = math.max(maxX, node.x + node.width);
+      maxY = math.max(maxY, node.y + node.height);
     }
 
     return MindMapLayout(
-      nodes: Map.unmodifiable(shifted),
-      width: width,
-      height: height,
+      nodes: Map.unmodifiable(placed),
+      width: math.max(maxX - minX, 0),
+      height: math.max(maxY - minY, 0),
     );
   }
 
