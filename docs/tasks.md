@@ -1354,7 +1354,7 @@ Roadmap: Phase 11 Radial Edge接続
 
 ### T-073 Rootへ戻る操作とFit to Screenの役割分担
 
-- [ ] 全体表示とは別に、Rootを画面中央へ戻す操作を用意する
+- [x] 全体表示とは別に、Rootを画面中央へ戻す操作を用意する
 
 背景:
 

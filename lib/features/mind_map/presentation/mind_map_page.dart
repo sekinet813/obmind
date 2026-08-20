@@ -415,6 +415,15 @@ class _MindMapPageState extends State<MindMapPage> {
 
   void _zoomOut() => _viewportKey.currentState?.zoomOut();
 
+  void _centerOnRoot() {
+    final renderBox =
+        _viewportKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null || !renderBox.hasSize) {
+      return;
+    }
+    _viewportKey.currentState?.centerOnRoot(renderBox.size);
+  }
+
   Future<void> _save() async {
     final file = widget.file;
     if (file == null || widget.readOnly || _externallyModified) {
@@ -608,6 +617,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   child: MindMapZoomControls(
                     onZoomIn: _zoomIn,
                     onZoomOut: _zoomOut,
+                    onCenterOnRoot: _centerOnRoot,
                   ),
                 ),
                 if (showContextActions)

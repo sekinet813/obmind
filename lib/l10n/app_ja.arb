@@ -33,6 +33,7 @@
   "editNode": "編集",
   "doneEditingNode": "完了",
   "fitToScreen": "全体表示",
+  "centerOnRoot": "中心へ戻る",
   "zoomIn": "拡大",
   "zoomOut": "縮小",
   "undoEdit": "元に戻す",

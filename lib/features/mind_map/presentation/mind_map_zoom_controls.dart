@@ -7,10 +7,12 @@ class MindMapZoomControls extends StatelessWidget {
     super.key,
     required this.onZoomIn,
     required this.onZoomOut,
+    this.onCenterOnRoot,
   });
 
   final VoidCallback onZoomIn;
   final VoidCallback onZoomOut;
+  final VoidCallback? onCenterOnRoot;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,13 @@ class MindMapZoomControls extends StatelessWidget {
             onPressed: onZoomOut,
             icon: const Icon(Icons.remove),
           ),
+          if (onCenterOnRoot != null)
+            IconButton(
+              key: const Key('centerOnRoot'),
+              tooltip: l10n.centerOnRoot,
+              onPressed: onCenterOnRoot,
+              icon: const Icon(Icons.filter_center_focus),
+            ),
         ],
       ),
     );

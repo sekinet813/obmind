@@ -250,6 +250,12 @@ abstract class AppLocalizations {
   /// **'全体表示'**
   String get fitToScreen;
 
+  /// No description provided for @centerOnRoot.
+  ///
+  /// In ja, this message translates to:
+  /// **'中心へ戻る'**
+  String get centerOnRoot;
+
   /// No description provided for @zoomIn.
   ///
   /// In ja, this message translates to:

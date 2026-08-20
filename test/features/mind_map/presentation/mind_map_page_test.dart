@@ -5,6 +5,7 @@ import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
+import 'package:obmind/features/mind_map/presentation/mind_map_viewport.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -195,6 +196,8 @@ void main() {
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
     expect(find.byKey(const Key('zoomOut')), findsOneWidget);
     expect(find.byTooltip('全体表示'), findsOneWidget);
+    expect(find.byKey(const Key('centerOnRoot')), findsOneWidget);
+    expect(find.byTooltip('中心へ戻る'), findsOneWidget);
 
     final viewer = tester.widget<InteractiveViewer>(
       find.byType(InteractiveViewer),
@@ -223,6 +226,36 @@ void main() {
       controller.value.getMaxScaleOnAxis(),
       closeTo(viewer.minScale, 0.001),
     );
+  });
+
+  testWidgets('center on root recenters without using fit-to-screen scale', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(InteractiveViewer), const Offset(120, 80));
+    await tester.pump();
+    final panned = tester.getCenter(
+      find.widgetWithText(MindNodeWidget, 'root'),
+    );
+
+    await tester.tap(find.byKey(const Key('centerOnRoot')));
+    await tester.pump();
+
+    final viewport = tester.getRect(find.byType(MindMapViewport));
+    final centered = tester.getCenter(
+      find.widgetWithText(MindNodeWidget, 'root'),
+    );
+    expect(centered, isNot(panned));
+    expect(centered.dx, closeTo(viewport.center.dx, 48));
+    final viewer = tester.widget<InteractiveViewer>(
+      find.byType(InteractiveViewer),
+    );
+    expect(viewer.transformationController!.value.getMaxScaleOnAxis(), 1);
+    expect(find.byTooltip('全体表示'), findsOneWidget);
   });
 
   testWidgets('zoom buttons remain available while editing a node', (

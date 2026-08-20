@@ -169,7 +169,7 @@ Radialを日常利用の既定にし、開いたときにRootが中央へ来る�
   - Task: T-071
 - [x] Radial Layout向けEdge接続
   - Task: T-072
-- [ ] Rootへ戻る操作とFit to Screenの役割分担
+- [x] Rootへ戻る操作とFit to Screenの役割分担
   - Task: T-073
 - [ ] ノード追加時に対象が見えるようViewportを保つ
   - Task: T-074
