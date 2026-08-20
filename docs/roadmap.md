@@ -218,7 +218,7 @@ Google Play提出のための準備。本番Application IDはT-007（人間が�
   - Task: T-088
 - [x] 本番向けの開発用導線を通常UIから外す
   - Task: T-089
-- [ ] プライバシーポリシーとData safetyの下書き
+- [x] プライバシーポリシーとData safetyの下書き
   - Task: T-090
 - [ ] Play掲載用の文言とスクリーンショット手順
   - Task: T-091

@@ -90,4 +90,29 @@ void main() {
 
     expect(find.byType(LicensePage), findsOneWidget);
   });
+
+  testWidgets('opens the in-app privacy policy from settings', (tester) async {
+    final vault = _MemoryVault();
+    final picker = _FakePicker();
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: SettingsPage(
+          loadVaultFolder: LoadVaultFolder(vault: vault, picker: picker),
+          selectVaultFolder: SelectVaultFolder(picker: picker, vault: vault),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('openPrivacyPolicy')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('プライバシーポリシー'), findsWidgets);
+    expect(find.textContaining('独自のサーバーも持たない'), findsOneWidget);
+    expect(find.textContaining('第三者へ送信しません'), findsOneWidget);
+    expect(find.textContaining('正本'), findsNothing);
+  });
 }

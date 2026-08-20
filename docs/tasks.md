@@ -1808,7 +1808,7 @@ Roadmap: Phase 14 本番UIからPoC導線を外す
 
 ### T-090 プライバシーポリシーとData safetyの下書き
 
-- [ ] PlayのData safetyとプライバシーポリシー用の説明をdocsに残す
+- [x] PlayのData safetyとプライバシーポリシー用の説明をdocsに残す
 
 背景:
 

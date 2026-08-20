@@ -471,6 +471,12 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'オープンソースライセンス'**
   String get openSourceLicenses;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'プライバシーポリシー'**
+  String get privacyPolicyTitle;
 }
 
 class _AppLocalizationsDelegate

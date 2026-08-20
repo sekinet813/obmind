@@ -201,4 +201,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get openSourceLicenses => 'オープンソースライセンス';
+
+  @override
+  String get privacyPolicyTitle => 'プライバシーポリシー';
 }

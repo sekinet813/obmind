@@ -76,5 +76,6 @@
   "designTemplateDark": "ダーク",
   "designTemplateMinimal": "ミニマル",
   "appAbout": "アプリ情報",
-  "openSourceLicenses": "オープンソースライセンス"
+  "openSourceLicenses": "オープンソースライセンス",
+  "privacyPolicyTitle": "プライバシーポリシー"
 }

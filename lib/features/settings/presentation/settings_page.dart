@@ -4,6 +4,7 @@ import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
+import 'package:obmind/features/settings/presentation/privacy_policy_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -96,6 +97,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     );
                   },
                   child: Text(l10n.openSourceLicenses),
+                ),
+                TextButton(
+                  key: const Key('openPrivacyPolicy'),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const PrivacyPolicyPage(),
+                      ),
+                    );
+                  },
+                  child: Text(l10n.privacyPolicyTitle),
                 ),
               ],
             ),
