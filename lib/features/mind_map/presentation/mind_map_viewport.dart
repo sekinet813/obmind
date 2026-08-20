@@ -35,6 +35,7 @@ class MindMapViewport extends StatefulWidget {
     this.draggingId,
     this.dropTargetId,
     this.onEditingComplete,
+    this.onToggleCollapsed,
     this.animateLayout = true,
     this.transformationController,
   });
@@ -60,6 +61,7 @@ class MindMapViewport extends StatefulWidget {
   final NodeId? draggingId;
   final NodeId? dropTargetId;
   final VoidCallback? onEditingComplete;
+  final ValueChanged<NodeId>? onToggleCollapsed;
   final bool animateLayout;
   final TransformationController? transformationController;
 
@@ -282,9 +284,18 @@ class MindMapViewportState extends State<MindMapViewport>
                                   widget.selectedId == node.id ||
                                   widget.dropTargetId == node.id,
                               editing: widget.editingId == node.id,
+                              hasChildren: node.children.isNotEmpty,
                               controller: widget.editingController,
                               focusNode: widget.editingFocusNode,
                               onEditingComplete: widget.onEditingComplete,
+                              collapseToggleKey: Key(
+                                'collapseToggle-${node.id.value}',
+                              ),
+                              onToggleCollapsed:
+                                  widget.onToggleCollapsed == null ||
+                                      widget.editingId != null
+                                  ? null
+                                  : () => widget.onToggleCollapsed!(node.id),
                             ),
                           ),
                         ),

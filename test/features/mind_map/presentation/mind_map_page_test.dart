@@ -105,6 +105,35 @@ void main() {
     expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
   });
 
+  testWidgets('toggles collapse from the node plus minus button', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(
+          root: node(
+            'root',
+            children: [
+              node('a', children: [node('a1')]),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('collapseToggle-a')));
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsNothing);
+    expect(find.byKey(const Key('toggleCollapsedNode')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('collapseToggle-a')));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
+  });
+
   testWidgets('exits inline editing with the done action', (tester) async {
     await tester.pumpWidget(
       app(

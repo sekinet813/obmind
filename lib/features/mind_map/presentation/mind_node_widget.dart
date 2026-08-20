@@ -10,9 +10,12 @@ class MindNodeWidget extends StatelessWidget {
     this.collapsed = false,
     this.selected = false,
     this.editing = false,
+    this.hasChildren = false,
     this.controller,
     this.focusNode,
     this.onEditingComplete,
+    this.onToggleCollapsed,
+    this.collapseToggleKey,
   });
 
   final String text;
@@ -20,9 +23,12 @@ class MindNodeWidget extends StatelessWidget {
   final bool collapsed;
   final bool selected;
   final bool editing;
+  final bool hasChildren;
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final VoidCallback? onEditingComplete;
+  final VoidCallback? onToggleCollapsed;
+  final Key? collapseToggleKey;
 
   @override
   Widget build(BuildContext context) {
@@ -70,32 +76,44 @@ class MindNodeWidget extends StatelessWidget {
                       onSubmitted: (_) => onEditingComplete?.call(),
                       onTapOutside: (_) => onEditingComplete?.call(),
                     )
-                  : FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (collapsed) ...[
-                            Icon(
-                              Icons.chevron_right,
-                              size: 18,
-                              color: theme.collapsedIconColor,
-                            ),
-                            const SizedBox(width: 4),
-                          ],
-                          Text(
-                            text,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: theme.onNodeText,
-                              fontSize: theme.nodeFontSize,
-                              height: theme.nodeLineHeight,
+                  : Row(
+                      children: [
+                        if (hasChildren &&
+                            onToggleCollapsed != null &&
+                            !editing) ...[
+                          SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Listener(
+                              behavior: HitTestBehavior.opaque,
+                              onPointerUp: (_) => onToggleCollapsed?.call(),
+                              child: Icon(
+                                key: collapseToggleKey,
+                                collapsed ? Icons.add : Icons.remove,
+                                size: 16,
+                                color: theme.collapsedIconColor,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 4),
                         ],
-                      ),
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              text,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: theme.onNodeText,
+                                fontSize: theme.nodeFontSize,
+                                height: theme.nodeLineHeight,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
             ),
           ),

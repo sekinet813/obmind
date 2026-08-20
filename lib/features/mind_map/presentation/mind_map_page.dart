@@ -341,16 +341,19 @@ class _MindMapPageState extends State<MindMapPage> {
     return null;
   }
 
-  void _toggleCollapsed() {
+  void _toggleCollapsed([NodeId? id]) {
     if (widget.readOnly || _externallyModified) {
       return;
     }
-    final id = _selectedId;
-    final node = id == null ? null : _node(id);
+    final targetId = id ?? _selectedId;
+    final node = targetId == null ? null : _node(targetId);
     if (node == null || node.children.isEmpty) {
       return;
     }
-    _mutateDocument(MindMapTree.setCollapsed(_document, id!, !node.collapsed));
+    _mutateDocument(
+      MindMapTree.setCollapsed(_document, targetId!, !node.collapsed),
+      selectedId: targetId,
+    );
   }
 
   void _startEditing(NodeId id) {
@@ -536,6 +539,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   onNodeDragUpdate: canEdit ? _onNodeDragUpdate : null,
                   onNodeDragEnd: canEdit ? _onNodeDragEnd : null,
                   onEditingComplete: _commitEditing,
+                  onToggleCollapsed: canEdit ? _toggleCollapsed : null,
                 ),
                 Positioned(
                   right: 12,
