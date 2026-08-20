@@ -76,5 +76,7 @@
   "designTemplatePaper": "ペーパー",
   "designTemplateInkwell": "インク",
   "designTemplateDark": "ダーク",
-  "designTemplateMinimal": "ミニマル"
+  "designTemplateMinimal": "ミニマル",
+  "appAbout": "アプリ情報",
+  "openSourceLicenses": "オープンソースライセンス"
 }

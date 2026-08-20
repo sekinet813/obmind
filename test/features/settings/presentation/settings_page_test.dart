@@ -62,4 +62,32 @@ void main() {
     expect(find.text('保存フォルダは設定済みです'), findsOneWidget);
     expect(await vault.load(), const MindMapLocation('vault'));
   });
+
+  testWidgets('shows the app name, version, and a licenses entry', (
+    tester,
+  ) async {
+    final vault = _MemoryVault();
+    final picker = _FakePicker();
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: SettingsPage(
+          loadVaultFolder: LoadVaultFolder(vault: vault, picker: picker),
+          selectVaultFolder: SelectVaultFolder(picker: picker, vault: vault),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('appInfo')), findsOneWidget);
+    expect(find.text('Obmind'), findsWidgets);
+    expect(find.text('1.0.0'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('openLicenses')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LicensePage), findsOneWidget);
+  });
 }

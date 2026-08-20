@@ -471,6 +471,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'ミニマル'**
   String get designTemplateMinimal;
+
+  /// No description provided for @appAbout.
+  ///
+  /// In ja, this message translates to:
+  /// **'アプリ情報'**
+  String get appAbout;
+
+  /// No description provided for @openSourceLicenses.
+  ///
+  /// In ja, this message translates to:
+  /// **'オープンソースライセンス'**
+  String get openSourceLicenses;
 }
 
 class _AppLocalizationsDelegate

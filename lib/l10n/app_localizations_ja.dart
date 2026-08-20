@@ -201,4 +201,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get designTemplateMinimal => 'ミニマル';
+
+  @override
+  String get appAbout => 'アプリ情報';
+
+  @override
+  String get openSourceLicenses => 'オープンソースライセンス';
 }
