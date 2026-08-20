@@ -275,4 +275,34 @@ void main() {
     await tester.pump();
     expect(openedSettings, isTrue);
   });
+
+  testWidgets('switches layout from the app bar and keeps nodes visible', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      app(MindMapDocument(root: node('root', children: [node('a')]))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('switchLayout')), findsOneWidget);
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('switchLayout')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('layoutRadial')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('switchLayout')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('layoutHorizontal')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
+    expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
+  });
 }

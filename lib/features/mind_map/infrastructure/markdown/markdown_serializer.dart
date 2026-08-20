@@ -10,11 +10,13 @@ final class MarkdownSerializer {
       ..writeln('---')
       ..writeln('obmind:')
       ..writeln('  version: ${document.formatVersion}')
-      ..writeln('  theme: ${document.theme.name}')
-      ..writeln('  layout: ${document.layout.name}');
-    final extraKeys = document.extraObmindFields.keys.toList()..sort();
+      ..writeln('  theme: ${document.theme.name}');
+    final extras = Map<String, String>.of(document.extraObmindFields);
+    final layoutValue = extras.remove('layout') ?? document.layout.name;
+    buffer.writeln('  layout: $layoutValue');
+    final extraKeys = extras.keys.toList()..sort();
     for (final key in extraKeys) {
-      buffer.writeln('  $key: ${document.extraObmindFields[key]}');
+      buffer.writeln('  $key: ${extras[key]}');
     }
     buffer
       ..writeln('---')

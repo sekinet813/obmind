@@ -343,6 +343,7 @@ final class MarkdownParser {
                 line: lineNumber,
               ),
             );
+            extra['layout'] = value;
           } else {
             layout = parsedLayout;
           }
@@ -463,6 +464,7 @@ final class MarkdownParser {
   LayoutType? _parseLayout(String value) {
     return switch (value) {
       'horizontal' => LayoutType.horizontal,
+      'radial' => LayoutType.radial,
       _ => null,
     };
   }

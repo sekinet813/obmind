@@ -405,6 +405,24 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'保存中'**
   String get savingInProgress;
+
+  /// No description provided for @layoutMenu.
+  ///
+  /// In ja, this message translates to:
+  /// **'レイアウト'**
+  String get layoutMenu;
+
+  /// No description provided for @layoutHorizontal.
+  ///
+  /// In ja, this message translates to:
+  /// **'水平'**
+  String get layoutHorizontal;
+
+  /// No description provided for @layoutRadial.
+  ///
+  /// In ja, this message translates to:
+  /// **'放射'**
+  String get layoutRadial;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
@@ -177,5 +178,30 @@ void main() {
     }
     await tester.pump();
     expect(controller.value.getMaxScaleOnAxis(), 0.5);
+  });
+
+  testWidgets('uses radial layout when the document layout is radial', (
+    tester,
+  ) async {
+    final document = MindMapDocument(
+      layout: LayoutType.radial,
+      root: node('root', children: [node('a'), node('b')]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindMapViewport(
+            document: document,
+            canvasTheme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('root'), findsOneWidget);
+    expect(find.text('a'), findsOneWidget);
+    expect(find.text('b'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

@@ -118,6 +118,47 @@ obmind:
     expect(second.theme, MindMapThemeId.dark);
   });
 
+  test('round-trips radial layout', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: radial
+---
+
+# Root <!-- obmind:id=root -->
+
+- Child <!-- obmind:id=child -->
+''';
+
+    final first = parseClean(markdown);
+    final second = parseClean(serializer.serialize(first));
+
+    expectSameMeaning(first, second);
+    expect(second.layout, LayoutType.radial);
+  });
+
+  test('round-trips unknown layout values', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: minimal
+  layout: honeycomb
+---
+
+# Root <!-- obmind:id=root -->
+''';
+
+    final first = parser.parse(markdown).document!;
+    final second = parseClean(serializer.serialize(first));
+
+    expect(first.layout, LayoutType.horizontal);
+    expect(second.layout, LayoutType.horizontal);
+    expect(second.extraObmindFields, {'layout': 'honeycomb'});
+  });
+
   test('files written by Obmind parse back without warnings', () {
     final document = parseClean('''
 # Solo <!-- obmind:id=solo -->

@@ -168,4 +168,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get savingInProgress => '保存中';
+
+  @override
+  String get layoutMenu => 'レイアウト';
+
+  @override
+  String get layoutHorizontal => '水平';
+
+  @override
+  String get layoutRadial => '放射';
 }

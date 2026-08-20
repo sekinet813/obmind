@@ -8,6 +8,7 @@ import 'package:obmind/features/mind_map/application/node_drag_resolver.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/mind_map_tree.dart';
 import 'package:obmind/features/mind_map/domain/mind_map_tree_exception.dart';
+import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
@@ -390,6 +391,17 @@ class _MindMapPageState extends State<MindMapPage> {
     _editFocusNode.unfocus();
   }
 
+  void _setLayout(LayoutType layout) {
+    if (widget.readOnly || _externallyModified || _document.layout == layout) {
+      return;
+    }
+    final extra = Map<String, String>.of(_document.extraObmindFields)
+      ..remove('layout');
+    _mutateDocument(
+      _document.copyWith(layout: layout, extraObmindFields: extra),
+    );
+  }
+
   void _fitToScreen() {
     final renderBox =
         _viewportKey.currentContext?.findRenderObject() as RenderBox?;
@@ -507,6 +519,32 @@ class _MindMapPageState extends State<MindMapPage> {
             tooltip: l10n.fitToScreen,
             onPressed: _fitToScreen,
             icon: const Icon(Icons.fit_screen_outlined),
+          ),
+          PopupMenuButton<LayoutType>(
+            key: const Key('switchLayout'),
+            tooltip: l10n.layoutMenu,
+            enabled: canEdit,
+            icon: Icon(
+              _document.layout == LayoutType.radial
+                  ? Icons.hub_outlined
+                  : Icons.account_tree_outlined,
+            ),
+            initialValue: _document.layout,
+            onSelected: _setLayout,
+            itemBuilder: (context) => [
+              CheckedPopupMenuItem(
+                key: const Key('layoutHorizontal'),
+                value: LayoutType.horizontal,
+                checked: _document.layout == LayoutType.horizontal,
+                child: Text(l10n.layoutHorizontal),
+              ),
+              CheckedPopupMenuItem(
+                key: const Key('layoutRadial'),
+                value: LayoutType.radial,
+                checked: _document.layout == LayoutType.radial,
+                child: Text(l10n.layoutRadial),
+              ),
+            ],
           ),
           if (widget.onOpenSettings != null)
             IconButton(

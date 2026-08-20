@@ -126,4 +126,24 @@ obmind:
     final markdown = serializer.serialize(document);
     expect(markdown.indexOf('- B'), lessThan(markdown.indexOf('- A')));
   });
+
+  test('writes radial layout into frontmatter', () {
+    final document = MindMapDocument(
+      layout: LayoutType.radial,
+      root: node('root', text: 'Root'),
+    );
+
+    expect(serializer.serialize(document), contains('layout: radial'));
+  });
+
+  test('writes an unknown layout value back instead of replacing it', () {
+    final document = MindMapDocument(
+      extraObmindFields: const {'layout': 'honeycomb'},
+      root: node('root', text: 'Root'),
+    );
+
+    final markdown = serializer.serialize(document);
+    expect(markdown, contains('layout: honeycomb'));
+    expect(markdown, isNot(contains('layout: horizontal')));
+  });
 }
