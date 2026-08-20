@@ -105,6 +105,102 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'Markdownを正本とする、Local-firstなマインドマップアプリです。'**
   String get homeMessage;
+
+  /// No description provided for @pickFolderAndCreateMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダを選んでMarkdownを作成'**
+  String get pickFolderAndCreateMarkdown;
+
+  /// No description provided for @folderPickCancelled.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダ選択をキャンセルしました'**
+  String get folderPickCancelled;
+
+  /// No description provided for @folderPickFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダの選択または保存に失敗しました'**
+  String get folderPickFailed;
+
+  /// No description provided for @markdownCreated.
+  ///
+  /// In ja, this message translates to:
+  /// **'{fileName}を作成しました'**
+  String markdownCreated(String fileName);
+
+  /// No description provided for @openMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdownを開いて編集'**
+  String get openMarkdown;
+
+  /// No description provided for @saveMarkdown.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存'**
+  String get saveMarkdown;
+
+  /// No description provided for @markdownSaved.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存しました'**
+  String get markdownSaved;
+
+  /// No description provided for @markdownSaveFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'保存に失敗しました。元のファイルは空にしていません'**
+  String get markdownSaveFailed;
+
+  /// No description provided for @noMarkdownFiles.
+  ///
+  /// In ja, this message translates to:
+  /// **'このフォルダにMarkdownがありません'**
+  String get noMarkdownFiles;
+
+  /// No description provided for @editMarkdownHint.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdown'**
+  String get editMarkdownHint;
+
+  /// No description provided for @addChildNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'子を追加'**
+  String get addChildNode;
+
+  /// No description provided for @addSiblingNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'兄弟を追加'**
+  String get addSiblingNode;
+
+  /// No description provided for @newNodeText.
+  ///
+  /// In ja, this message translates to:
+  /// **'新しいノード'**
+  String get newNodeText;
+
+  /// No description provided for @deleteNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'削除'**
+  String get deleteNode;
+
+  /// No description provided for @collapseNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'折りたたむ'**
+  String get collapseNode;
+
+  /// No description provided for @expandNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'展開'**
+  String get expandNode;
 }
 
 class _AppLocalizationsDelegate

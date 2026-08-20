@@ -1,5 +1,28 @@
 {
   "@@locale": "ja",
   "appTitle": "Obmind",
-  "homeMessage": "Markdownを正本とする、Local-firstなマインドマップアプリです。"
+  "homeMessage": "Markdownを正本とする、Local-firstなマインドマップアプリです。",
+  "pickFolderAndCreateMarkdown": "フォルダを選んでMarkdownを作成",
+  "folderPickCancelled": "フォルダ選択をキャンセルしました",
+  "folderPickFailed": "フォルダの選択または保存に失敗しました",
+  "markdownCreated": "{fileName}を作成しました",
+  "@markdownCreated": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "openMarkdown": "Markdownを開いて編集",
+  "saveMarkdown": "保存",
+  "markdownSaved": "保存しました",
+  "markdownSaveFailed": "保存に失敗しました。元のファイルは空にしていません",
+  "noMarkdownFiles": "このフォルダにMarkdownがありません",
+  "editMarkdownHint": "Markdown",
+  "addChildNode": "子を追加",
+  "addSiblingNode": "兄弟を追加",
+  "newNodeText": "新しいノード",
+  "deleteNode": "削除",
+  "collapseNode": "折りたたむ",
+  "expandNode": "展開"
 }

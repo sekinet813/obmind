@@ -2,4 +2,6 @@
 
 Markdownのparse / serializeと、OS固有ストレージ実装を置きます。
 
-Phase 0では未実装です。
+Format v0.1のParserは`markdown/markdown_parser.dart`です。未対応ブロックは黙って捨てず、警告を返します。保存してよいかはApplicationが判断します。Serializerは`markdown/markdown_serializer.dart`で、Frontmatter・H1・2スペースインデントのリスト・HTMLコメントをこの順で書き出します。
+
+Androidのフォルダ選択とMarkdownの読み書きPoCは`AndroidDocumentStorage`がSAFを扱います。保存は一時ファイルへ書いてから本ファイルへ写し、失敗時に元ファイルを空にしません。PresentationとDomainはこの具象をimportしません。

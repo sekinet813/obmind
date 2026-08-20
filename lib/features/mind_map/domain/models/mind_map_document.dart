@@ -12,7 +12,9 @@ final class MindMapDocument {
     required this.root,
     this.theme = MindMapThemeId.minimal,
     this.layout = LayoutType.horizontal,
-  }) {
+    this.formatVersion = 1,
+    Map<String, String> extraObmindFields = const {},
+  }) : extraObmindFields = Map<String, String>.unmodifiable(extraObmindFields) {
     _ensureUniqueNodeIds();
   }
 
@@ -22,6 +24,12 @@ final class MindMapDocument {
   final MindNode root;
   final MindMapThemeId theme;
   final LayoutType layout;
+
+  /// Markdown format version from Frontmatter `obmind.version`.
+  final int formatVersion;
+
+  /// Unknown `obmind` Frontmatter keys preserved for round-trip.
+  final Map<String, String> extraObmindFields;
 
   /// Same as [MindNode.text] on [root].
   String get title => root.text;
@@ -34,6 +42,8 @@ final class MindMapDocument {
     MindNode? root,
     MindMapThemeId? theme,
     LayoutType? layout,
+    int? formatVersion,
+    Map<String, String>? extraObmindFields,
     bool clearId = false,
   }) {
     return MindMapDocument(
@@ -41,6 +51,8 @@ final class MindMapDocument {
       root: root ?? this.root,
       theme: theme ?? this.theme,
       layout: layout ?? this.layout,
+      formatVersion: formatVersion ?? this.formatVersion,
+      extraObmindFields: extraObmindFields ?? this.extraObmindFields,
     );
   }
 

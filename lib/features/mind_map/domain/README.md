@@ -1,5 +1,5 @@
 # domain
 
-マインドマップのモデルと`MindMapStorage` interfaceを置きます。
+マインドマップのモデルと`MindMapStorage` interfaceを置きます。Add / Delete / Move / Reorderは`MindMapTree`が不変な`MindMapDocument`を返します。自分や子孫へのMoveはCycleとして拒否します。
 
-この層はFlutter Widget、ファイルシステム、Android / iOSのOS APIへ依存しません。Nodeへ画面座標を持たせません。
+この層はFlutter Widget、ファイルシステム、Android / iOSのOS APIへ依存しません。Nodeへ画面座標を持たせません。フォルダ選択は`MindMapFolderPicker`、読み書きは`MindMapStorage`です。

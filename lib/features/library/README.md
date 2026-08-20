@@ -2,4 +2,4 @@
 
 マインドマップ一覧・フォルダ選択などのエントリ画面を置くfeatureです。
 
-Phase 0ではプレースホルダのホーム画面のみです。
+ホーム画面のフォルダ選択ボタンはApplicationの`CreateMarkdownInFolder`を呼びます。SAFやDocument Pickerは呼びません。

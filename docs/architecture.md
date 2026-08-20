@@ -51,6 +51,7 @@ Presentation
      ↓
 Application
 │
+├── LayoutEngine（MindMapDocument → MindMapLayout）
 ├── CreateNode / EditNode / DeleteNode
 ├── MoveNode / ReorderNode
 ├── LoadMindMap / SaveMindMap
@@ -81,11 +82,22 @@ MindMapViewport
 └── NodeLayer（MindNodeWidget...）
 ```
 
-Layout EngineはWidgetから独立させ、`MindMapDocument`から`NodeLayout`を計算します。全Nodeを常時Widget Treeへ載せ続けないよう、将来のViewport Cullingを阻害しない構造にします。
+Layout EngineはWidgetから独立させ、`MindMapDocument`から`NodeLayout`を計算します。全Nodeを常時Widget Treeへ載せ続けないよう、将来のViewport Cullingを阻害しない構造にします。契約はApplication層の`LayoutEngine`です。
 
 ### Application
 
 ノード操作、Load/Save、Undo/Redoなどのユースケースを置きます。UIの一時的なStateとDomain Stateを混ぜません。
+
+Layout Engineもここに置きます。Presentationが測った`NodeSize`を入力し、表示用の`MindMapLayout`を返します。`NodeLayout`の`x` / `y`は計算結果であり、DomainモデルやMarkdownへ保存しません。
+
+```dart
+abstract interface class LayoutEngine {
+  MindMapLayout layout(
+    MindMapDocument document, {
+    required Map<NodeId, NodeSize> nodeSizes,
+  });
+}
+```
 
 ### Domain
 
@@ -128,6 +140,8 @@ abstract interface class MindMapStorage {
 
 `MindMapLocation`はパス文字列やContent URIをDomainへ漏らさないための値です。実体のURIやsecurity-scoped bookmarkはInfrastructureが持ちます。
 
+フォルダ選択は`MindMapFolderPicker`です。Androidの`ACTION_OPEN_DOCUMENT_TREE`は`AndroidDocumentStorage`だけが呼びます。PresentationはApplicationの`CreateMarkdownInFolder`を通します。
+
 Autosaveはdebounceとatomic writeを前提にします。保存直前に外部変更を検知できるよう、読み込み時のファイル情報（更新時刻やハッシュ）をInfrastructure側で保持し、無条件上書きしません。高度なConflict ResolutionはMVP対象外です。
 
 ## Markdown
@@ -138,7 +152,7 @@ Autosaveはdebounceとatomic writeを前提にします。保存直前に外部�
 
 ## Logging
 
-`print()`を無秩序に使いません。Logging abstractionまたはFlutter標準のログ機構を使い、Productionでは不要なDebug Logを抑制できるようにします。実装は機能追加に合わせて行います。
+`print()`を無秩序に使いません。`lib/core/logging`の`AppLogger`を使い、`dart:developer`へ書き出します。Productionでは`configureAppLogging(suppressDebug: kReleaseMode)`でDebug Logを抑制します。Domainはこのabstractionをimportしません。
 
 ## Error Handling
 
