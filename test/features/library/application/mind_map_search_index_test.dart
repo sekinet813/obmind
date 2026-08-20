@@ -75,6 +75,8 @@ void main() {
     expect(texts[readable.location.token], ['Root', 'Child idea']);
     expect(texts[broken.location.token], isEmpty);
     expect(texts[missing.location.token], isEmpty);
+    expect(index.previewsByToken[readable.location.token], isNotNull);
+    expect(index.previewsByToken[broken.location.token], isNull);
   });
 
   test('reuses cached texts until invalidated', () async {

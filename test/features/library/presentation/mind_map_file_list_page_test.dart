@@ -213,4 +213,29 @@ void main() {
     expect(find.text('notes.md'), findsOneWidget);
     expect(find.text('plan.md'), findsNothing);
   });
+
+  testWidgets('switches between list and preview tiles', (tester) async {
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryTileGrid')), findsNothing);
+    expect(find.byKey(const Key('toggleLibraryView')), findsOneWidget);
+    expect(find.byKey(const Key('openSettings')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('toggleLibraryView')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('libraryTileGrid')), findsOneWidget);
+    expect(
+      find.byKey(Key('mindMapPreview-${file.displayName}')),
+      findsOneWidget,
+    );
+    expect(find.text('idea.md'), findsOneWidget);
+    expect(find.byKey(Key('renameMenu-${file.displayName}')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('toggleLibraryView')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('libraryTileGrid')), findsNothing);
+    expect(find.text('idea.md'), findsOneWidget);
+  });
 }

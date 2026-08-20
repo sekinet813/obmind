@@ -167,6 +167,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get noSearchResults => '該当するMarkdownがありません';
 
   @override
+  String get libraryViewList => 'リスト表示';
+
+  @override
+  String get libraryViewTiles => 'タイル表示';
+
+  @override
   String get autosaveEnabled => '自動保存';
 
   @override

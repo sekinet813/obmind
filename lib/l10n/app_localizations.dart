@@ -400,6 +400,18 @@ abstract class AppLocalizations {
   /// **'該当するMarkdownがありません'**
   String get noSearchResults;
 
+  /// No description provided for @libraryViewList.
+  ///
+  /// In ja, this message translates to:
+  /// **'リスト表示'**
+  String get libraryViewList;
+
+  /// No description provided for @libraryViewTiles.
+  ///
+  /// In ja, this message translates to:
+  /// **'タイル表示'**
+  String get libraryViewTiles;
+
   /// No description provided for @autosaveEnabled.
   ///
   /// In ja, this message translates to:

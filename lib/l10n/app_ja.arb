@@ -65,6 +65,8 @@
   "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
   "searchMindMaps": "名前やノードで検索",
   "noSearchResults": "該当するMarkdownがありません",
+  "libraryViewList": "リスト表示",
+  "libraryViewTiles": "タイル表示",
   "autosaveEnabled": "自動保存",
   "savingInProgress": "保存中",
   "layoutMenu": "レイアウト",

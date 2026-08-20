@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/application/mind_map_file_query.dart';
+import 'package:obmind/features/library/application/mind_map_preview_layout.dart';
 import 'package:obmind/features/library/application/mind_map_search_index.dart';
+import 'package:obmind/features/library/domain/library_view_mode.dart';
+import 'package:obmind/features/library/domain/library_view_mode_repository.dart';
+import 'package:obmind/features/library/presentation/mind_map_preview_tile.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
@@ -28,6 +32,7 @@ class MindMapFileListPage extends StatefulWidget {
     this.asHome = false,
     this.recordRecentMindMap,
     this.removeRecentMindMap,
+    this.viewModeRepository,
   });
 
   final List<MindMapFile> files;
@@ -41,6 +46,7 @@ class MindMapFileListPage extends StatefulWidget {
   final bool asHome;
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
+  final LibraryViewModeRepository? viewModeRepository;
 
   @override
   State<MindMapFileListPage> createState() => _MindMapFileListPageState();
@@ -50,7 +56,9 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
   late List<MindMapFile> _files;
   late final MindMapSearchIndex _searchIndex;
   var _query = '';
+  var _viewMode = LibraryViewMode.list;
   Map<String, List<String>> _nodeTextsByToken = const {};
+  Map<String, MindMapPreviewLayout?> _previewsByToken = const {};
 
   @override
   void initState() {
@@ -58,6 +66,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
     _files = List<MindMapFile>.from(widget.files);
     _searchIndex = MindMapSearchIndex(loadMindMap: widget.loadMindMap);
     _indexFiles();
+    _loadViewMode();
   }
 
   @override
@@ -72,8 +81,30 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
   Future<void> _indexFiles() async {
     final indexed = await _searchIndex.ensureIndexed(_files);
     if (mounted) {
-      setState(() => _nodeTextsByToken = indexed);
+      setState(() {
+        _nodeTextsByToken = indexed;
+        _previewsByToken = _searchIndex.previewsByToken;
+      });
     }
+  }
+
+  Future<void> _loadViewMode() async {
+    final repository = widget.viewModeRepository;
+    if (repository == null) {
+      return;
+    }
+    final mode = await repository.load();
+    if (mounted) {
+      setState(() => _viewMode = mode);
+    }
+  }
+
+  Future<void> _toggleViewMode() async {
+    final next = _viewMode == LibraryViewMode.list
+        ? LibraryViewMode.tiles
+        : LibraryViewMode.list;
+    setState(() => _viewMode = next);
+    await widget.viewModeRepository?.save(next);
   }
 
   @override
@@ -85,6 +116,19 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
       appBar: AppBar(
         title: Text(widget.asHome ? l10n.appTitle : l10n.openMarkdown),
         actions: [
+          if (_files.isNotEmpty)
+            IconButton(
+              key: const Key('toggleLibraryView'),
+              tooltip: _viewMode == LibraryViewMode.list
+                  ? l10n.libraryViewTiles
+                  : l10n.libraryViewList,
+              onPressed: _toggleViewMode,
+              icon: Icon(
+                _viewMode == LibraryViewMode.list
+                    ? Icons.grid_view_outlined
+                    : Icons.view_list_outlined,
+              ),
+            ),
           if (widget.onOpenSettings != null)
             IconButton(
               key: const Key('openSettings'),
@@ -156,6 +200,23 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                           ),
                         );
                       }
+                      if (_viewMode == LibraryViewMode.tiles) {
+                        return GridView.builder(
+                          key: const Key('libraryTileGrid'),
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 8,
+                                crossAxisSpacing: 8,
+                                childAspectRatio: 1.05,
+                              ),
+                          itemCount: visible.length,
+                          itemBuilder: (context, index) {
+                            return _tileCard(context, visible[index], l10n);
+                          },
+                        );
+                      }
                       return ListView.separated(
                         padding: const EdgeInsets.all(16),
                         itemCount: visible.length,
@@ -181,35 +242,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                                     style: theme.textTheme.bodyLarge,
                                   ),
                                 ),
-                                if (widget.renameMindMap != null ||
-                                    widget.deleteMindMap != null)
-                                  PopupMenuButton<String>(
-                                    key: Key('renameMenu-${file.displayName}'),
-                                    onSelected: (value) {
-                                      if (value == 'rename') {
-                                        _renameMindMap(file);
-                                      } else if (value == 'delete') {
-                                        _deleteMindMap(file);
-                                      }
-                                    },
-                                    itemBuilder: (context) => [
-                                      if (widget.renameMindMap != null)
-                                        PopupMenuItem(
-                                          value: 'rename',
-                                          child: Text(l10n.renameMindMap),
-                                        ),
-                                      if (widget.deleteMindMap != null)
-                                        PopupMenuItem(
-                                          value: 'delete',
-                                          child: Text(l10n.deleteMindMap),
-                                        ),
-                                    ],
-                                  )
-                                else
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
+                                _fileMenu(file, l10n, theme),
                               ],
                             ),
                           );
@@ -220,6 +253,78 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _tileCard(
+    BuildContext context,
+    MindMapFile file,
+    AppLocalizations l10n,
+  ) {
+    final theme = Theme.of(context);
+    return PaperSurface(
+      onTap: () => _openMindMap(file),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: MindMapPreviewTile(
+                  key: Key('mindMapPreview-${file.displayName}'),
+                  layout: _previewsByToken[file.location.token],
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 0, 8),
+                  child: Text(
+                    file.displayName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+              _fileMenu(file, l10n, theme),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _fileMenu(MindMapFile file, AppLocalizations l10n, ThemeData theme) {
+    if (widget.renameMindMap == null && widget.deleteMindMap == null) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: Icon(
+          Icons.chevron_right,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+    return PopupMenuButton<String>(
+      key: Key('renameMenu-${file.displayName}'),
+      onSelected: (value) {
+        if (value == 'rename') {
+          _renameMindMap(file);
+        } else if (value == 'delete') {
+          _deleteMindMap(file);
+        }
+      },
+      itemBuilder: (context) => [
+        if (widget.renameMindMap != null)
+          PopupMenuItem(value: 'rename', child: Text(l10n.renameMindMap)),
+        if (widget.deleteMindMap != null)
+          PopupMenuItem(value: 'delete', child: Text(l10n.deleteMindMap)),
+      ],
     );
   }
 
