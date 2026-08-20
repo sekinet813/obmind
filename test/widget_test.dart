@@ -118,8 +118,10 @@ void main() {
     expect(find.byType(MindMapPage), findsOneWidget);
     expect(find.text('Obmind'), findsWidgets);
 
-    await tester.tap(find.text('子を追加'));
-    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('addChildNode')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('saveMindMap')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 50));

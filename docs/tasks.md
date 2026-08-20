@@ -446,10 +446,7 @@ Roadmap: Phase 4 Collapse / Expand
 
 ### T-030 Edit（キャンバスから離れない）
 
-- [ ] キャンバス上でNode textを編集する
-
-Status: BLOCKED
-Reason: インライン編集はキーボード・フォーカス・Pan/Zoomとの競合があり、Phase 6のGesture競合と一体で決める。Dialogへ逃げる実装は「キャンバスから離れない」要件を満たさない。
+- [x] キャンバス上でNode textを編集する
 
 完了条件:
 
@@ -466,10 +463,7 @@ Roadmap: Phase 4 Edit（キャンバスから離れない）
 
 ### T-031 Reorder / Move Parent（Drag）
 
-- [ ] Dragで並び替えと親変更をする
-
-Status: BLOCKED
-Reason: 1本指PanとNode Dragの競合解消はPhase 6。DomainのMove / ReorderはT-017で完了済み。
+- [x] Dragで並び替えと親変更をする
 
 完了条件:
 
@@ -488,10 +482,7 @@ Roadmap: Phase 4 Reorder / Move Parent（Drag）
 
 ### T-032 Undo / Redo
 
-- [ ] Add / Delete / Edit / Move / Reorder / Collapse をUndoできる
-
-Status: BLOCKED
-Reason: EditとDragが未完了のため対象操作が揃わない。部分的な履歴は誤解を招く。
+- [x] Add / Delete / Edit / Move / Reorder / Collapse をUndoできる
 
 完了条件:
 
@@ -605,7 +596,7 @@ Roadmap: Phase 5 Recent maps
 
 ### T-038 Animation
 
-- [ ] Layout変化をアニメーションする
+- [x] Layout変化をアニメーションする
 
 完了条件:
 
@@ -623,7 +614,7 @@ Roadmap: Phase 6 Animation
 
 ### T-039 Context Menu
 
-- [ ] 選択時のみContext Actionを出す
+- [x] 選択時のみContext Actionを出す
 
 完了条件:
 
@@ -642,7 +633,7 @@ Roadmap: Phase 6 Context Menu
 
 ### T-040 Keyboard / Focus
 
-- [ ] キーボードとフォーカスの扱いを定義する
+- [x] キーボードとフォーカスの扱いを定義する
 
 完了条件:
 
@@ -658,13 +649,15 @@ Roadmap: Phase 6 Keyboard / Focus
 
 ### T-041 Gesture競合の解消
 
-- [ ] Pan / Zoom / Tap / Drag / 編集開始が衝突しないようにする
+- [x] Pan / Zoom / Tap / Drag / 編集開始が衝突しないようにする
 
 完了条件:
 
 - 1本指Pan、Pinch Zoom、Node Tap、Long Press、Node Dragの役割が衝突しない
 - インライン編集開始がPan / Zoomを壊さない入口がある
 - 完了後、理由が解消していればT-030とT-031のBLOCKEDを外す
+
+備考: Node Drag（T-031）は未実装。Tap / Long Press / Double Tap / Pan / Zoom / 編集の役割は`docs/gesture-and-focus.md`に定義済み。
 
 依存:
 
@@ -676,7 +669,7 @@ Roadmap: Phase 6 Gesture競合の解消
 
 ### T-042 Fit to Screen
 
-- [ ] 表示中の地図全体をViewportに収める
+- [x] 表示中の地図全体をViewportに収める
 
 完了条件:
 
@@ -696,7 +689,7 @@ Themeは差し替え可能にする。課金実装はしない。
 
 ### T-043 MindMapTheme（Minimal / Soft / Dark）
 
-- [ ] Minimal / Soft / Darkをキャンバスへ反映する
+- [x] Minimal / Soft / Darkをキャンバスへ反映する
 
 完了条件:
 
@@ -712,7 +705,7 @@ Roadmap: Phase 7 MindMapTheme（Minimal / Soft / Dark）
 
 ### T-044 Dark Mode
 
-- [ ] アプリ全体のDark Modeを入れる
+- [x] アプリ全体のDark Modeを入れる
 
 完了条件:
 
@@ -728,7 +721,7 @@ Roadmap: Phase 7 Dark Mode
 
 ### T-045 Typography
 
-- [ ] Node textのタイポグラフィを整える
+- [x] Node textのタイポグラフィを整える
 
 完了条件:
 
@@ -744,7 +737,7 @@ Roadmap: Phase 7 Typography
 
 ### T-046 Node Styleの差し替え口
 
-- [ ] Nodeの見た目をWidget直書きから差し替え可能にする
+- [x] Nodeの見た目をWidget直書きから差し替え可能にする
 
 完了条件:
 
@@ -760,7 +753,7 @@ Roadmap: Phase 7 Node Styleの差し替え口
 
 ### T-047 Home / Library UI
 
-- [ ] 一覧・新規・最近の入口があるLibrary画面にする
+- [x] 一覧・新規・最近の入口があるLibrary画面にする
 
 完了条件:
 
@@ -782,6 +775,9 @@ Roadmap: Phase 7 Home / Library UI
 ### T-048 Android実機
 
 - [ ] Android実機でMVPの基本操作を確認する
+
+Status: BLOCKED
+Reason: エージェント環境からAndroid実機・エミュレータへアクセスできない。手順は`docs/mobile-testing.md`。
 
 完了条件:
 
@@ -820,7 +816,7 @@ Roadmap: Phase 8 iPhone実機
 
 ### T-050 大量Node Test
 
-- [ ] 200 Node程度で描画と操作が破綻しないことを確認する
+- [x] 200 Node程度で描画と操作が破綻しないことを確認する
 
 完了条件:
 
@@ -837,7 +833,7 @@ Roadmap: Phase 8 大量Node Test
 
 ### T-051 File corruption test
 
-- [ ] 保存失敗や不正ファイルでデータを失わないことをテストする
+- [x] 保存失敗や不正ファイルでデータを失わないことをテストする
 
 完了条件:
 
@@ -854,7 +850,7 @@ Roadmap: Phase 8 File corruption test
 
 ### T-052 Obsidian interoperability test
 
-- [ ] Obsidian Vault想定のMarkdownと相互運用できることを確認する
+- [x] Obsidian Vault想定のMarkdownと相互運用できることを確認する
 
 完了条件:
 

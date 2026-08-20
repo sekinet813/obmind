@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
+import 'test_canvas_theme.dart';
 
 void main() {
   testWidgets('shows node text', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: MindNodeWidget(text: '課題')),
+      MaterialApp(
+        home: Scaffold(
+          body: MindNodeWidget(text: '課題', theme: testCanvasTheme()),
+        ),
       ),
     );
 
@@ -18,8 +21,14 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: MindNodeWidget(text: '折りたたみ', collapsed: true)),
+      MaterialApp(
+        home: Scaffold(
+          body: MindNodeWidget(
+            text: '折りたたみ',
+            theme: testCanvasTheme(),
+            collapsed: true,
+          ),
+        ),
       ),
     );
 

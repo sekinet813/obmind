@@ -231,6 +231,30 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'展開'**
   String get expandNode;
+
+  /// No description provided for @editNode.
+  ///
+  /// In ja, this message translates to:
+  /// **'編集'**
+  String get editNode;
+
+  /// No description provided for @fitToScreen.
+  ///
+  /// In ja, this message translates to:
+  /// **'全体表示'**
+  String get fitToScreen;
+
+  /// No description provided for @undoEdit.
+  ///
+  /// In ja, this message translates to:
+  /// **'元に戻す'**
+  String get undoEdit;
+
+  /// No description provided for @redoEdit.
+  ///
+  /// In ja, this message translates to:
+  /// **'やり直す'**
+  String get redoEdit;
 }
 
 class _AppLocalizationsDelegate

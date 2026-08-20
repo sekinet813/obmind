@@ -83,22 +83,6 @@ final class MarkdownParser {
         continue;
       }
 
-      if (_tablePattern.hasMatch(line) ||
-          _blockquotePattern.hasMatch(line) ||
-          _orderedListPattern.hasMatch(line) ||
-          _otherListPattern.hasMatch(line) ||
-          _headingPattern.hasMatch(line) ||
-          _wikiLinkPattern.hasMatch(line)) {
-        issues.add(
-          MarkdownParseIssue(
-            code: MarkdownParseIssueCode.unsupportedBlock,
-            message: 'unsupported Markdown construct',
-            line: lineNumber,
-          ),
-        );
-        continue;
-      }
-
       final h1Match = _h1Pattern.firstMatch(line);
       if (h1Match != null) {
         final parsed = _parseNodeLine(
@@ -167,6 +151,22 @@ final class MarkdownParser {
         stack.removeRange(level + 1, stack.length);
         stack[level].children.add(node);
         stack.add(node);
+        continue;
+      }
+
+      if (_tablePattern.hasMatch(line) ||
+          _blockquotePattern.hasMatch(line) ||
+          _orderedListPattern.hasMatch(line) ||
+          _otherListPattern.hasMatch(line) ||
+          _headingPattern.hasMatch(line) ||
+          _wikiLinkPattern.hasMatch(line)) {
+        issues.add(
+          MarkdownParseIssue(
+            code: MarkdownParseIssueCode.unsupportedBlock,
+            message: 'unsupported Markdown construct',
+            line: lineNumber,
+          ),
+        );
         continue;
       }
 

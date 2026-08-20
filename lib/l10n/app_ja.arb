@@ -29,5 +29,9 @@
   "newNodeText": "新しいノード",
   "deleteNode": "削除",
   "collapseNode": "折りたたむ",
-  "expandNode": "展開"
+  "expandNode": "展開",
+  "editNode": "編集",
+  "fitToScreen": "全体表示",
+  "undoEdit": "元に戻す",
+  "redoEdit": "やり直す"
 }

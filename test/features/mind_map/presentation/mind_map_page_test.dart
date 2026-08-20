@@ -14,7 +14,10 @@ void main() {
 
   int nextId = 0;
 
-  Widget app(MindMapDocument document) {
+  Widget app(
+    MindMapDocument document, {
+    NodeId? initialSelectedId,
+  }) {
     nextId = 0;
     return MaterialApp(
       locale: const Locale('ja'),
@@ -22,6 +25,7 @@ void main() {
       supportedLocales: AppLocalizations.supportedLocales,
       home: MindMapPage(
         document: document,
+        initialSelectedId: initialSelectedId,
         generateId: () {
           nextId += 1;
           return NodeId('new-$nextId');
@@ -34,9 +38,10 @@ void main() {
     await tester.pumpWidget(
       app(MindMapDocument(root: node('root', children: [node('a')]))),
     );
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.text('子を追加'));
-    await tester.pump();
+    await tester.tap(find.byKey(const Key('addChildNode')));
+    await tester.pumpAndSettle();
 
     expect(find.text('新しいノード'), findsOneWidget);
     expect(find.text('a'), findsOneWidget);
@@ -46,13 +51,15 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      app(MindMapDocument(root: node('root', children: [node('a')]))),
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
     );
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.text('a'));
-    await tester.pump();
-    await tester.tap(find.text('兄弟を追加'));
-    await tester.pump();
+    await tester.tap(find.byKey(const Key('addSiblingNode')));
+    await tester.pumpAndSettle();
 
     expect(find.text('新しいノード'), findsOneWidget);
     expect(find.text('a'), findsOneWidget);
@@ -60,13 +67,15 @@ void main() {
 
   testWidgets('deletes the selected non-root node', (tester) async {
     await tester.pumpWidget(
-      app(MindMapDocument(root: node('root', children: [node('a')]))),
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
     );
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.text('a'));
-    await tester.pump();
-    await tester.tap(find.text('削除'));
-    await tester.pump();
+    await tester.tap(find.byKey(const Key('deleteNode')));
+    await tester.pumpAndSettle();
 
     expect(find.text('a'), findsNothing);
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
@@ -83,19 +92,19 @@ void main() {
             ],
           ),
         ),
+        initialSelectedId: const NodeId('a'),
       ),
     );
+    await tester.pumpAndSettle();
 
-    await tester.tap(find.text('a'));
-    await tester.pump();
-    await tester.tap(find.text('折りたたむ'));
-    await tester.pump();
+    await tester.tap(find.byKey(const Key('toggleCollapsedNode')));
+    await tester.pumpAndSettle();
 
     expect(find.widgetWithText(MindNodeWidget, 'a1'), findsNothing);
     expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
 
     await tester.tap(find.text('展開'));
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.widgetWithText(MindNodeWidget, 'a1'), findsOneWidget);
   });
 }

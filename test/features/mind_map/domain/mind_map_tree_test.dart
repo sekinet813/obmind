@@ -155,6 +155,16 @@ void main() {
     expect(original.root.children.single.collapsed, isFalse);
   });
 
+  test('updateText changes node label without altering ids', () {
+    final original = documentWith(node('root', children: [node('a')]));
+
+    final updated = MindMapTree.updateText(original, NodeId('a'), 'Renamed');
+
+    expect(updated.root.children.single.text, 'Renamed');
+    expect(updated.root.children.single.id.value, 'a');
+    expect(original.root.children.single.text, 'a');
+  });
+
   test('operations reject unknown ids and duplicate ids', () {
     final original = documentWith(node('root', children: [node('a')]));
 

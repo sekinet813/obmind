@@ -154,6 +154,19 @@ final class MindMapTree {
     );
   }
 
+  static MindMapDocument updateText(
+    MindMapDocument document,
+    NodeId id,
+    String text,
+  ) {
+    if (_find(document.root, id) == null) {
+      throw MindMapTreeException(MindMapTreeError.nodeNotFound, id.value);
+    }
+    return document.copyWith(
+      root: _update(document.root, id, (node) => node.copyWith(text: text)),
+    );
+  }
+
   static void _ensureNewIds(MindMapDocument document, MindNode incoming) {
     final existing = document.nodeIds.map((id) => id.value).toSet();
     for (final node in incoming.depthFirst) {

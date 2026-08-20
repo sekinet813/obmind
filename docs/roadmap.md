@@ -55,14 +55,11 @@ UIより先に安定させます。
 
 - [x] Node選択
 - [x] Add Child / Sibling
-- [ ] Edit（キャンバスから離れない）
-  - Status: BLOCKED Reason: インライン編集とPan/Zoomの競合はPhase 6と一体。詳細はT-030
+- [x] Edit（キャンバスから離れない）
 - [x] Delete
-- [ ] Reorder / Move Parent（Drag）
-  - Status: BLOCKED Reason: PanとDragの競合はPhase 6。Domain操作はT-017済み
+- [x] Reorder / Move Parent（Drag）
 - [x] Collapse / Expand
-- [ ] Undo / Redo
-  - Status: BLOCKED Reason: Edit / Drag未完了。詳細はT-032
+- [x] Undo / Redo
 
 ## Phase 5：Persistence
 
@@ -79,40 +76,41 @@ UIより先に安定させます。
 
 ## Phase 6：UX
 
-- [ ] Animation
+- [x] Animation
   - Task: T-038
-- [ ] Context Menu
+- [x] Context Menu
   - Task: T-039
-- [ ] Keyboard / Focus
+- [x] Keyboard / Focus
   - Task: T-040
-- [ ] Gesture競合の解消
+- [x] Gesture競合の解消
   - Task: T-041
-- [ ] Fit to Screen
+- [x] Fit to Screen
   - Task: T-042
 
 ## Phase 7：Design
 
-- [ ] MindMapTheme（Minimal / Soft / Dark）
+- [x] MindMapTheme（Minimal / Soft / Dark）
   - Task: T-043
-- [ ] Dark Mode
+- [x] Dark Mode
   - Task: T-044
-- [ ] Typography
+- [x] Typography
   - Task: T-045
-- [ ] Node Styleの差し替え口
+- [x] Node Styleの差し替え口
   - Task: T-046
-- [ ] Home / Library UI
+- [x] Home / Library UI
   - Task: T-047
 
 ## Phase 8：Beta
 
 - [ ] Android実機
   - Task: T-048
+  - Status: BLOCKED Reason: エージェント環境から実機へアクセス不可
 - [ ] iPhone実機
   - Task: T-049
   - Status: Skip Reason: T-012依存
-- [ ] 大量Node Test
+- [x] 大量Node Test
   - Task: T-050
-- [ ] File corruption test
+- [x] File corruption test
   - Task: T-051
-- [ ] Obsidian interoperability test
+- [x] Obsidian interoperability test
   - Task: T-052
