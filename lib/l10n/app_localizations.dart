@@ -391,7 +391,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchMindMaps.
   ///
   /// In ja, this message translates to:
-  /// **'ファイル名で検索'**
+  /// **'名前やノードで検索'**
   String get searchMindMaps;
 
   /// No description provided for @noSearchResults.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/application/mind_map_file_query.dart';
+import 'package:obmind/features/library/application/mind_map_search_index.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
@@ -47,12 +48,16 @@ class MindMapFileListPage extends StatefulWidget {
 
 class _MindMapFileListPageState extends State<MindMapFileListPage> {
   late List<MindMapFile> _files;
+  late final MindMapSearchIndex _searchIndex;
   var _query = '';
+  Map<String, List<String>> _nodeTextsByToken = const {};
 
   @override
   void initState() {
     super.initState();
     _files = List<MindMapFile>.from(widget.files);
+    _searchIndex = MindMapSearchIndex(loadMindMap: widget.loadMindMap);
+    _indexFiles();
   }
 
   @override
@@ -60,6 +65,14 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
     super.didUpdateWidget(oldWidget);
     if (!identical(widget.files, oldWidget.files)) {
       _files = List<MindMapFile>.from(widget.files);
+      _indexFiles();
+    }
+  }
+
+  Future<void> _indexFiles() async {
+    final indexed = await _searchIndex.ensureIndexed(_files);
+    if (mounted) {
+      setState(() => _nodeTextsByToken = indexed);
     }
   }
 
@@ -130,7 +143,11 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                 Expanded(
                   child: Builder(
                     builder: (context) {
-                      final visible = queryMindMapFiles(_files, query: _query);
+                      final visible = queryMindMapFiles(
+                        _files,
+                        query: _query,
+                        nodeTextsByToken: _nodeTextsByToken,
+                      );
                       if (visible.isEmpty) {
                         return Center(
                           child: Text(
@@ -224,6 +241,10 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
         return;
       }
       setState(() => _files = [..._files, file]);
+      await _indexFiles();
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.markdownCreated(file.displayName))),
       );
@@ -284,12 +305,15 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
       if (!mounted) {
         return;
       }
+      _searchIndex.invalidate(file.location);
+      _searchIndex.invalidate(renamed.location);
       setState(() {
         _files = [
           for (final entry in _files)
             if (entry.location.token == file.location.token) renamed else entry,
         ];
       });
+      await _indexFiles();
     } on MindMapStorageException catch (error, stackTrace) {
       appLogger.error(
         'Failed to rename mind map',
@@ -344,6 +368,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
       if (!mounted) {
         return;
       }
+      _searchIndex.invalidate(file.location);
       setState(() {
         _files = [
           for (final entry in _files)
@@ -384,6 +409,10 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
           ),
         ),
       );
+      _searchIndex.invalidate(file.location);
+      if (mounted) {
+        await _indexFiles();
+      }
     } on LoadMindMapException catch (error, stackTrace) {
       appLogger.error(
         'Failed to load mind map',

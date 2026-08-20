@@ -177,4 +177,40 @@ void main() {
     expect(find.text('zeta.md'), findsOneWidget);
     expect(find.text('alpha.md'), findsNothing);
   });
+
+  testWidgets('filters the list by node text', (tester) async {
+    final notes = await storage.create(
+      const MindMapLocation('vault'),
+      'notes.md',
+      markdown: '# 買い物リスト\n\n- 牛乳\n',
+    );
+    final plan = await storage.create(
+      const MindMapLocation('vault'),
+      'plan.md',
+      markdown: '# Release\n',
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapFileListPage(
+          files: [notes, plan],
+          loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+          saveMindMap: SaveMindMap(
+            storage: storage,
+            serializer: const MarkdownSerializer(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('名前やノードで検索'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('searchMindMaps')), '牛乳');
+    await tester.pumpAndSettle();
+
+    expect(find.text('notes.md'), findsOneWidget);
+    expect(find.text('plan.md'), findsNothing);
+  });
 }
