@@ -1934,3 +1934,30 @@ Roadmap: Phase 14 Play技術要件
 
 Roadmap: Phase 14 Play提出チェックリスト
 
+## P1: Phase 15 Localization
+
+### T-095 日本語 / 英語の多言語対応
+
+- [x] `app_en.arb`を追加し、端末言語と設定画面で日本語 / 英語を切り替えられるようにする
+
+背景:
+
+- UI文言は`app_ja.arb`に集約済みだが、`MaterialApp`が日本語固定だった
+- Play初回公開では日本語 + 英語が一般的な最初の一歩
+
+完了条件:
+
+- 対応言語は`ja` / `en`。未対応の端末言語は日本語へフォールバックする
+- 設定で「端末の言語 / 日本語 / English」を選べ、Preferencesに永続化する（Markdownへ書かない）
+- コントローラ未注入のテストでは従来どおり日本語固定のまま動く
+- 新規地図の既定名はロケールに従う（日本語: 新規マインドマップ、英語: New Mind Map）。既存ファイルはリネームしない
+- アプリ内プライバシーポリシー本文もl10n化する。`docs/privacy-policy.md`は日本語の正本として残す
+- Play掲載文の英訳は対象外（人間作業）
+- `dart format` / `flutter analyze` / `flutter test`が成功する
+
+依存:
+
+- T-088（設定画面）
+
+Roadmap: Phase 15 Localization
+

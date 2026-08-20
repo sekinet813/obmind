@@ -30,12 +30,18 @@ abstract final class MindMapFileName {
     return _stemFromNormalized(normalize(displayName));
   }
 
-  /// Picks `新規マインドマップ.md`, then `(1)` `(2)` … using the first free number.
-  static String nextNewMapName(Iterable<String> existingDisplayNames) {
+  /// Picks `[baseName].md`, then `(1)` `(2)` … using the first free number.
+  ///
+  /// [baseName] defaults to [defaultNewMapBase] (Japanese). Presentation
+  /// passes a localized name; Domain stays free of Flutter l10n.
+  static String nextNewMapName(
+    Iterable<String> existingDisplayNames, {
+    String baseName = defaultNewMapBase,
+  }) {
     final taken = <String>{
       for (final name in existingDisplayNames) _comparableStem(normalize(name)),
     };
-    const base = defaultNewMapBase;
+    final base = baseName.trim().isEmpty ? defaultNewMapBase : baseName.trim();
     if (!taken.contains(_comparableStem(base))) {
       return normalize(base);
     }

@@ -65,6 +65,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get newNodeText => '新しいノード';
 
   @override
+  String get newMindMapName => '新規マインドマップ';
+
+  @override
   String get deleteNode => '削除';
 
   @override
@@ -204,4 +207,20 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get privacyPolicyTitle => 'プライバシーポリシー';
+
+  @override
+  String get privacyPolicyBody =>
+      'Obmindは、アカウントも独自のサーバーも持たない、Local-firstなマインドマップアプリです。思考はMarkdownファイルとして、あなたが選んだフォルダに残ります。\n\n収集しないデータ\n\nObmindは、氏名、メールアドレス、位置情報、連絡先、広告IDなどの個人情報を集めません。利用状況の解析や広告のための送信もしません。アカウント登録は不要です。\n\nファイルの扱い\n\nマインドマップの内容は、端末と、あなたが選んだ保存フォルダに留まります。Obmindが選んだフォルダのMarkdownを読み書きするのは、地図を表示・編集・保存するためです。選んでいないフォルダへはアクセスしません。\n\n保存フォルダの場所、最近開いた地図、一覧の表示方法など、アプリの操作に必要な設定は端末内にだけ覚えます。これらの設定をObmindのサーバーへ送ることはありません。独自サーバー自体がありません。\n\n第三者への送信\n\n思考の内容も、端末内の設定も、第三者へ送信しません。クラウドへ自動でアップロードする機能はありません。別アプリやクラウドへ置くかどうかは、あなたが選んだフォルダの置き場所に従います。\n\nアプリを削除した場合\n\nObmindをアンインストールしても、あなたが選んだフォルダにあるMarkdownファイルは、その場所に残ります。端末内のアプリ設定だけが消えます。';
+
+  @override
+  String get languageSettingsTitle => '言語';
+
+  @override
+  String get languageSystem => '端末の言語';
+
+  @override
+  String get languageJapanese => '日本語';
+
+  @override
+  String get languageEnglish => 'English';
 }

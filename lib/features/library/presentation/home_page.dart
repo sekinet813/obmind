@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:obmind/app/app_locale_controller.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/library/domain/library_view_mode_repository.dart';
@@ -32,6 +33,7 @@ class HomePage extends StatefulWidget {
     this.loadVaultFolder,
     this.selectVaultFolder,
     this.libraryViewModeRepository,
+    this.localeController,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -46,6 +48,7 @@ class HomePage extends StatefulWidget {
   final LoadVaultFolder? loadVaultFolder;
   final SelectVaultFolder? selectVaultFolder;
   final LibraryViewModeRepository? libraryViewModeRepository;
+  final AppLocaleController? localeController;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -314,6 +317,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context) => SettingsPage(
           loadVaultFolder: loadVaultFolder,
           selectVaultFolder: selectVaultFolder,
+          localeController: widget.localeController,
         ),
       ),
     );

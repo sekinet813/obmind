@@ -33,11 +33,14 @@ lib/
 │   │   ├── domain/
 │   │   ├── application/
 │   │   └── presentation/
-│   └── settings/            # 設定・Vault変更
+│   └── settings/            # 設定・Vault変更・言語
+│       ├── domain/
+│       ├── infrastructure/
+│       └── presentation/
 └── main.dart
 ```
 
-テンプレート当時の`lib/data`は各featureの`infrastructure`へ吸収します。OS固有型はInfrastructureの外へ出しません。
+テンプレート当時の`lib/data`は各featureの`infrastructure`へ吸収します。OS固有型はInfrastructureの外へ出しません。UI文言は`lib/l10n`のARB（日本語テンプレート + 英語）です。
 
 ## レイヤー
 
@@ -146,6 +149,8 @@ abstract interface class MindMapStorage {
 フォルダ選択は`MindMapFolderPicker`です。Androidの`ACTION_OPEN_DOCUMENT_TREE`は`AndroidDocumentStorage`だけが呼びます。PresentationはApplicationの`CreateMarkdownInFolder`を通します。
 
 選んだ正本フォルダ（Vault）のtokenは`VaultFolderRepository`がInfrastructureのPreferencesへ永続化します。パスやContent URIをDomainモデルのフィールドとしては持ちません。権限失効時は`hasAccess`がfalseを返し、設定画面から選び直せます。
+
+言語設定（`AppLocalePreference`）もPreferencesへ保存します。Markdownには書きません。端末の言語に従うか、日本語 / 英語を固定できます。未対応の端末言語は日本語へフォールバックします。
 
 Autosaveはdebounceとatomic writeを前提にします。保存直前に外部変更を検知できるよう、読み込み時のファイル情報（更新時刻やハッシュ）をInfrastructure側で保持し、無条件上書きしません。高度なConflict ResolutionはMVP対象外です。
 

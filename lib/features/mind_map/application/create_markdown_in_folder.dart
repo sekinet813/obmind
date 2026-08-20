@@ -44,6 +44,7 @@ final class CreateMarkdownInFolder {
     MindMapLocation? folder,
     String? displayName,
     String? markdown,
+    String? defaultBaseName,
   }) async {
     final target = folder ?? await picker.pickFolder();
     if (target == null) {
@@ -52,6 +53,7 @@ final class CreateMarkdownInFolder {
     final name = displayName == null
         ? MindMapFileName.nextNewMapName(
             (await storage.list(target)).map((file) => file.displayName),
+            baseName: defaultBaseName ?? MindMapFileName.defaultNewMapBase,
           )
         : MindMapFileName.normalize(displayName);
     final contents =

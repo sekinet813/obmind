@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/app_info.dart';
+import 'package:obmind/app/app_locale_controller.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
+import 'package:obmind/features/settings/domain/app_locale_preference.dart';
 import 'package:obmind/features/settings/presentation/privacy_policy_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -12,12 +14,14 @@ class SettingsPage extends StatefulWidget {
     super.key,
     required this.loadVaultFolder,
     required this.selectVaultFolder,
+    this.localeController,
     this.appName = AppInfo.name,
     this.versionName = AppInfo.versionName,
   });
 
   final LoadVaultFolder loadVaultFolder;
   final SelectVaultFolder selectVaultFolder;
+  final AppLocaleController? localeController;
   final String appName;
   final String versionName;
 
@@ -51,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
       VaultFolderKind.revoked => l10n.vaultPermissionLost,
       VaultFolderKind.unset => l10n.vaultNotConfigured,
     };
+    final localeController = widget.localeController;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
@@ -71,6 +76,37 @@ class _SettingsPageState extends State<SettingsPage> {
                   : l10n.changeVaultFolder,
             ),
           ),
+          if (localeController != null) ...[
+            const SizedBox(height: 32),
+            Text(
+              l10n.languageSettingsTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            ListenableBuilder(
+              listenable: localeController,
+              builder: (context, _) {
+                return RadioGroup<AppLocalePreference>(
+                  groupValue: localeController.preference,
+                  onChanged: (value) {
+                    if (value != null) {
+                      localeController.setPreference(value);
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      for (final preference in AppLocalePreference.values)
+                        RadioListTile<AppLocalePreference>(
+                          key: Key('locale_${preference.name}'),
+                          title: Text(_languageLabel(l10n, preference)),
+                          value: preference,
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
           const SizedBox(height: 32),
           Text(l10n.appAbout, style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
@@ -115,6 +151,14 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  String _languageLabel(AppLocalizations l10n, AppLocalePreference preference) {
+    return switch (preference) {
+      AppLocalePreference.system => l10n.languageSystem,
+      AppLocalePreference.ja => l10n.languageJapanese,
+      AppLocalePreference.en => l10n.languageEnglish,
+    };
   }
 
   Future<void> _changeVault() async {
