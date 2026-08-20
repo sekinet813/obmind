@@ -61,5 +61,7 @@
   "vaultNotConfigured": "正本フォルダが未設定です",
   "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください",
   "vaultOnboardingTitle": "思考の正本フォルダを選ぶ",
-  "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。"
+  "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。",
+  "searchMindMaps": "ファイル名で検索",
+  "noSearchResults": "該当するMarkdownがありません"
 }

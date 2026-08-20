@@ -156,4 +156,10 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get vaultOnboardingBody =>
       'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
+
+  @override
+  String get searchMindMaps => 'ファイル名で検索';
+
+  @override
+  String get noSearchResults => '該当するMarkdownがありません';
 }

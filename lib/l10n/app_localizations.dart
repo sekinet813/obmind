@@ -381,6 +381,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
   String get vaultOnboardingBody;
+
+  /// No description provided for @searchMindMaps.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイル名で検索'**
+  String get searchMindMaps;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In ja, this message translates to:
+  /// **'該当するMarkdownがありません'**
+  String get noSearchResults;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
+import 'package:obmind/features/library/application/mind_map_file_query.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
@@ -46,6 +47,7 @@ class MindMapFileListPage extends StatefulWidget {
 
 class _MindMapFileListPageState extends State<MindMapFileListPage> {
   late List<MindMapFile> _files;
+  var _query = '';
 
   @override
   void initState() {
@@ -112,64 +114,94 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
                 ),
               ),
             )
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: _files.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final file = _files[index];
-                return PaperSurface(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 4,
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: TextField(
+                    key: const Key('searchMindMaps'),
+                    decoration: InputDecoration(
+                      hintText: l10n.searchMindMaps,
+                      prefixIcon: const Icon(Icons.search),
+                    ),
+                    onChanged: (value) => setState(() => _query = value),
                   ),
-                  onTap: () => _openMindMap(file),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.description_outlined,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          file.displayName,
-                          style: theme.textTheme.bodyLarge,
-                        ),
-                      ),
-                      if (widget.renameMindMap != null ||
-                          widget.deleteMindMap != null)
-                        PopupMenuButton<String>(
-                          key: Key('renameMenu-${file.displayName}'),
-                          onSelected: (value) {
-                            if (value == 'rename') {
-                              _renameMindMap(file);
-                            } else if (value == 'delete') {
-                              _deleteMindMap(file);
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            if (widget.renameMindMap != null)
-                              PopupMenuItem(
-                                value: 'rename',
-                                child: Text(l10n.renameMindMap),
-                              ),
-                            if (widget.deleteMindMap != null)
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Text(l10n.deleteMindMap),
-                              ),
-                          ],
-                        )
-                      else
-                        Icon(
-                          Icons.chevron_right,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                    ],
+                ),
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      final visible = queryMindMapFiles(_files, query: _query);
+                      if (visible.isEmpty) {
+                        return Center(
+                          child: Text(
+                            l10n.noSearchResults,
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                        );
+                      }
+                      return ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: visible.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final file = visible[index];
+                          return PaperSurface(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            onTap: () => _openMindMap(file),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.description_outlined,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    file.displayName,
+                                    style: theme.textTheme.bodyLarge,
+                                  ),
+                                ),
+                                if (widget.renameMindMap != null ||
+                                    widget.deleteMindMap != null)
+                                  PopupMenuButton<String>(
+                                    key: Key('renameMenu-${file.displayName}'),
+                                    onSelected: (value) {
+                                      if (value == 'rename') {
+                                        _renameMindMap(file);
+                                      } else if (value == 'delete') {
+                                        _deleteMindMap(file);
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                      if (widget.renameMindMap != null)
+                                        PopupMenuItem(
+                                          value: 'rename',
+                                          child: Text(l10n.renameMindMap),
+                                        ),
+                                      if (widget.deleteMindMap != null)
+                                        PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text(l10n.deleteMindMap),
+                                        ),
+                                    ],
+                                  )
+                                else
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
     );
   }

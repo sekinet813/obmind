@@ -134,4 +134,47 @@ void main() {
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('削除できませんでした'), findsOneWidget);
   });
+
+  testWidgets('sorts files by name and filters by search query', (
+    tester,
+  ) async {
+    final zeta = await storage.create(
+      const MindMapLocation('vault'),
+      'zeta.md',
+      markdown: '# Z\n',
+    );
+    final alpha = await storage.create(
+      const MindMapLocation('vault'),
+      'alpha.md',
+      markdown: '# A\n',
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ja'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: MindMapFileListPage(
+          files: [zeta, alpha],
+          loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+          saveMindMap: SaveMindMap(
+            storage: storage,
+            serializer: const MarkdownSerializer(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('alpha.md'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('alpha.md')).dy,
+      lessThan(tester.getTopLeft(find.text('zeta.md')).dy),
+    );
+
+    await tester.enterText(find.byKey(const Key('searchMindMaps')), 'zet');
+    await tester.pumpAndSettle();
+
+    expect(find.text('zeta.md'), findsOneWidget);
+    expect(find.text('alpha.md'), findsNothing);
+  });
 }
