@@ -72,3 +72,35 @@ Obmindは、思考を気持ちよく整理するためのマインドマップ�
 - フィーチャーグラフィックの作成とアップロード
 - 512×512アイコンの書き出し（マスターから）
 - 短い説明・詳細説明のConsole転記と、提出時点の文字数確認
+
+## Release署名とApp Bundle
+
+Playへの新規公開はAAB（`.aab`）が基本です。debug署名のAABは提出しない。keystoreとパスワードはリポジトリに置きません。
+
+### 人間が一度だけ行う鍵の用意
+
+エージェントはkeystoreを発行しません。提出する人が手元で作り、`android/key.properties`へパスを書きます。サンプルは`android/key.properties.example`です。
+
+```bash
+keytool -genkey -v -keystore /absolute/path/to/obmind-upload.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+`android/key.properties.example`を`android/key.properties`へコピーし、パスワードと`storeFile`を埋めます。`key.properties`、`*.jks`、`*.keystore`はgitignore済みです。
+
+本番のapplicationIdはT-007（[ADR-0003](decisions/ADR-0003-identifiers.md)）が未決のままです。AABを作る配線は開発用`com.example.obmind`でも確認できますが、Playへ出すAABは本番IDと本番（upload）鍵で署名します。
+
+### AABのビルド
+
+`android/key.properties`があるマシンで:
+
+```bash
+flutter pub get
+flutter build appbundle
+```
+
+成果物は`build/app/outputs/bundle/release/app-release.aab`です。Play Consoleの内部テストトラックなどへアップロードします。Play App Signingを使う場合、ここで使うのはupload鍵です。
+
+`key.properties`が無いと、releaseはdebug鍵のままになります。`flutter run --release`用のフォールバックであり、そのAABは提出しないでください。
+
+keystore未作成は人間作業の残課題です。CIのDebug APK手順は従来どおり[mobile-testing.md](mobile-testing.md)です。

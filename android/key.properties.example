@@ -1,0 +1,7 @@
+# Copy to android/key.properties on the machine that builds Play AAB.
+# Do not commit key.properties or the keystore. Paths may be absolute.
+
+storePassword=
+keyPassword=
+keyAlias=upload
+storeFile=/absolute/path/to/obmind-upload.jks

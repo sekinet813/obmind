@@ -18,7 +18,7 @@ AndroidはローカルPCでビルドしなくても、GitHub ActionsのDebug APK
 方針:
 
 - Debug APKは開発中の実機確認用途とする
-- Play Store配布やRelease署名はこのリポジトリの標準対象外とする
+- Play Store配布とRelease署名の手順は[play-store.md](play-store.md)を参照する。Debug APKをストア提出用として扱わない
 - CIで静的解析・テストが失敗した場合は、APK配布まで進めない
 - Artifactの保持期間は7日間とし、長期保管を目的としない
 - APKそのものをGitリポジトリへコミットしない

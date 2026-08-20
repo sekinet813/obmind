@@ -1857,7 +1857,9 @@ Roadmap: Phase 14 Play掲載準備
 
 ### T-092 Release署名とApp Bundle
 
-- [ ] debug署名のまま提出しないよう、ReleaseのsigningとAABビルド手順を整える
+- [x] debug署名のまま提出しないよう、ReleaseのsigningとAABビルド手順を整える
+
+残課題: keystoreと`android/key.properties`の実ファイルは人間が作成する。リポジトリへは入れない。
 
 背景:
 
