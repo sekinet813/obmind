@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Check latest Flutter stable
         id: check
@@ -46,7 +46,7 @@ jobs:
 
       - name: Create pull request
         if: steps.check.outputs.updated == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "chore: bump Flutter SDK pin to ${{ steps.check.outputs.latest }}"
           title: "chore: bump Flutter SDK pin to ${{ steps.check.outputs.latest }}"
