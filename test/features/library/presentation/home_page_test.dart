@@ -118,6 +118,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('正本フォルダを選ぶ'), findsOneWidget);
+    expect(find.text('思考の正本フォルダを選ぶ'), findsOneWidget);
+    expect(find.textContaining('キャンセルしてもアプリは終了しません'), findsOneWidget);
     expect(find.text('フォルダを選んでMarkdownを作成'), findsNothing);
 
     await tester.tap(find.text('正本フォルダを選ぶ'));

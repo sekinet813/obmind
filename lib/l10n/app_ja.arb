@@ -59,5 +59,7 @@
   "changeVaultFolder": "正本フォルダを変更",
   "vaultConfigured": "正本フォルダは設定済みです",
   "vaultNotConfigured": "正本フォルダが未設定です",
-  "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください"
+  "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください",
+  "vaultOnboardingTitle": "思考の正本フォルダを選ぶ",
+  "vaultOnboardingBody": "ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。"
 }

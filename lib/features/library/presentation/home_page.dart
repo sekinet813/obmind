@@ -185,11 +185,29 @@ class _HomePageState extends State<HomePage> {
         children: [
           PaperSurface(
             padding: const EdgeInsets.all(20),
-            child: Text(
-              l10n.homeMessage,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge,
-            ),
+            child:
+                widget.loadVaultFolder != null &&
+                    _vault.kind == VaultFolderKind.unset
+                ? Column(
+                    children: [
+                      Text(
+                        l10n.vaultOnboardingTitle,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.vaultOnboardingBody,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    ],
+                  )
+                : Text(
+                    l10n.homeMessage,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyLarge,
+                  ),
           ),
           if (_recentFiles.isNotEmpty) ...[
             const SizedBox(height: 24),

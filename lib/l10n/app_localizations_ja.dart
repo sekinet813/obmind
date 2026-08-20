@@ -149,4 +149,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get vaultPermissionLost => 'フォルダへのアクセス権限がありません。設定から選び直してください';
+
+  @override
+  String get vaultOnboardingTitle => '思考の正本フォルダを選ぶ';
+
+  @override
+  String get vaultOnboardingBody =>
+      'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。';
 }

@@ -1046,7 +1046,7 @@ Roadmap: Phase 9 Radial Layout
 
 ### T-061 初回オンボーディング
 
-- [ ] Vault未設定時の初回起動フローを整える
+- [x] Vault未設定時の初回起動フローを整える
 
 完了条件:
 

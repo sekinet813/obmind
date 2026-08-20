@@ -369,6 +369,18 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'フォルダへのアクセス権限がありません。設定から選び直してください'**
   String get vaultPermissionLost;
+
+  /// No description provided for @vaultOnboardingTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'思考の正本フォルダを選ぶ'**
+  String get vaultOnboardingTitle;
+
+  /// No description provided for @vaultOnboardingBody.
+  ///
+  /// In ja, this message translates to:
+  /// **'ObmindはMarkdownファイルを正本にします。ObsidianのVaultなど、普段使っているフォルダを選んでください。キャンセルしてもアプリは終了しません。'**
+  String get vaultOnboardingBody;
 }
 
 class _AppLocalizationsDelegate

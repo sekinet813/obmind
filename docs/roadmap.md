@@ -135,7 +135,7 @@ UIより先に安定させます。
   - Task: T-059
 - [ ] Radial Layout Engine
   - Task: T-060
-- [ ] 初回オンボーディング
+- [x] 初回オンボーディング
   - Task: T-061
 - [ ] Library一覧の検索とソート
   - Task: T-062
