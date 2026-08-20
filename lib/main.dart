@@ -6,6 +6,7 @@ import 'package:obmind/features/mind_map/application/create_markdown_in_folder.d
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/infrastructure/android_document_storage.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
@@ -38,5 +39,11 @@ Future<Widget> _buildApp() async {
     listRecentMindMaps: ListRecentMindMaps(recentRepository),
     recordRecentMindMap: RecordRecentMindMap(recentRepository),
     removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    renameMindMap: RenameMindMap(
+      storage: storage,
+      listRecentMindMaps: ListRecentMindMaps(recentRepository),
+      recordRecentMindMap: RecordRecentMindMap(recentRepository),
+      removeRecentMindMap: RemoveRecentMindMap(recentRepository),
+    ),
   );
 }

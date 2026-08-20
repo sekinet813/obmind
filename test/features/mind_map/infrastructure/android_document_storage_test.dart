@@ -99,4 +99,22 @@ void main() {
     expect(files.single.displayName, 'a.md');
     expect(files.single.location.token, 'content://doc/a.md');
   });
+
+  test('rename maps a new display name without exposing SAF types', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'renameMarkdown');
+      expect(call.arguments['fileToken'], 'content://doc/a.md');
+      expect(call.arguments['displayName'], 'b.md');
+      return {'uri': 'content://doc/b.md', 'displayName': 'b.md'};
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+    final renamed = await storage.rename(
+      const MindMapLocation('content://doc/a.md'),
+      'b.md',
+    );
+
+    expect(renamed.displayName, 'b.md');
+    expect(renamed.location.token, 'content://doc/b.md');
+  });
 }

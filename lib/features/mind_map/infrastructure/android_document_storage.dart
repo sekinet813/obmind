@@ -65,6 +65,38 @@ final class AndroidDocumentStorage
   }
 
   @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    try {
+      final result = await _channel
+          .invokeMapMethod<String, Object?>('renameMarkdown', {
+            'fileToken': location.token,
+            'displayName': newDisplayName,
+          });
+      final uri = result?['uri'] as String?;
+      final name = result?['displayName'] as String? ?? newDisplayName;
+      if (uri == null || uri.isEmpty) {
+        throw const MindMapStorageException('failed to rename markdown');
+      }
+      return MindMapFile(location: MindMapLocation(uri), displayName: name);
+    } on MindMapStorageException {
+      rethrow;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android markdown rename failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      throw MindMapStorageException(
+        error.message ?? 'failed to rename markdown',
+        cause: error,
+      );
+    }
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     try {
       final rows =

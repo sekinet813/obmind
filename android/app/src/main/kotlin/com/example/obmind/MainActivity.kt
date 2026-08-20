@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity() {
                     "readMarkdown" -> readMarkdown(call.arguments, result)
                     "writeMarkdown" -> writeMarkdown(call.arguments, result)
                     "listMarkdown" -> listMarkdown(call.arguments, result)
+                    "renameMarkdown" -> renameMarkdown(call.arguments, result)
                     else -> result.notImplemented()
                 }
             }
@@ -146,6 +147,36 @@ class MainActivity : FlutterActivity() {
             return
         }
         runStorage(result) { documentTreeAccess.listMarkdown(folderToken) }
+    }
+
+    private fun renameMarkdown(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val args = arguments as? Map<*, *>
+        val fileToken = args?.get("fileToken") as? String
+        val displayName = args?.get("displayName") as? String
+        if (fileToken.isNullOrEmpty() || displayName.isNullOrEmpty()) {
+            result.error("invalid_args", "fileToken and displayName are required", null)
+            return
+        }
+        Thread {
+            try {
+                val renamed = documentTreeAccess.renameMarkdown(fileToken, displayName)
+                runOnUiThread {
+                    result.success(
+                        hashMapOf(
+                            "uri" to renamed.first,
+                            "displayName" to renamed.second,
+                        ),
+                    )
+                }
+            } catch (error: Exception) {
+                runOnUiThread {
+                    result.error("rename_failed", error.message, null)
+                }
+            }
+        }.start()
     }
 
     private fun runStorage(

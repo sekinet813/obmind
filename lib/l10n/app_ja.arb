@@ -36,5 +36,10 @@
   "zoomIn": "拡大",
   "zoomOut": "縮小",
   "undoEdit": "元に戻す",
-  "redoEdit": "やり直す"
+  "redoEdit": "やり直す",
+  "renameMindMap": "名前を変更",
+  "renameMindMapHint": "ファイル名",
+  "renameMindMapFailed": "名前を変更できませんでした",
+  "renameMindMapInvalidName": "使えないファイル名です",
+  "renameMindMapDuplicateName": "同じ名前のファイルがあります"
 }

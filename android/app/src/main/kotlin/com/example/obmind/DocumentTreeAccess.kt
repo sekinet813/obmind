@@ -107,6 +107,51 @@ internal class DocumentTreeAccess(
         return results
     }
 
+    fun renameMarkdown(
+        fileUriString: String,
+        newDisplayName: String,
+    ): Pair<String, String> {
+        val fileUri = Uri.parse(fileUriString)
+        val documentId = DocumentsContract.getDocumentId(fileUri)
+        val parentId =
+            if (documentId.contains('/')) {
+                documentId.substringBeforeLast('/')
+            } else {
+                DocumentsContract.getTreeDocumentId(fileUri)
+            }
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(fileUri, parentId)
+        val cursor =
+            contentResolver.query(
+                childrenUri,
+                arrayOf(
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                ),
+                null,
+                null,
+                null,
+            ) ?: throw IOException("cannot query siblings")
+        cursor.use {
+            val nameIndex =
+                it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+            val idIndex = it.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+            while (it.moveToNext()) {
+                val name = it.getString(nameIndex) ?: continue
+                val siblingId = it.getString(idIndex)
+                if (name.equals(newDisplayName, ignoreCase = true) && siblingId != documentId) {
+                    throw IOException("name already exists")
+                }
+            }
+        }
+        val renamed =
+            DocumentsContract.renameDocument(
+                contentResolver,
+                fileUri,
+                newDisplayName,
+            ) ?: throw IOException("renameDocument returned null")
+        return renamed.toString() to newDisplayName
+    }
+
     private fun treeRootDocumentUri(treeUriString: String): Uri {
         val treeUri = Uri.parse(treeUriString)
         return DocumentsContract.buildDocumentUriUsingTree(

@@ -99,4 +99,19 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get redoEdit => 'やり直す';
+
+  @override
+  String get renameMindMap => '名前を変更';
+
+  @override
+  String get renameMindMapHint => 'ファイル名';
+
+  @override
+  String get renameMindMapFailed => '名前を変更できませんでした';
+
+  @override
+  String get renameMindMapInvalidName => '使えないファイル名です';
+
+  @override
+  String get renameMindMapDuplicateName => '同じ名前のファイルがあります';
 }

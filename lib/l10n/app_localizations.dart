@@ -273,6 +273,36 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'やり直す'**
   String get redoEdit;
+
+  /// No description provided for @renameMindMap.
+  ///
+  /// In ja, this message translates to:
+  /// **'名前を変更'**
+  String get renameMindMap;
+
+  /// No description provided for @renameMindMapHint.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイル名'**
+  String get renameMindMapHint;
+
+  /// No description provided for @renameMindMapFailed.
+  ///
+  /// In ja, this message translates to:
+  /// **'名前を変更できませんでした'**
+  String get renameMindMapFailed;
+
+  /// No description provided for @renameMindMapInvalidName.
+  ///
+  /// In ja, this message translates to:
+  /// **'使えないファイル名です'**
+  String get renameMindMapInvalidName;
+
+  /// No description provided for @renameMindMapDuplicateName.
+  ///
+  /// In ja, this message translates to:
+  /// **'同じ名前のファイルがあります'**
+  String get renameMindMapDuplicateName;
 }
 
 class _AppLocalizationsDelegate

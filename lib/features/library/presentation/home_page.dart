@@ -6,6 +6,7 @@ import 'package:obmind/features/mind_map/application/create_markdown_in_folder.d
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
     this.listRecentMindMaps,
     this.recordRecentMindMap,
     this.removeRecentMindMap,
+    this.renameMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -33,6 +35,7 @@ class HomePage extends StatefulWidget {
   final ListRecentMindMaps? listRecentMindMaps;
   final RecordRecentMindMap? recordRecentMindMap;
   final RemoveRecentMindMap? removeRecentMindMap;
+  final RenameMindMap? renameMindMap;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -219,6 +222,7 @@ class _HomePageState extends State<HomePage> {
             saveMindMap: saveMindMap,
             recordRecentMindMap: widget.recordRecentMindMap,
             removeRecentMindMap: widget.removeRecentMindMap,
+            renameMindMap: widget.renameMindMap,
           ),
         ),
       );

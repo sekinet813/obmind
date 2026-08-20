@@ -16,6 +16,31 @@ class _MemoryMindMapStorage implements MindMapStorage {
   }
 
   @override
+  Future<MindMapFile> rename(
+    MindMapLocation location,
+    String newDisplayName,
+  ) async {
+    final markdown = files[location.token];
+    if (markdown == null) {
+      throw const MindMapStorageException('missing file');
+    }
+    final slash = location.token.lastIndexOf('/');
+    final parent = slash == -1 ? '' : location.token.substring(0, slash);
+    final newToken = parent.isEmpty
+        ? newDisplayName
+        : '$parent/$newDisplayName';
+    if (newToken != location.token && files.containsKey(newToken)) {
+      throw const MindMapStorageException('name already exists');
+    }
+    files.remove(location.token);
+    files[newToken] = markdown;
+    return MindMapFile(
+      location: MindMapLocation(newToken),
+      displayName: newDisplayName,
+    );
+  }
+
+  @override
   Future<List<MindMapFile>> list(MindMapLocation folder) async {
     return files.entries
         .map(
@@ -69,6 +94,31 @@ void main() {
       expect(await storage.read(file.location), '# Root\n');
     },
   );
+
+  test('rename changes the display name without rewriting markdown', () async {
+    final storage = _MemoryMindMapStorage();
+    const folder = MindMapLocation('maps');
+    final file = await storage.create(folder, 'idea.md', markdown: '# Root\n');
+
+    final renamed = await storage.rename(file.location, 'renamed.md');
+
+    expect(renamed.displayName, 'renamed.md');
+    expect(await storage.read(renamed.location), '# Root\n');
+    expect(() => storage.read(file.location), throwsA(isA<StateError>()));
+  });
+
+  test('rename refuses to overwrite an existing file', () async {
+    final storage = _MemoryMindMapStorage();
+    const folder = MindMapLocation('maps');
+    await storage.create(folder, 'a.md', markdown: '# A\n');
+    final file = await storage.create(folder, 'b.md', markdown: '# B\n');
+
+    expect(
+      () => storage.rename(file.location, 'a.md'),
+      throwsA(isA<MindMapStorageException>()),
+    );
+    expect(await storage.read(file.location), '# B\n');
+  });
 
   test('failed write does not empty existing markdown', () async {
     final storage = _ThrowingWriteStorage();

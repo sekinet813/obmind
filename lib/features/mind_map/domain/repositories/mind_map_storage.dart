@@ -76,4 +76,10 @@ abstract interface class MindMapStorage {
     String displayName, {
     String markdown = '',
   });
+
+  /// Changes the file display name. Markdown contents must stay unchanged.
+  ///
+  /// Rejects empty names, illegal characters, and collisions. Must not
+  /// overwrite an existing file.
+  Future<MindMapFile> rename(MindMapLocation location, String newDisplayName);
 }
