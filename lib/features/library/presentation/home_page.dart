@@ -489,6 +489,7 @@ class _HomePageState extends State<HomePage> {
             file: file,
             document: loaded.document,
             saveMindMap: saveMindMap,
+            renameMindMap: widget.renameMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
           ),

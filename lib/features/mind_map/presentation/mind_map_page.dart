@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/core/utils/uuid_v4.dart';
@@ -5,7 +7,9 @@ import 'package:obmind/features/mind_map/application/autosave_mind_map.dart';
 import 'package:obmind/features/mind_map/application/layout/layout_engine.dart';
 import 'package:obmind/features/mind_map/application/mind_map_edit_history.dart';
 import 'package:obmind/features/mind_map/application/node_drag_resolver.dart';
+import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/domain/mind_map_file_name.dart';
 import 'package:obmind/features/mind_map/domain/mind_map_tree.dart';
 import 'package:obmind/features/mind_map/domain/mind_map_tree_exception.dart';
 import 'package:obmind/features/mind_map/domain/models/layout_type.dart';
@@ -27,6 +31,7 @@ class MindMapPage extends StatefulWidget {
     required this.document,
     this.file,
     this.saveMindMap,
+    this.renameMindMap,
     this.revision,
     this.readOnly = false,
     this.generateId,
@@ -36,6 +41,7 @@ class MindMapPage extends StatefulWidget {
   final MindMapDocument document;
   final MindMapFile? file;
   final SaveMindMap? saveMindMap;
+  final RenameMindMap? renameMindMap;
   final MindMapRevision? revision;
   final bool readOnly;
   final NodeId Function()? generateId;
@@ -52,6 +58,7 @@ class _MindMapPageState extends State<MindMapPage> {
 
   late MindMapDocument _document;
   late MindMapEditHistory _history;
+  MindMapFile? _file;
   NodeId? _selectedId;
   NodeId? _editingId;
   NodeId? _draggingId;
@@ -66,12 +73,13 @@ class _MindMapPageState extends State<MindMapPage> {
     super.initState();
     _document = widget.document;
     _history = MindMapEditHistory(_document);
+    _file = widget.file;
     _selectedId = widget.initialSelectedId ?? _document.root.id;
     _revision = widget.revision;
     final saveMindMap = widget.saveMindMap;
     final revision = _revision;
     if (saveMindMap != null &&
-        widget.file != null &&
+        _file != null &&
         revision != null &&
         !widget.readOnly) {
       _autosave = AutosaveMindMap(
@@ -98,7 +106,7 @@ class _MindMapPageState extends State<MindMapPage> {
     if (_externallyModified) {
       return;
     }
-    final file = widget.file;
+    final file = _file;
     final autosave = _autosave;
     if (file == null || autosave == null || widget.readOnly) {
       return;
@@ -397,13 +405,69 @@ class _MindMapPageState extends State<MindMapPage> {
     }
     final text = _editController.text.trim();
     final node = _node(id);
+    final wasRoot = id == _document.root.id;
     if (node != null && text.isNotEmpty && text != node.text) {
       _mutateDocument(MindMapTree.updateText(_document, id, text));
       setState(() => _editingId = null);
+      if (wasRoot) {
+        unawaited(_syncFileNameWithRoot(text));
+      }
     } else {
       setState(() => _editingId = null);
     }
     _editFocusNode.unfocus();
+  }
+
+  Future<void> _syncFileNameWithRoot(String title) async {
+    final file = _file;
+    final renameMindMap = widget.renameMindMap;
+    if (file == null ||
+        renameMindMap == null ||
+        widget.readOnly ||
+        _externallyModified) {
+      return;
+    }
+    try {
+      if (MindMapFileName.stem(file.displayName) == title) {
+        return;
+      }
+    } on MindMapStorageException {
+      // Fall through and let rename validate the new title.
+    }
+    try {
+      await _autosave?.flush();
+      if (!mounted) {
+        return;
+      }
+      final renamed = await renameMindMap(file, title, updateRootText: false);
+      if (!mounted) {
+        return;
+      }
+      setState(() => _file = renamed);
+    } on MindMapStorageException catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to rename mind map after root edit',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) {
+        return;
+      }
+      _scheduleAutosave();
+      final l10n = AppLocalizations.of(context)!;
+      final message = switch (error.message) {
+        'invalid file name' => l10n.renameMindMapInvalidName,
+        'name already exists' => l10n.renameMindMapDuplicateName,
+        _ => l10n.renameMindMapFailed,
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } on MindMapStorageConflictException {
+      if (mounted) {
+        _handleSaveConflict();
+      }
+    }
   }
 
   void _setLayout(LayoutType layout) {
@@ -468,7 +532,7 @@ class _MindMapPageState extends State<MindMapPage> {
   }
 
   Future<void> _save() async {
-    final file = widget.file;
+    final file = _file;
     if (file == null || widget.readOnly || _externallyModified) {
       return;
     }
@@ -530,8 +594,7 @@ class _MindMapPageState extends State<MindMapPage> {
     final canDelete = canAddSibling;
     final selected = _selectedId == null ? null : _node(_selectedId!);
     final canToggleCollapsed = selected != null && selected.children.isNotEmpty;
-    final canSave =
-        canEdit && widget.saveMindMap != null && widget.file != null;
+    final canSave = canEdit && widget.saveMindMap != null && _file != null;
     final canvasTheme = mindMapCanvasThemeFor(
       _document.theme,
       Theme.of(context).colorScheme,
@@ -545,10 +608,10 @@ class _MindMapPageState extends State<MindMapPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.file?.displayName ?? _document.title,
+              _file?.displayName ?? _document.title,
               overflow: TextOverflow.ellipsis,
             ),
-            if (widget.file != null && !_externallyModified)
+            if (_file != null && !_externallyModified)
               Text(
                 _saving ? l10n.savingInProgress : l10n.autosaveEnabled,
                 style: Theme.of(context).textTheme.labelSmall,

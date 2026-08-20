@@ -145,7 +145,7 @@ void main() {
 
     expect(find.text('新規マインドマップ.mdを作成しました'), findsOneWidget);
     expect(find.byType(MindMapPage), findsOneWidget);
-    expect(find.text('Obmind'), findsWidgets);
+    expect(find.text('新規マインドマップ'), findsWidgets);
 
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
@@ -156,7 +156,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
 
     final saved = storage.files.values.single;
-    expect(saved, contains('# Obmind'));
+    expect(saved, contains('# 新規マインドマップ'));
     expect(saved, contains('layout: radial'));
     expect(saved, contains('新しいノード'));
   });

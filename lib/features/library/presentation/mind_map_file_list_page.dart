@@ -523,6 +523,7 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
             file: file,
             document: loaded.document,
             saveMindMap: widget.saveMindMap,
+            renameMindMap: widget.renameMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
           ),

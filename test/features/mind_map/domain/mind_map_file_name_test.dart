@@ -40,4 +40,10 @@ void main() {
       '新規マインドマップ (3).md',
     );
   });
+
+  test('stem strips md and markdown extensions without changing case', () {
+    expect(MindMapFileName.stem('新規マインドマップ.md'), '新規マインドマップ');
+    expect(MindMapFileName.stem('Idea.MD'), 'Idea');
+    expect(MindMapFileName.stem('Notes.markdown'), 'Notes');
+  });
 }

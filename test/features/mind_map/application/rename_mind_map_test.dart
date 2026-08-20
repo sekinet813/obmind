@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:obmind/features/mind_map/application/load_mind_map.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
+import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/domain/repositories/recent_mind_maps_repository.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
+import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
 
 class _MemoryStorage implements MindMapStorage {
   final files = <String, String>{};
@@ -128,5 +132,88 @@ void main() {
     expect(listed, hasLength(1));
     expect(listed.single.displayName, 'new.md');
     expect(listed.single.location, renamed.location);
+  });
+
+  RenameMindMap syncingRename(_MemoryStorage storage) {
+    return RenameMindMap(
+      storage: storage,
+      loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
+      saveMindMap: SaveMindMap(
+        storage: storage,
+        serializer: const MarkdownSerializer(),
+      ),
+    );
+  }
+
+  test('updates root text when renaming from the library', () async {
+    final storage = _MemoryStorage();
+    final file = await storage.create(
+      const MindMapLocation('vault'),
+      'old.md',
+      markdown: '# Old\n\n- Child\n',
+    );
+
+    final renamed = await syncingRename(storage)(file, 'New Title');
+
+    expect(renamed.displayName, 'New Title.md');
+    expect(storage.files.containsKey(file.location.token), isFalse);
+    final markdown = await storage.read(renamed.location);
+    expect(markdown, contains('# New Title'));
+    expect(markdown, contains('Child'));
+    expect(markdown, isNot(contains('# Old')));
+  });
+
+  test('does not overwrite another file when the name is taken', () async {
+    final storage = _MemoryStorage();
+    final file = await storage.create(
+      const MindMapLocation('vault'),
+      'old.md',
+      markdown: '# Old\n',
+    );
+    await storage.create(
+      const MindMapLocation('vault'),
+      'taken.md',
+      markdown: '# Keep\n',
+    );
+
+    expect(
+      () => syncingRename(storage)(file, 'taken'),
+      throwsA(isA<MindMapStorageException>()),
+    );
+    expect(await storage.read(file.location), '# Old\n');
+    expect(
+      await storage.read(const MindMapLocation('vault/taken.md')),
+      '# Keep\n',
+    );
+  });
+
+  test('rejects illegal names without rewriting markdown', () async {
+    final storage = _MemoryStorage();
+    final file = await storage.create(
+      const MindMapLocation('vault'),
+      'old.md',
+      markdown: '# Old\n',
+    );
+
+    expect(
+      () => syncingRename(storage)(file, 'a/b'),
+      throwsA(isA<MindMapStorageException>()),
+    );
+    expect(await storage.read(file.location), '# Old\n');
+  });
+
+  test('does not rewrite unsupported markdown when renaming', () async {
+    final storage = _MemoryStorage();
+    const original = '# Root\n\nParagraph that cannot round-trip\n';
+    final file = await storage.create(
+      const MindMapLocation('vault'),
+      'old.md',
+      markdown: original,
+    );
+
+    final renamed = await syncingRename(storage)(file, 'kept');
+
+    expect(renamed.displayName, 'kept.md');
+    expect(await storage.read(renamed.location), original);
   });
 }
