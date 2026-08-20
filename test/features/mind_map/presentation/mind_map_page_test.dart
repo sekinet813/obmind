@@ -412,9 +412,11 @@ void main() {
 
     await tester.tap(find.byKey(const Key('switchDesignTemplate')));
     await tester.pumpAndSettle();
-    expect(find.text('ミニマル'), findsOneWidget);
-    expect(find.text('ソフト'), findsOneWidget);
+    expect(find.text('ペーパー'), findsOneWidget);
+    expect(find.text('インク'), findsOneWidget);
     expect(find.text('ダーク'), findsOneWidget);
+    expect(find.text('ミニマル'), findsOneWidget);
+    expect(find.text('ソフト'), findsNothing);
     expect(find.text('ソフト水平'), findsNothing);
     await tester.tap(find.byKey(const Key('designTemplate-soft')));
     await tester.pumpAndSettle();
@@ -429,6 +431,14 @@ void main() {
 
     expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
     expect(nodeRadius(tester, 'root'), 14);
+
+    await tester.tap(find.byKey(const Key('switchDesignTemplate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('designTemplate-inkwell')));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.account_tree_outlined), findsOneWidget);
+    expect(nodeRadius(tester, 'root'), 6);
     expect(find.widgetWithText(MindNodeWidget, 'root'), findsOneWidget);
     expect(find.widgetWithText(MindNodeWidget, 'a'), findsOneWidget);
     expect(find.byKey(const Key('switchLayout')), findsOneWidget);
@@ -439,7 +449,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.hub_outlined), findsOneWidget);
-    expect(nodeRadius(tester, 'root'), 14);
+    expect(nodeRadius(tester, 'root'), 6);
   });
 
   _titleSyncTests();

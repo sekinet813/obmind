@@ -448,23 +448,29 @@ abstract class AppLocalizations {
   /// **'デザイン'**
   String get designTemplateMenu;
 
-  /// No description provided for @designTemplateMinimal.
+  /// No description provided for @designTemplatePaper.
   ///
   /// In ja, this message translates to:
-  /// **'ミニマル'**
-  String get designTemplateMinimal;
+  /// **'ペーパー'**
+  String get designTemplatePaper;
 
-  /// No description provided for @designTemplateSoft.
+  /// No description provided for @designTemplateInkwell.
   ///
   /// In ja, this message translates to:
-  /// **'ソフト'**
-  String get designTemplateSoft;
+  /// **'インク'**
+  String get designTemplateInkwell;
 
   /// No description provided for @designTemplateDark.
   ///
   /// In ja, this message translates to:
   /// **'ダーク'**
   String get designTemplateDark;
+
+  /// No description provided for @designTemplateMinimal.
+  ///
+  /// In ja, this message translates to:
+  /// **'ミニマル'**
+  String get designTemplateMinimal;
 }
 
 class _AppLocalizationsDelegate

@@ -105,6 +105,46 @@ obmind:
     expect(result.hasUnsupportedContent, isFalse);
   });
 
+  test('parses the inkwell theme identifier', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: inkwell
+  layout: radial
+---
+
+# Root <!-- obmind:id=root -->
+''';
+
+    final result = parser.parse(markdown);
+
+    expect(result.document!.theme, MindMapThemeId.inkwell);
+    expect(result.issues, isEmpty);
+  });
+
+  test('preserves unknown theme values without using them for display', () {
+    const markdown = '''
+---
+obmind:
+  version: 1
+  theme: neon
+  layout: horizontal
+---
+
+# Root <!-- obmind:id=root -->
+''';
+
+    final result = parser.parse(markdown);
+
+    expect(result.document!.theme, MindMapThemeId.minimal);
+    expect(result.document!.extraObmindFields, {'theme': 'neon'});
+    expect(
+      result.issues.map((issue) => issue.code),
+      contains(MarkdownParseIssueCode.unknownTheme),
+    );
+  });
+
   test('assigns ids to simple markdown without comments', () {
     const markdown = '''
 # Root

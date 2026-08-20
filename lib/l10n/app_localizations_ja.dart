@@ -191,11 +191,14 @@ class AppLocalizationsJa extends AppLocalizations {
   String get designTemplateMenu => 'デザイン';
 
   @override
-  String get designTemplateMinimal => 'ミニマル';
+  String get designTemplatePaper => 'ペーパー';
 
   @override
-  String get designTemplateSoft => 'ソフト';
+  String get designTemplateInkwell => 'インク';
 
   @override
   String get designTemplateDark => 'ダーク';
+
+  @override
+  String get designTemplateMinimal => 'ミニマル';
 }

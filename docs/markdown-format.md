@@ -59,10 +59,10 @@ obmind:
 | キー | 意味 | MVPの値 |
 | --- | --- | --- |
 | `version` | Format版 | `1` |
-| `theme` | テーマ識別子 | `minimal` / `soft` / `dark` |
+| `theme` | テーマ識別子 | `minimal` / `soft` / `dark` / `inkwell` |
 | `layout` | レイアウト | `horizontal` / `radial`（未指定時は `horizontal`） |
 
-未知のキーは読み込み時に保持し、可能なら書き戻します。`layout`の未知の値も警告したうえで保持し、表示は`horizontal`として扱います。将来の`nodeStyles`などはv0.1では書きません。
+未知のキーは読み込み時に保持し、可能なら書き戻します。`layout`と`theme`の未知の値も警告したうえで保持し、表示はそれぞれ`horizontal` / `minimal`として扱います。将来の`nodeStyles`などはv0.1では書きません。
 
 `version`のメジャーが未知のファイルは、黙って破壊せず警告または読み取り失敗として扱います。
 

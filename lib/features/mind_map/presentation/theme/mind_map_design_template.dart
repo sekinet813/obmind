@@ -11,14 +11,14 @@ final class MindMapDesignTemplate {
   final String id;
   final MindMapThemeId theme;
 
-  static const minimal = MindMapDesignTemplate(
-    id: 'minimal',
-    theme: MindMapThemeId.minimal,
-  );
-
-  static const soft = MindMapDesignTemplate(
+  static const paper = MindMapDesignTemplate(
     id: 'soft',
     theme: MindMapThemeId.soft,
+  );
+
+  static const inkwell = MindMapDesignTemplate(
+    id: 'inkwell',
+    theme: MindMapThemeId.inkwell,
   );
 
   static const dark = MindMapDesignTemplate(
@@ -26,7 +26,12 @@ final class MindMapDesignTemplate {
     theme: MindMapThemeId.dark,
   );
 
-  static const values = [minimal, soft, dark];
+  static const minimal = MindMapDesignTemplate(
+    id: 'minimal',
+    theme: MindMapThemeId.minimal,
+  );
+
+  static const values = [paper, inkwell, dark, minimal];
 
   static MindMapDesignTemplate? byId(String id) {
     for (final template in values) {

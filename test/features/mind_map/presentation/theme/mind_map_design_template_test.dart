@@ -32,13 +32,23 @@ void main() {
       root: MindNode(id: const NodeId('root'), text: 'Root'),
       layout: LayoutType.radial,
     );
-    final applied = document.copyWith(theme: MindMapDesignTemplate.soft.theme);
+    final applied = document.copyWith(theme: MindMapDesignTemplate.paper.theme);
     final markdown = const MarkdownSerializer().serialize(applied);
 
     expect(applied.layout, LayoutType.radial);
     expect(markdown, contains('theme: soft'));
     expect(markdown, contains('layout: radial'));
-    expect(MindMapDesignTemplate.soft.matches(applied), isTrue);
-    expect(MindMapDesignTemplate.soft.matches(document), isFalse);
+    expect(MindMapDesignTemplate.paper.matches(applied), isTrue);
+    expect(MindMapDesignTemplate.paper.matches(document), isFalse);
+    expect(MindMapDesignTemplate.values, hasLength(4));
+    expect(
+      MindMapDesignTemplate.values.map((template) => template.theme).toSet(),
+      containsAll([
+        MindMapDesignTemplate.paper.theme,
+        MindMapDesignTemplate.inkwell.theme,
+        MindMapDesignTemplate.dark.theme,
+        MindMapDesignTemplate.minimal.theme,
+      ]),
+    );
   });
 }

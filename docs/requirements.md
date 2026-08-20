@@ -108,7 +108,7 @@ Add、Delete、Edit、Move、Reorder、Collapse / Expandを対象にします。
 
 ## Theme
 
-MindMapThemeを差し替え可能にします。MVPの候補はMinimal、Soft、Darkです。課金実装は不要ですが、後からFree / Proへ分けやすい構造にします。データアクセスそのものを過度に課金対象にしません。
+MindMapThemeを差し替え可能にします。MVPの候補はペーパー（`soft`）、インク（`inkwell`）、ダーク、ミニマルです。課金実装は不要ですが、後からFree / Proへ分けやすい構造にします。データアクセスそのものを過度に課金対象にしません。
 
 ## MVP対象外
 

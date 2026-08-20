@@ -73,7 +73,8 @@
   "layoutHorizontal": "水平",
   "layoutRadial": "放射",
   "designTemplateMenu": "デザイン",
-  "designTemplateMinimal": "ミニマル",
-  "designTemplateSoft": "ソフト",
-  "designTemplateDark": "ダーク"
+  "designTemplatePaper": "ペーパー",
+  "designTemplateInkwell": "インク",
+  "designTemplateDark": "ダーク",
+  "designTemplateMinimal": "ミニマル"
 }

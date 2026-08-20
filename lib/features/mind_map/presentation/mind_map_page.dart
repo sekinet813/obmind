@@ -510,9 +510,10 @@ class _MindMapPageState extends State<MindMapPage> {
     MindMapDesignTemplate template,
   ) {
     return switch (template.id) {
-      'minimal' => l10n.designTemplateMinimal,
-      'soft' => l10n.designTemplateSoft,
+      'soft' => l10n.designTemplatePaper,
+      'inkwell' => l10n.designTemplateInkwell,
       'dark' => l10n.designTemplateDark,
+      'minimal' => l10n.designTemplateMinimal,
       _ => template.id,
     };
   }

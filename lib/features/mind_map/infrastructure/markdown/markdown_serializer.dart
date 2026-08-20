@@ -9,9 +9,10 @@ final class MarkdownSerializer {
     final buffer = StringBuffer()
       ..writeln('---')
       ..writeln('obmind:')
-      ..writeln('  version: ${document.formatVersion}')
-      ..writeln('  theme: ${document.theme.name}');
+      ..writeln('  version: ${document.formatVersion}');
     final extras = Map<String, String>.of(document.extraObmindFields);
+    final themeValue = extras.remove('theme') ?? document.theme.name;
+    buffer.writeln('  theme: $themeValue');
     final layoutValue = extras.remove('layout') ?? document.layout.name;
     buffer.writeln('  layout: $layoutValue');
     final extraKeys = extras.keys.toList()..sort();
