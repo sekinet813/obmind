@@ -167,7 +167,7 @@ Radialを日常利用の既定にし、開いたときにRootが中央へ来る�
   - Task: T-070
 - [x] Radial LayoutのRoot原点を安定させる
   - Task: T-071
-- [ ] Radial Layout向けEdge接続
+- [x] Radial Layout向けEdge接続
   - Task: T-072
 - [ ] Rootへ戻る操作とFit to Screenの役割分担
   - Task: T-073
