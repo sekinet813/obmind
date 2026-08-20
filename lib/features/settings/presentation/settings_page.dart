@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/app/app_info.dart';
 import 'package:obmind/app/app_locale_controller.dart';
+import 'package:obmind/app/app_theme_controller.dart';
 import 'package:obmind/app/widgets/paper_surface.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/settings/domain/app_locale_preference.dart';
+import 'package:obmind/features/settings/domain/app_theme_preference.dart';
 import 'package:obmind/features/settings/presentation/privacy_policy_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -15,6 +17,7 @@ class SettingsPage extends StatefulWidget {
     required this.loadVaultFolder,
     required this.selectVaultFolder,
     this.localeController,
+    this.themeController,
     this.appName = AppInfo.name,
     this.versionName = AppInfo.versionName,
   });
@@ -22,6 +25,7 @@ class SettingsPage extends StatefulWidget {
   final LoadVaultFolder loadVaultFolder;
   final SelectVaultFolder selectVaultFolder;
   final AppLocaleController? localeController;
+  final AppThemeController? themeController;
   final String appName;
   final String versionName;
 
@@ -56,6 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
       VaultFolderKind.unset => l10n.vaultNotConfigured,
     };
     final localeController = widget.localeController;
+    final themeController = widget.themeController;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsTitle)),
@@ -99,6 +104,37 @@ class _SettingsPageState extends State<SettingsPage> {
                         RadioListTile<AppLocalePreference>(
                           key: Key('locale_${preference.name}'),
                           title: Text(_languageLabel(l10n, preference)),
+                          value: preference,
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+          if (themeController != null) ...[
+            const SizedBox(height: 32),
+            Text(
+              l10n.appearanceSettingsTitle,
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            ListenableBuilder(
+              listenable: themeController,
+              builder: (context, _) {
+                return RadioGroup<AppThemePreference>(
+                  groupValue: themeController.preference,
+                  onChanged: (value) {
+                    if (value != null) {
+                      themeController.setPreference(value);
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      for (final preference in AppThemePreference.values)
+                        RadioListTile<AppThemePreference>(
+                          key: Key('theme_${preference.name}'),
+                          title: Text(_themeLabel(l10n, preference)),
                           value: preference,
                         ),
                     ],
@@ -158,6 +194,14 @@ class _SettingsPageState extends State<SettingsPage> {
       AppLocalePreference.system => l10n.languageSystem,
       AppLocalePreference.ja => l10n.languageJapanese,
       AppLocalePreference.en => l10n.languageEnglish,
+    };
+  }
+
+  String _themeLabel(AppLocalizations l10n, AppThemePreference preference) {
+    return switch (preference) {
+      AppThemePreference.system => l10n.themeSystem,
+      AppThemePreference.light => l10n.themeLight,
+      AppThemePreference.dark => l10n.themeDark,
     };
   }
 

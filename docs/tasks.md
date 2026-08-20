@@ -1961,3 +1961,29 @@ Roadmap: Phase 14 Play提出チェックリスト
 
 Roadmap: Phase 15 Localization
 
+## P1: Phase 16 Appearance
+
+### T-096 アプリ全体のテーマ設定
+
+- [x] 設定画面で端末の設定 / ライト / ダークを切り替え、Preferencesに永続化する
+
+背景:
+
+- Material 3のライト / ダーク`ThemeData`は実装済みだが、`themeMode`が端末固定だった
+- 言語設定と同じく、ユーザーが外観を明示できるようにする
+
+完了条件:
+
+- 設定で「端末の設定 / ライト / ダーク」を選べ、Preferencesに永続化する（Markdownへ書かない）
+- マインドマップ文書のデザインテーマ（`MindMapThemeId`）とは別。キャンバスはアプリの`ColorScheme`に追従する
+- コントローラ未注入のテストでは従来どおり`ThemeMode.system`のまま動く
+- DomainがFlutter Themeに依存しない
+- `dart format` / `flutter analyze` / `flutter test`が成功する
+
+依存:
+
+- T-044（Dark Mode）
+- T-088（設定画面）
+
+Roadmap: Phase 16 Appearance
+

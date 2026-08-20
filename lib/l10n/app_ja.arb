@@ -83,5 +83,9 @@
   "languageSettingsTitle": "言語",
   "languageSystem": "端末の言語",
   "languageJapanese": "日本語",
-  "languageEnglish": "English"
+  "languageEnglish": "English",
+  "appearanceSettingsTitle": "外観",
+  "themeSystem": "端末の設定",
+  "themeLight": "ライト",
+  "themeDark": "ダーク"
 }

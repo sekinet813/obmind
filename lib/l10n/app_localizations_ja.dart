@@ -223,4 +223,16 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get appearanceSettingsTitle => '外観';
+
+  @override
+  String get themeSystem => '端末の設定';
+
+  @override
+  String get themeLight => 'ライト';
+
+  @override
+  String get themeDark => 'ダーク';
 }

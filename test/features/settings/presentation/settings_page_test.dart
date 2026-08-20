@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:obmind/app/app.dart';
 import 'package:obmind/app/app_locale_controller.dart';
+import 'package:obmind/app/app_theme_controller.dart';
 import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
@@ -9,6 +10,8 @@ import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.da
 import 'package:obmind/features/mind_map/domain/repositories/vault_folder_repository.dart';
 import 'package:obmind/features/settings/domain/app_locale_preference.dart';
 import 'package:obmind/features/settings/domain/app_locale_repository.dart';
+import 'package:obmind/features/settings/domain/app_theme_preference.dart';
+import 'package:obmind/features/settings/domain/app_theme_repository.dart';
 import 'package:obmind/features/settings/presentation/settings_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -47,6 +50,18 @@ class _MemoryLocaleRepository implements AppLocaleRepository {
 
   @override
   Future<void> save(AppLocalePreference next) async {
+    preference = next;
+  }
+}
+
+class _MemoryThemeRepository implements AppThemeRepository {
+  AppThemePreference preference = AppThemePreference.system;
+
+  @override
+  Future<AppThemePreference> load() async => preference;
+
+  @override
+  Future<void> save(AppThemePreference next) async {
     preference = next;
   }
 }
@@ -198,6 +213,49 @@ void main() {
     expect(
       find.textContaining('saves your thoughts as Markdown files'),
       findsOneWidget,
+    );
+  });
+
+  testWidgets('switching appearance in settings updates MaterialApp theme', (
+    tester,
+  ) async {
+    final vault = _MemoryVault();
+    final picker = _FakePicker();
+    final themeRepository = _MemoryThemeRepository();
+    final themeController = AppThemeController(
+      repository: themeRepository,
+      initial: AppThemePreference.dark,
+    );
+
+    await tester.pumpWidget(
+      ObmindApp(
+        loadVaultFolder: LoadVaultFolder(vault: vault, picker: picker),
+        selectVaultFolder: SelectVaultFolder(picker: picker, vault: vault),
+        themeController: themeController,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(themeController.themeMode, ThemeMode.dark);
+    expect(
+      Theme.of(tester.element(find.byType(Scaffold).first)).brightness,
+      Brightness.dark,
+    );
+
+    await tester.tap(find.byKey(const Key('openSettings')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('外観'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('theme_light')));
+    await tester.pumpAndSettle();
+
+    expect(themeController.preference, AppThemePreference.light);
+    expect(themeRepository.preference, AppThemePreference.light);
+    expect(themeController.themeMode, ThemeMode.light);
+    expect(
+      Theme.of(tester.element(find.byType(Scaffold).first)).brightness,
+      Brightness.light,
     );
   });
 }

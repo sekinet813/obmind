@@ -230,4 +230,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get appearanceSettingsTitle => 'Appearance';
+
+  @override
+  String get themeSystem => 'Device theme';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

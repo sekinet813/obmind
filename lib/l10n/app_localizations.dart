@@ -517,6 +517,30 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @appearanceSettingsTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'外観'**
+  String get appearanceSettingsTitle;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In ja, this message translates to:
+  /// **'端末の設定'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In ja, this message translates to:
+  /// **'ライト'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In ja, this message translates to:
+  /// **'ダーク'**
+  String get themeDark;
 }
 
 class _AppLocalizationsDelegate

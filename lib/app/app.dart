@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:obmind/app/app_locale_controller.dart';
+import 'package:obmind/app/app_theme_controller.dart';
 import 'package:obmind/app/obmind_theme.dart';
 import 'package:obmind/features/library/domain/library_view_mode_repository.dart';
 import 'package:obmind/features/library/presentation/home_page.dart';
@@ -31,6 +32,7 @@ class ObmindApp extends StatelessWidget {
     this.selectVaultFolder,
     this.libraryViewModeRepository,
     this.localeController,
+    this.themeController,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -46,22 +48,28 @@ class ObmindApp extends StatelessWidget {
   final SelectVaultFolder? selectVaultFolder;
   final LibraryViewModeRepository? libraryViewModeRepository;
   final AppLocaleController? localeController;
+  final AppThemeController? themeController;
 
   @override
   Widget build(BuildContext context) {
-    final controller = localeController;
-    if (controller == null) {
-      return _buildApp(locale: const Locale('ja'));
+    final locale = localeController;
+    final theme = themeController;
+    final listenables = <Listenable>[?locale, ?theme];
+    if (listenables.isEmpty) {
+      return _buildApp(locale: const Locale('ja'), themeMode: ThemeMode.system);
     }
     return ListenableBuilder(
-      listenable: controller,
+      listenable: Listenable.merge(listenables),
       builder: (context, _) {
-        return _buildApp(locale: controller.materialLocale);
+        return _buildApp(
+          locale: locale != null ? locale.materialLocale : const Locale('ja'),
+          themeMode: theme?.themeMode ?? ThemeMode.system,
+        );
       },
     );
   }
 
-  Widget _buildApp({required Locale? locale}) {
+  Widget _buildApp({required Locale? locale, required ThemeMode themeMode}) {
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       localizationsDelegates: const [
@@ -75,7 +83,7 @@ class ObmindApp extends StatelessWidget {
       localeListResolutionCallback: resolveAppLocale,
       theme: ObmindTheme.light(),
       darkTheme: ObmindTheme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       home: HomePage(
         createMarkdownInFolder: createMarkdownInFolder,
         listMindMapFiles: listMindMapFiles,
@@ -90,6 +98,7 @@ class ObmindApp extends StatelessWidget {
         selectVaultFolder: selectVaultFolder,
         libraryViewModeRepository: libraryViewModeRepository,
         localeController: localeController,
+        themeController: themeController,
       ),
     );
   }
