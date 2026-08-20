@@ -13,13 +13,14 @@ final class CreateMarkdownInFolder {
   final MindMapStorage storage;
 
   Future<MindMapFile?> call({
+    MindMapLocation? folder,
     String displayName = pocMarkdownFileName,
     String markdown = pocMarkdownContents,
   }) async {
-    final folder = await picker.pickFolder();
-    if (folder == null) {
+    final target = folder ?? await picker.pickFolder();
+    if (target == null) {
       return null;
     }
-    return storage.create(folder, displayName, markdown: markdown);
+    return storage.create(target, displayName, markdown: markdown);
   }
 }

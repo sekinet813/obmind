@@ -125,4 +125,28 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get deleteMindMapFailed => '削除できませんでした';
+
+  @override
+  String get settingsTitle => '設定';
+
+  @override
+  String get selectVaultFolder => '正本フォルダを選ぶ';
+
+  @override
+  String get openVaultMindMaps => 'Markdown一覧を開く';
+
+  @override
+  String get createInVault => 'このフォルダにMarkdownを作成';
+
+  @override
+  String get changeVaultFolder => '正本フォルダを変更';
+
+  @override
+  String get vaultConfigured => '正本フォルダは設定済みです';
+
+  @override
+  String get vaultNotConfigured => '正本フォルダが未設定です';
+
+  @override
+  String get vaultPermissionLost => 'フォルダへのアクセス権限がありません。設定から選び直してください';
 }

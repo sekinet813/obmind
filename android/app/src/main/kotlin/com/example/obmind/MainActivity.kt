@@ -17,6 +17,7 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "pickFolder" -> pickFolder(result)
+                    "hasFolderAccess" -> hasFolderAccess(call.arguments, result)
                     "createMarkdown" -> createMarkdown(call.arguments, result)
                     "readMarkdown" -> readMarkdown(call.arguments, result)
                     "writeMarkdown" -> writeMarkdown(call.arguments, result)
@@ -74,6 +75,18 @@ class MainActivity : FlutterActivity() {
                 addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION)
             }
         startActivityForResult(intent, REQUEST_OPEN_TREE)
+    }
+
+    private fun hasFolderAccess(
+        arguments: Any?,
+        result: MethodChannel.Result,
+    ) {
+        val folderToken = (arguments as? Map<*, *>)?.get("folderToken") as? String
+        if (folderToken.isNullOrEmpty()) {
+            result.error("invalid_args", "folderToken is required", null)
+            return
+        }
+        runStorage(result) { documentTreeAccess.hasFolderAccess(folderToken) }
     }
 
     private fun createMarkdown(

@@ -19,6 +19,9 @@ class _FakePicker implements MindMapFolderPicker {
   Future<MindMapLocation?> pickFolder() async {
     return const MindMapLocation('folder');
   }
+
+  @override
+  Future<bool> hasAccess(MindMapLocation folder) async => true;
 }
 
 class _MemoryStorage implements MindMapStorage {

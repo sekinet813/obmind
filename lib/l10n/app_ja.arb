@@ -51,5 +51,13 @@
       }
     }
   },
-  "deleteMindMapFailed": "削除できませんでした"
+  "deleteMindMapFailed": "削除できませんでした",
+  "settingsTitle": "設定",
+  "selectVaultFolder": "正本フォルダを選ぶ",
+  "openVaultMindMaps": "Markdown一覧を開く",
+  "createInVault": "このフォルダにMarkdownを作成",
+  "changeVaultFolder": "正本フォルダを変更",
+  "vaultConfigured": "正本フォルダは設定済みです",
+  "vaultNotConfigured": "正本フォルダが未設定です",
+  "vaultPermissionLost": "フォルダへのアクセス権限がありません。設定から選び直してください"
 }

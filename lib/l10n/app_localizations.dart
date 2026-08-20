@@ -321,6 +321,54 @@ abstract class AppLocalizations {
   /// In ja, this message translates to:
   /// **'削除できませんでした'**
   String get deleteMindMapFailed;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In ja, this message translates to:
+  /// **'設定'**
+  String get settingsTitle;
+
+  /// No description provided for @selectVaultFolder.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダを選ぶ'**
+  String get selectVaultFolder;
+
+  /// No description provided for @openVaultMindMaps.
+  ///
+  /// In ja, this message translates to:
+  /// **'Markdown一覧を開く'**
+  String get openVaultMindMaps;
+
+  /// No description provided for @createInVault.
+  ///
+  /// In ja, this message translates to:
+  /// **'このフォルダにMarkdownを作成'**
+  String get createInVault;
+
+  /// No description provided for @changeVaultFolder.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダを変更'**
+  String get changeVaultFolder;
+
+  /// No description provided for @vaultConfigured.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダは設定済みです'**
+  String get vaultConfigured;
+
+  /// No description provided for @vaultNotConfigured.
+  ///
+  /// In ja, this message translates to:
+  /// **'正本フォルダが未設定です'**
+  String get vaultNotConfigured;
+
+  /// No description provided for @vaultPermissionLost.
+  ///
+  /// In ja, this message translates to:
+  /// **'フォルダへのアクセス権限がありません。設定から選び直してください'**
+  String get vaultPermissionLost;
 }
 
 class _AppLocalizationsDelegate

@@ -6,9 +6,11 @@ import 'package:obmind/features/mind_map/application/create_markdown_in_folder.d
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
@@ -25,6 +27,8 @@ class ObmindApp extends StatelessWidget {
     this.removeRecentMindMap,
     this.renameMindMap,
     this.deleteMindMap,
+    this.loadVaultFolder,
+    this.selectVaultFolder,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -37,6 +41,8 @@ class ObmindApp extends StatelessWidget {
   final RemoveRecentMindMap? removeRecentMindMap;
   final RenameMindMap? renameMindMap;
   final DeleteMindMap? deleteMindMap;
+  final LoadVaultFolder? loadVaultFolder;
+  final SelectVaultFolder? selectVaultFolder;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +70,8 @@ class ObmindApp extends StatelessWidget {
         removeRecentMindMap: removeRecentMindMap,
         renameMindMap: renameMindMap,
         deleteMindMap: deleteMindMap,
+        loadVaultFolder: loadVaultFolder,
+        selectVaultFolder: selectVaultFolder,
       ),
     );
   }

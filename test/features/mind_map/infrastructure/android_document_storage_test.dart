@@ -34,6 +34,21 @@ void main() {
     expect(await storage.pickFolder(), isNull);
   });
 
+  test('hasAccess checks the folder through the channel', () async {
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'hasFolderAccess');
+      expect(call.arguments['folderToken'], 'content://tree/primary');
+      return true;
+    });
+
+    final storage = AndroidDocumentStorage(channel: channel);
+
+    expect(
+      await storage.hasAccess(const MindMapLocation('content://tree/primary')),
+      isTrue,
+    );
+  });
+
   test('create returns a file location without exposing SAF types', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       expect(call.method, 'createMarkdown');

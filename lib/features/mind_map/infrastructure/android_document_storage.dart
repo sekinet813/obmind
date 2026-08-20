@@ -34,6 +34,23 @@ final class AndroidDocumentStorage
   }
 
   @override
+  Future<bool> hasAccess(MindMapLocation folder) async {
+    try {
+      final granted = await _channel.invokeMethod<bool>('hasFolderAccess', {
+        'folderToken': folder.token,
+      });
+      return granted ?? false;
+    } on PlatformException catch (error, stackTrace) {
+      _logger.error(
+        'Android folder access check failed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return false;
+    }
+  }
+
+  @override
   Future<MindMapFile> create(
     MindMapLocation folder,
     String displayName, {

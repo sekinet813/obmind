@@ -8,6 +8,14 @@ import java.io.IOException
 internal class DocumentTreeAccess(
     private val contentResolver: ContentResolver,
 ) {
+    fun hasFolderAccess(treeUriString: String): Boolean {
+        return try {
+            listMarkdown(treeUriString)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
     fun createMarkdown(
         treeUriString: String,
         displayName: String,

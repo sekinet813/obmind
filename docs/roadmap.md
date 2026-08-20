@@ -131,7 +131,7 @@ UIより先に安定させます。
   - Task: T-057
 - [ ] Library一覧のCRUD強化
   - Task: T-058
-- [ ] Vaultフォルダの永続化と設定画面
+- [x] Vaultフォルダの永続化と設定画面
   - Task: T-059
 - [ ] Radial Layout Engine
   - Task: T-060

@@ -6,12 +6,15 @@ import 'package:obmind/features/mind_map/application/create_markdown_in_folder.d
 import 'package:obmind/features/mind_map/application/delete_mind_map.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/load_vault_folder.dart';
 import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/rename_mind_map.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
+import 'package:obmind/features/mind_map/application/select_vault_folder.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
+import 'package:obmind/features/settings/presentation/settings_page.dart';
 import 'package:obmind/l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
@@ -27,6 +30,8 @@ class HomePage extends StatefulWidget {
     this.removeRecentMindMap,
     this.renameMindMap,
     this.deleteMindMap,
+    this.loadVaultFolder,
+    this.selectVaultFolder,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -39,6 +44,8 @@ class HomePage extends StatefulWidget {
   final RemoveRecentMindMap? removeRecentMindMap;
   final RenameMindMap? renameMindMap;
   final DeleteMindMap? deleteMindMap;
+  final LoadVaultFolder? loadVaultFolder;
+  final SelectVaultFolder? selectVaultFolder;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -47,11 +54,32 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var _busy = false;
   List<MindMapFile> _recentFiles = const [];
+  VaultFolderStatus _vault = const VaultFolderStatus.unset();
 
   @override
   void initState() {
     super.initState();
     _loadRecent();
+    _loadVault();
+  }
+
+  Future<void> _loadVault() async {
+    final loadVaultFolder = widget.loadVaultFolder;
+    if (loadVaultFolder == null) {
+      return;
+    }
+    try {
+      final status = await loadVaultFolder();
+      if (mounted) {
+        setState(() => _vault = status);
+      }
+    } catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to load vault folder',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Future<void> _loadRecent() async {
@@ -85,7 +113,19 @@ class _HomePageState extends State<HomePage> {
         widget.saveMindMap != null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.appTitle)),
+      appBar: AppBar(
+        title: Text(l10n.appTitle),
+        actions: [
+          if (widget.loadVaultFolder != null &&
+              widget.selectVaultFolder != null)
+            IconButton(
+              key: const Key('openSettings'),
+              tooltip: l10n.settingsTitle,
+              onPressed: _busy ? null : _openSettings,
+              icon: const Icon(Icons.settings_outlined),
+            ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -131,32 +171,126 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ],
-          if (createMarkdownInFolder != null) ...[
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _busy
-                  ? null
-                  : () => _createMarkdown(createMarkdownInFolder),
-              child: Text(l10n.pickFolderAndCreateMarkdown),
-            ),
-          ],
-          if (canOpen) ...[
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _busy ? null : _openFileList,
-              child: Text(l10n.openMarkdown),
-            ),
+          if (widget.loadVaultFolder != null) ...[
+            if (_vault.kind == VaultFolderKind.unset) ...[
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: _busy ? null : _selectVault,
+                child: Text(l10n.selectVaultFolder),
+              ),
+            ] else if (_vault.kind == VaultFolderKind.revoked) ...[
+              const SizedBox(height: 24),
+              Text(
+                l10n.vaultPermissionLost,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: _busy ? null : _selectVault,
+                child: Text(l10n.changeVaultFolder),
+              ),
+            ] else ...[
+              if (createMarkdownInFolder != null) ...[
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: _busy
+                      ? null
+                      : () => _createMarkdown(createMarkdownInFolder),
+                  child: Text(l10n.createInVault),
+                ),
+              ],
+              if (canOpen) ...[
+                const SizedBox(height: 12),
+                OutlinedButton(
+                  onPressed: _busy ? null : _openFileList,
+                  child: Text(l10n.openVaultMindMaps),
+                ),
+              ],
+            ],
+          ] else ...[
+            if (createMarkdownInFolder != null) ...[
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: _busy
+                    ? null
+                    : () => _createMarkdown(createMarkdownInFolder),
+                child: Text(l10n.pickFolderAndCreateMarkdown),
+              ),
+            ],
+            if (canOpen) ...[
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: _busy ? null : _openFileList,
+                child: Text(l10n.openMarkdown),
+              ),
+            ],
           ],
         ],
       ),
     );
   }
 
+  Future<void> _selectVault() async {
+    final selectVaultFolder = widget.selectVaultFolder;
+    if (selectVaultFolder == null) {
+      return;
+    }
+    setState(() => _busy = true);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      final folder = await selectVaultFolder();
+      if (!mounted) {
+        return;
+      }
+      if (folder == null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
+        return;
+      }
+      await _loadVault();
+    } catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to select vault folder',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.folderPickFailed)));
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _openSettings() async {
+    final loadVaultFolder = widget.loadVaultFolder;
+    final selectVaultFolder = widget.selectVaultFolder;
+    if (loadVaultFolder == null || selectVaultFolder == null) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => SettingsPage(
+          loadVaultFolder: loadVaultFolder,
+          selectVaultFolder: selectVaultFolder,
+        ),
+      ),
+    );
+    await _loadVault();
+  }
+
   Future<void> _createMarkdown(CreateMarkdownInFolder useCase) async {
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context)!;
     try {
-      final file = await useCase();
+      final file = await useCase(folder: _vault.folder);
       if (!mounted) {
         return;
       }
@@ -179,9 +313,12 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) {
         return;
       }
+      final message = _vault.kind == VaultFolderKind.revoked
+          ? l10n.vaultPermissionLost
+          : l10n.folderPickFailed;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.folderPickFailed)));
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       if (mounted) {
         setState(() => _busy = false);
@@ -194,8 +331,7 @@ class _HomePageState extends State<HomePage> {
     final listMindMapFiles = widget.listMindMapFiles;
     final loadMindMap = widget.loadMindMap;
     final saveMindMap = widget.saveMindMap;
-    if (picker == null ||
-        listMindMapFiles == null ||
+    if (listMindMapFiles == null ||
         loadMindMap == null ||
         saveMindMap == null) {
       return;
@@ -203,7 +339,8 @@ class _HomePageState extends State<HomePage> {
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context)!;
     try {
-      final folder = await picker.pickFolder();
+      var folder = _vault.folder;
+      folder ??= await picker?.pickFolder();
       if (!mounted) {
         return;
       }
@@ -211,6 +348,12 @@ class _HomePageState extends State<HomePage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(l10n.folderPickCancelled)));
+        return;
+      }
+      if (_vault.kind == VaultFolderKind.revoked) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.vaultPermissionLost)));
         return;
       }
       final listed = await listMindMapFiles(folder);
@@ -231,6 +374,22 @@ class _HomePageState extends State<HomePage> {
         ),
       );
       await _loadRecent();
+    } on MindMapStorageException catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to list Markdown files',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) {
+        return;
+      }
+      await _loadVault();
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.vaultPermissionLost)));
     } catch (error, stackTrace) {
       appLogger.error(
         'Failed to list Markdown files',
