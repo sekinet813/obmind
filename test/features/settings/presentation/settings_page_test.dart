@@ -54,12 +54,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('正本フォルダが未設定です'), findsOneWidget);
+    expect(find.text('保存フォルダが未設定です'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('changeVaultFolder')));
     await tester.pumpAndSettle();
 
-    expect(find.text('正本フォルダは設定済みです'), findsOneWidget);
+    expect(find.text('保存フォルダは設定済みです'), findsOneWidget);
     expect(await vault.load(), const MindMapLocation('vault'));
   });
 }

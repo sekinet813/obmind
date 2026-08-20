@@ -133,7 +133,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsTitle => '設定';
 
   @override
-  String get selectVaultFolder => '正本フォルダを選ぶ';
+  String get selectVaultFolder => '保存フォルダを選ぶ';
 
   @override
   String get openVaultMindMaps => 'Markdown一覧を開く';
@@ -142,19 +142,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get createInVault => 'このフォルダにMarkdownを作成';
 
   @override
-  String get changeVaultFolder => '正本フォルダを変更';
+  String get changeVaultFolder => '保存フォルダを変更';
 
   @override
-  String get vaultConfigured => '正本フォルダは設定済みです';
+  String get vaultConfigured => '保存フォルダは設定済みです';
 
   @override
-  String get vaultNotConfigured => '正本フォルダが未設定です';
+  String get vaultNotConfigured => '保存フォルダが未設定です';
 
   @override
   String get vaultPermissionLost => 'フォルダへのアクセス権限がありません。設定から選び直してください';
 
   @override
-  String get vaultOnboardingTitle => '思考の正本フォルダを選ぶ';
+  String get vaultOnboardingTitle => '思考の保存フォルダを選ぶ';
 
   @override
   String get vaultOnboardingBody =>

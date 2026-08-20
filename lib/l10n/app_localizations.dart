@@ -337,7 +337,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectVaultFolder.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダを選ぶ'**
+  /// **'保存フォルダを選ぶ'**
   String get selectVaultFolder;
 
   /// No description provided for @openVaultMindMaps.
@@ -355,19 +355,19 @@ abstract class AppLocalizations {
   /// No description provided for @changeVaultFolder.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダを変更'**
+  /// **'保存フォルダを変更'**
   String get changeVaultFolder;
 
   /// No description provided for @vaultConfigured.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダは設定済みです'**
+  /// **'保存フォルダは設定済みです'**
   String get vaultConfigured;
 
   /// No description provided for @vaultNotConfigured.
   ///
   /// In ja, this message translates to:
-  /// **'正本フォルダが未設定です'**
+  /// **'保存フォルダが未設定です'**
   String get vaultNotConfigured;
 
   /// No description provided for @vaultPermissionLost.
@@ -379,7 +379,7 @@ abstract class AppLocalizations {
   /// No description provided for @vaultOnboardingTitle.
   ///
   /// In ja, this message translates to:
-  /// **'思考の正本フォルダを選ぶ'**
+  /// **'思考の保存フォルダを選ぶ'**
   String get vaultOnboardingTitle;
 
   /// No description provided for @vaultOnboardingBody.
