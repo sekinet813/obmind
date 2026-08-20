@@ -151,10 +151,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('addChildNode')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('saveMindMap')));
+    await tester.pump(const Duration(milliseconds: 900));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 50));
 
+    expect(find.byKey(const Key('saveMindMap')), findsNothing);
     final saved = storage.files.values.single;
     expect(saved, contains('# 新規マインドマップ'));
     expect(saved, contains('layout: radial'));

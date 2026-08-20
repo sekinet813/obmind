@@ -317,6 +317,8 @@ void main() {
 
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('自動保存'), findsOneWidget);
+    expect(find.byKey(const Key('saveMindMap')), findsNothing);
+    expect(find.text('保存'), findsNothing);
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
     expect(find.byKey(const Key('switchLayout')), findsOneWidget);
     expect(find.byKey(const Key('openMapSettings')), findsNothing);
