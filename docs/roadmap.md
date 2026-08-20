@@ -226,5 +226,5 @@ Google Play提出のための準備。本番Application IDはT-007（人間が�
   - Task: T-092
 - [x] Playの技術要件確認
   - Task: T-093
-- [ ] Play提出前チェックリスト
+- [x] Play提出前チェックリスト
   - Task: T-094

@@ -153,3 +153,29 @@ zipalign -c -P 16 -v 4 app-release.apk
 - 署名済みRelease AABでの16KB再確認
 - Play Consoleが提出時点で示すtarget API / page sizeの表示との突き合わせ
 
+## Play提出前チェックリスト
+
+人間がPlay Consoleで行う作業と、アプリ側の前提です。エージェントは提出ボタンを押さず、本番applicationIdも決めません。チェックを埋めること自体は人間作業です。
+
+### アプリ側（提出の前提）
+
+- [ ] T-007: 本番のAndroid applicationIdが設定済みである。開発用`com.example.obmind`のまま提出しない。Bundle IDは[ADR-0003](decisions/ADR-0003-identifiers.md)
+- [ ] Release AABが本番IDかつupload鍵（`android/key.properties`）で署名されている。debug署名や`key.properties`無しのAABは使わない
+- [ ] 署名済みAABで16KBページサイズを再確認した（上記の手順）
+- [ ] Android実機でMVPの基本操作を確認した（T-048）。手順は[mobile-testing.md](mobile-testing.md)
+
+### Play Console（人間作業）
+
+- [ ] デベロッパーアカウントとPlay App Signing
+- [ ] 内部テストトラック（またはクローズドテスト）へAABをアップロード
+- [ ] プライバシーポリシーの公開URLを設定した。文面は[privacy-policy.md](privacy-policy.md)。アプリ内設定からも読める
+- [ ] Data safetyを申告した。収集・共有なし、ファイルアクセスの目的はマインドマップの保存
+- [ ] コンテンツレーティングの質問票
+- [ ] アプリのカテゴリと連絡先メール
+- [ ] 短い説明・詳細説明を転記した。「正本」は使わない
+- [ ] 高解像度アイコン（512×512）、フィーチャーグラフィック（1024×500）、Phoneスクリーンショット（2枚以上）
+- [ ] targetSdk 36と16KBのConsole表示が要件を満たす
+
+提出完了は人間の判断です。このチェックリストの文書化をもってT-094は完了とします。
+
+
