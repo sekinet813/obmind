@@ -74,7 +74,7 @@ UIより先に安定させます。
   - Task: T-035
 - [x] File list
   - Task: T-036
-- [ ] Recent maps
+- [x] Recent maps
   - Task: T-037
 
 ## Phase 6：UX

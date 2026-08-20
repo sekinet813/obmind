@@ -4,6 +4,7 @@ import 'package:obmind/features/library/presentation/home_page.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/l10n/app_localizations.dart';
@@ -16,6 +17,9 @@ class ObmindApp extends StatelessWidget {
     this.listMindMapFiles,
     this.loadMindMap,
     this.saveMindMap,
+    this.listRecentMindMaps,
+    this.recordRecentMindMap,
+    this.removeRecentMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -23,6 +27,9 @@ class ObmindApp extends StatelessWidget {
   final ListMindMapFiles? listMindMapFiles;
   final LoadMindMap? loadMindMap;
   final SaveMindMap? saveMindMap;
+  final ListRecentMindMaps? listRecentMindMaps;
+  final RecordRecentMindMap? recordRecentMindMap;
+  final RemoveRecentMindMap? removeRecentMindMap;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +53,9 @@ class ObmindApp extends StatelessWidget {
         listMindMapFiles: listMindMapFiles,
         loadMindMap: loadMindMap,
         saveMindMap: saveMindMap,
+        listRecentMindMaps: listRecentMindMaps,
+        recordRecentMindMap: recordRecentMindMap,
+        removeRecentMindMap: removeRecentMindMap,
       ),
     );
   }

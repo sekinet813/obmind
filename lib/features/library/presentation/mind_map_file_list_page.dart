@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_page.dart';
@@ -13,11 +14,15 @@ class MindMapFileListPage extends StatelessWidget {
     required this.files,
     required this.loadMindMap,
     required this.saveMindMap,
+    this.recordRecentMindMap,
+    this.removeRecentMindMap,
   });
 
   final List<MindMapFile> files;
   final LoadMindMap loadMindMap;
   final SaveMindMap saveMindMap;
+  final RecordRecentMindMap? recordRecentMindMap;
+  final RemoveRecentMindMap? removeRecentMindMap;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +49,7 @@ class MindMapFileListPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     try {
       final loaded = await loadMindMap(file.location);
+      await recordRecentMindMap?.call(file);
       if (!context.mounted) {
         return;
       }
@@ -64,12 +70,26 @@ class MindMapFileListPage extends StatelessWidget {
         error: error,
         stackTrace: stackTrace,
       );
+      await removeRecentMindMap?.call(file.location);
       if (!context.mounted) {
         return;
       }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.mindMapLoadFailed)));
+    } on MindMapStorageException catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to read mind map file',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      await removeRecentMindMap?.call(file.location);
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.recentMindMapUnavailable)));
     }
   }
 }

@@ -172,6 +172,18 @@ abstract class AppLocalizations {
   /// **'ファイルが外部で変更されたため、上書き保存を停止しました'**
   String get mindMapExternalChangeBlocked;
 
+  /// No description provided for @recentMindMaps.
+  ///
+  /// In ja, this message translates to:
+  /// **'最近開いた地図'**
+  String get recentMindMaps;
+
+  /// No description provided for @recentMindMapUnavailable.
+  ///
+  /// In ja, this message translates to:
+  /// **'ファイルを開けませんでした。最近の一覧から削除しました'**
+  String get recentMindMapUnavailable;
+
   /// No description provided for @noMarkdownFiles.
   ///
   /// In ja, this message translates to:

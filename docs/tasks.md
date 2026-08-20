@@ -584,7 +584,7 @@ Roadmap: Phase 5 File list
 
 ### T-037 Recent maps
 
-- [ ] 最近開いた地図を再開できる
+- [x] 最近開いた地図を再開できる
 
 完了条件:
 

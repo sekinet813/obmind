@@ -4,6 +4,7 @@ import 'package:obmind/features/library/presentation/mind_map_file_list_page.dar
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_folder_picker.dart';
 import 'package:obmind/features/mind_map/domain/repositories/mind_map_storage.dart';
@@ -18,6 +19,9 @@ class HomePage extends StatefulWidget {
     this.listMindMapFiles,
     this.loadMindMap,
     this.saveMindMap,
+    this.listRecentMindMaps,
+    this.recordRecentMindMap,
+    this.removeRecentMindMap,
   });
 
   final CreateMarkdownInFolder? createMarkdownInFolder;
@@ -25,6 +29,9 @@ class HomePage extends StatefulWidget {
   final ListMindMapFiles? listMindMapFiles;
   final LoadMindMap? loadMindMap;
   final SaveMindMap? saveMindMap;
+  final ListRecentMindMaps? listRecentMindMaps;
+  final RecordRecentMindMap? recordRecentMindMap;
+  final RemoveRecentMindMap? removeRecentMindMap;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -32,6 +39,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var _busy = false;
+  List<MindMapFile> _recentFiles = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecent();
+  }
+
+  Future<void> _loadRecent() async {
+    final listRecent = widget.listRecentMindMaps;
+    if (listRecent == null) {
+      return;
+    }
+    try {
+      final recent = await listRecent();
+      if (mounted) {
+        setState(() => _recentFiles = recent);
+      }
+    } catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to load recent mind maps',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,36 +81,45 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(l10n.appTitle),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                l10n.homeMessage,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              if (createMarkdownInFolder != null) ...[
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _busy
-                      ? null
-                      : () => _createMarkdown(createMarkdownInFolder),
-                  child: Text(l10n.pickFolderAndCreateMarkdown),
-                ),
-              ],
-              if (canOpen) ...[
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: _busy ? null : _openFileList,
-                  child: Text(l10n.openMarkdown),
-                ),
-              ],
-            ],
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          Text(
+            l10n.homeMessage,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
-        ),
+          if (_recentFiles.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Text(
+              l10n.recentMindMaps,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            for (final file in _recentFiles)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(file.displayName),
+                onTap: _busy ? null : () => _openMindMap(file),
+              ),
+          ],
+          if (createMarkdownInFolder != null) ...[
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _busy
+                  ? null
+                  : () => _createMarkdown(createMarkdownInFolder),
+              child: Text(l10n.pickFolderAndCreateMarkdown),
+            ),
+          ],
+          if (canOpen) ...[
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: _busy ? null : _openFileList,
+              child: Text(l10n.openMarkdown),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -153,9 +195,12 @@ class _HomePageState extends State<HomePage> {
             files: listed,
             loadMindMap: loadMindMap,
             saveMindMap: saveMindMap,
+            recordRecentMindMap: widget.recordRecentMindMap,
+            removeRecentMindMap: widget.removeRecentMindMap,
           ),
         ),
       );
+      await _loadRecent();
     } catch (error, stackTrace) {
       appLogger.error(
         'Failed to list Markdown files',
@@ -181,9 +226,11 @@ class _HomePageState extends State<HomePage> {
     if (loadMindMap == null || saveMindMap == null) {
       return;
     }
+    setState(() => _busy = true);
     final l10n = AppLocalizations.of(context)!;
     try {
       final loaded = await loadMindMap(file.location);
+      await widget.recordRecentMindMap?.call(file);
       if (!mounted) {
         return;
       }
@@ -198,18 +245,39 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       );
+      await _loadRecent();
     } on LoadMindMapException catch (error, stackTrace) {
       appLogger.error(
         'Failed to load mind map',
         error: error,
         stackTrace: stackTrace,
       );
+      await widget.removeRecentMindMap?.call(file.location);
+      await _loadRecent();
       if (!mounted) {
         return;
       }
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(l10n.mindMapLoadFailed)));
+    } on MindMapStorageException catch (error, stackTrace) {
+      appLogger.error(
+        'Failed to read mind map file',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      await widget.removeRecentMindMap?.call(file.location);
+      await _loadRecent();
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.recentMindMapUnavailable)));
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
     }
   }
 }

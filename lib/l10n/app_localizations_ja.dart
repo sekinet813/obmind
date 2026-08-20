@@ -50,6 +50,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mindMapExternalChangeBlocked => 'ファイルが外部で変更されたため、上書き保存を停止しました';
 
   @override
+  String get recentMindMaps => '最近開いた地図';
+
+  @override
+  String get recentMindMapUnavailable => 'ファイルを開けませんでした。最近の一覧から削除しました';
+
+  @override
   String get noMarkdownFiles => 'このフォルダにMarkdownがありません';
 
   @override

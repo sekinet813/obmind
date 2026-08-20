@@ -5,23 +5,27 @@ import 'package:obmind/core/logging/app_logger.dart';
 import 'package:obmind/features/mind_map/application/create_markdown_in_folder.dart';
 import 'package:obmind/features/mind_map/application/list_mind_map_files.dart';
 import 'package:obmind/features/mind_map/application/load_mind_map.dart';
+import 'package:obmind/features/mind_map/application/recent_mind_maps.dart';
 import 'package:obmind/features/mind_map/application/save_mind_map.dart';
 import 'package:obmind/features/mind_map/infrastructure/android_document_storage.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_parser.dart';
 import 'package:obmind/features/mind_map/infrastructure/markdown/markdown_serializer.dart';
+import 'package:obmind/features/mind_map/infrastructure/shared_preferences_recent_mind_maps_repository.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureAppLogging(suppressDebug: kReleaseMode);
-  runApp(_buildApp());
+  runApp(await _buildApp());
 }
 
-Widget _buildApp() {
+Future<Widget> _buildApp() async {
   if (defaultTargetPlatform != TargetPlatform.android) {
     return const ObmindApp();
   }
   final storage = AndroidDocumentStorage();
   const serializer = MarkdownSerializer();
+  final recentRepository =
+      await SharedPreferencesRecentMindMapsRepository.create();
   return ObmindApp(
     createMarkdownInFolder: CreateMarkdownInFolder(
       picker: storage,
@@ -31,5 +35,8 @@ Widget _buildApp() {
     listMindMapFiles: ListMindMapFiles(storage),
     loadMindMap: LoadMindMap(storage: storage, parser: MarkdownParser()),
     saveMindMap: SaveMindMap(storage: storage, serializer: serializer),
+    listRecentMindMaps: ListRecentMindMaps(recentRepository),
+    recordRecentMindMap: RecordRecentMindMap(recentRepository),
+    removeRecentMindMap: RemoveRecentMindMap(recentRepository),
   );
 }
