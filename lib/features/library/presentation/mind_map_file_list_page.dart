@@ -381,7 +381,6 @@ class _MindMapFileListPageState extends State<MindMapFileListPage> {
             saveMindMap: widget.saveMindMap,
             revision: loaded.revision,
             readOnly: loaded.hasUnsupportedContent,
-            onOpenSettings: widget.onOpenSettings,
           ),
         ),
       );

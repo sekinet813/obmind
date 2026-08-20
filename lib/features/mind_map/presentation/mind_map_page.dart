@@ -30,7 +30,6 @@ class MindMapPage extends StatefulWidget {
     this.readOnly = false,
     this.generateId,
     this.initialSelectedId,
-    this.onOpenSettings,
   });
 
   final MindMapDocument document;
@@ -40,7 +39,6 @@ class MindMapPage extends StatefulWidget {
   final bool readOnly;
   final NodeId Function()? generateId;
   final NodeId? initialSelectedId;
-  final VoidCallback? onOpenSettings;
 
   @override
   State<MindMapPage> createState() => _MindMapPageState();
@@ -572,13 +570,6 @@ class _MindMapPageState extends State<MindMapPage> {
               ),
             ],
           ),
-          if (widget.onOpenSettings != null)
-            IconButton(
-              key: const Key('openMapSettings'),
-              tooltip: l10n.settingsTitle,
-              onPressed: widget.onOpenSettings,
-              icon: const Icon(Icons.settings_outlined),
-            ),
           if (canSave)
             TextButton(
               key: const Key('saveMindMap'),

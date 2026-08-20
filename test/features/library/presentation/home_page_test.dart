@@ -159,6 +159,7 @@ void main() {
 
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('保存フォルダを選ぶ'), findsNothing);
+    expect(find.byKey(const Key('openSettings')), findsOneWidget);
   });
 
   testWidgets('shows a reason when vault access is revoked', (tester) async {

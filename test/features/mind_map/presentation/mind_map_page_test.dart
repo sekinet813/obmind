@@ -280,10 +280,9 @@ void main() {
     expect(find.byKey(const Key('zoomOut')), findsOneWidget);
   });
 
-  testWidgets('shows the file name, autosave status, and settings action', (
+  testWidgets('shows the file name and autosave status without settings', (
     tester,
   ) async {
-    var openedSettings = false;
     await tester.pumpWidget(
       MaterialApp(
         locale: const Locale('ja'),
@@ -295,7 +294,6 @@ void main() {
             location: MindMapLocation('vault/idea.md'),
             displayName: 'idea.md',
           ),
-          onOpenSettings: () => openedSettings = true,
         ),
       ),
     );
@@ -304,9 +302,9 @@ void main() {
     expect(find.text('idea.md'), findsOneWidget);
     expect(find.text('自動保存'), findsOneWidget);
     expect(find.byKey(const Key('zoomIn')), findsOneWidget);
-    await tester.tap(find.byKey(const Key('openMapSettings')));
-    await tester.pump();
-    expect(openedSettings, isTrue);
+    expect(find.byKey(const Key('switchLayout')), findsOneWidget);
+    expect(find.byKey(const Key('openMapSettings')), findsNothing);
+    expect(find.byTooltip('設定'), findsNothing);
   });
 
   testWidgets('switches layout from the app bar and keeps nodes visible', (
