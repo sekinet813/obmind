@@ -197,6 +197,32 @@ void main() {
     expect(find.text('編集'), findsOneWidget);
   });
 
+  testWidgets('keeps node actions available while editing', (tester) async {
+    await tester.pumpWidget(
+      app(
+        MindMapDocument(root: node('root', children: [node('a')])),
+        initialSelectedId: const NodeId('a'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('編集'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('doneEditingNode')), findsOneWidget);
+    expect(find.byKey(const Key('addChildNode')), findsOneWidget);
+    expect(find.byKey(const Key('addSiblingNode')), findsOneWidget);
+    expect(find.byKey(const Key('deleteNode')), findsOneWidget);
+    expect(find.text('編集'), findsNothing);
+
+    await tester.enterText(find.byType(TextField), '更新後');
+    await tester.tap(find.byKey(const Key('addChildNode')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('更新後'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+  });
+
   testWidgets('exits inline editing when tapping another node', (tester) async {
     await tester.pumpWidget(
       app(

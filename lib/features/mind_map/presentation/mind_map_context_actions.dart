@@ -49,38 +49,36 @@ class MindMapContextActions extends StatelessWidget {
                 icon: const Icon(Icons.check),
                 label: Text(l10n.doneEditingNode),
               ),
-            if (onDoneEditing == null) ...[
-              if (canEdit && onEdit != null)
-                TextButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined),
-                  label: Text(l10n.editNode),
-                ),
+            if (onDoneEditing == null && canEdit && onEdit != null)
               TextButton.icon(
-                key: const Key('addChildNode'),
-                onPressed: onAddChild,
-                icon: const Icon(Icons.subdirectory_arrow_right),
-                label: Text(l10n.addChildNode),
+                onPressed: onEdit,
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(l10n.editNode),
               ),
-              TextButton.icon(
-                key: const Key('addSiblingNode'),
-                onPressed: canAddSibling ? onAddSibling : null,
-                icon: const Icon(Icons.arrow_downward),
-                label: Text(l10n.addSiblingNode),
-              ),
-              TextButton.icon(
-                key: const Key('deleteNode'),
-                onPressed: canDelete ? onDelete : null,
-                icon: const Icon(Icons.delete_outline),
-                label: Text(l10n.deleteNode),
-              ),
-              TextButton.icon(
-                key: const Key('toggleCollapsedNode'),
-                onPressed: canToggleCollapsed ? onToggleCollapsed : null,
-                icon: Icon(collapsed ? Icons.unfold_more : Icons.unfold_less),
-                label: Text(collapsed ? l10n.expandNode : l10n.collapseNode),
-              ),
-            ],
+            TextButton.icon(
+              key: const Key('addChildNode'),
+              onPressed: onAddChild,
+              icon: const Icon(Icons.subdirectory_arrow_right),
+              label: Text(l10n.addChildNode),
+            ),
+            TextButton.icon(
+              key: const Key('addSiblingNode'),
+              onPressed: canAddSibling ? onAddSibling : null,
+              icon: const Icon(Icons.arrow_downward),
+              label: Text(l10n.addSiblingNode),
+            ),
+            TextButton.icon(
+              key: const Key('deleteNode'),
+              onPressed: canDelete ? onDelete : null,
+              icon: const Icon(Icons.delete_outline),
+              label: Text(l10n.deleteNode),
+            ),
+            TextButton.icon(
+              key: const Key('toggleCollapsedNode'),
+              onPressed: canToggleCollapsed ? onToggleCollapsed : null,
+              icon: Icon(collapsed ? Icons.unfold_more : Icons.unfold_less),
+              label: Text(collapsed ? l10n.expandNode : l10n.collapseNode),
+            ),
           ],
         ),
       ),

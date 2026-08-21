@@ -305,6 +305,7 @@ class _MindMapPageState extends State<MindMapPage> {
     if (parentId == null) {
       return;
     }
+    _commitEditing();
     final child = MindNode(id: _newId(), text: '');
     _mutateDocument(
       MindMapTree.addChild(_document, parentId, child),
@@ -322,6 +323,7 @@ class _MindMapPageState extends State<MindMapPage> {
     if (siblingId == null || siblingId == _document.root.id) {
       return;
     }
+    _commitEditing();
     final sibling = MindNode(id: _newId(), text: '');
     _mutateDocument(
       MindMapTree.addSibling(_document, siblingId, sibling),
@@ -364,6 +366,7 @@ class _MindMapPageState extends State<MindMapPage> {
     if (id == null || id == _document.root.id) {
       return;
     }
+    _commitEditing();
     final parentId = _parentId(id);
     _mutateDocument(
       MindMapTree.delete(_document, id),
@@ -389,6 +392,7 @@ class _MindMapPageState extends State<MindMapPage> {
     if (node == null || node.children.isEmpty) {
       return;
     }
+    _commitEditing();
     _mutateDocument(
       MindMapTree.setCollapsed(_document, targetId!, !node.collapsed),
       selectedId: targetId,
