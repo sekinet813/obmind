@@ -10,7 +10,7 @@ final class HorizontalLayoutEngine implements LayoutEngine {
   const HorizontalLayoutEngine({
     this.horizontalGap = 48,
     this.verticalGap = 16,
-    this.fallbackSize = const NodeSize(width: 80, height: 40),
+    this.fallbackSize = const NodeSize(width: 160, height: 64),
   });
 
   final double horizontalGap;

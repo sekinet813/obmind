@@ -17,7 +17,7 @@ final class RadialLayoutEngine implements LayoutEngine {
   const RadialLayoutEngine({
     this.radialGap = 48,
     this.siblingGap = 16,
-    this.fallbackSize = const NodeSize(width: 80, height: 40),
+    this.fallbackSize = const NodeSize(width: 160, height: 64),
   });
 
   final double radialGap;
