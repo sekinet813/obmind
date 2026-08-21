@@ -58,7 +58,15 @@ void main() {
     await tester.tap(find.byKey(const Key('addChildNode')));
     await tester.pumpAndSettle();
 
-    expect(find.text('新しいノード'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).decoration!.hintText,
+      '新規ノード',
+    );
     expect(find.text('a'), findsOneWidget);
   });
 
@@ -76,7 +84,15 @@ void main() {
     await tester.tap(find.byKey(const Key('addSiblingNode')));
     await tester.pumpAndSettle();
 
-    expect(find.text('新しいノード'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller!.text,
+      isEmpty,
+    );
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).decoration!.hintText,
+      '新規ノード',
+    );
     expect(find.text('a'), findsOneWidget);
   });
 

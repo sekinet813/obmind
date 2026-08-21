@@ -23,6 +23,24 @@ void main() {
     expect(find.byIcon(Icons.remove), findsNothing);
   });
 
+  testWidgets('shows a placeholder only when node text is empty', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MindNodeWidget(
+            text: '',
+            emptyPlaceholder: '新規ノード',
+            theme: testCanvasTheme(),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('新規ノード'), findsOneWidget);
+  });
+
   testWidgets('shows a plus toggle on collapsed nodes with children', (
     tester,
   ) async {

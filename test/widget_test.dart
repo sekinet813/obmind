@@ -210,7 +210,7 @@ void main() {
     final saved = storage.files.values.single;
     expect(saved, contains('# 新規マインドマップ'));
     expect(saved, contains('layout: radial'));
-    expect(saved, contains('新しいノード'));
+    expect(saved, contains('-  <!-- obmind:'));
   });
 
   testWidgets('保存失敗でも編集中のテキストを消さない', (tester) async {

@@ -305,12 +305,12 @@ class _MindMapPageState extends State<MindMapPage> {
     if (parentId == null) {
       return;
     }
-    final l10n = AppLocalizations.of(context)!;
-    final child = MindNode(id: _newId(), text: l10n.newNodeText);
+    final child = MindNode(id: _newId(), text: '');
     _mutateDocument(
       MindMapTree.addChild(_document, parentId, child),
       selectedId: child.id,
     );
+    _startEditing(child.id);
     _ensureAddedNodeVisible(child.id);
   }
 
@@ -322,12 +322,12 @@ class _MindMapPageState extends State<MindMapPage> {
     if (siblingId == null || siblingId == _document.root.id) {
       return;
     }
-    final l10n = AppLocalizations.of(context)!;
-    final sibling = MindNode(id: _newId(), text: l10n.newNodeText);
+    final sibling = MindNode(id: _newId(), text: '');
     _mutateDocument(
       MindMapTree.addSibling(_document, siblingId, sibling),
       selectedId: sibling.id,
     );
+    _startEditing(sibling.id);
     _ensureAddedNodeVisible(sibling.id);
   }
 
@@ -662,6 +662,7 @@ class _MindMapPageState extends State<MindMapPage> {
                   editingId: _editingId,
                   editingController: _editController,
                   editingFocusNode: _editFocusNode,
+                  emptyNodePlaceholder: l10n.newNodeText,
                   onNodeSelected: (id) {
                     if (_editingId != null) {
                       _commitEditing();

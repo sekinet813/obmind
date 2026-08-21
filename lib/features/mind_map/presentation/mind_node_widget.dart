@@ -13,6 +13,7 @@ class MindNodeWidget extends StatelessWidget {
     this.hasChildren = false,
     this.controller,
     this.focusNode,
+    this.emptyPlaceholder,
     this.onEditingComplete,
     this.onToggleCollapsed,
     this.collapseToggleKey,
@@ -26,6 +27,7 @@ class MindNodeWidget extends StatelessWidget {
   final bool hasChildren;
   final TextEditingController? controller;
   final FocusNode? focusNode;
+  final String? emptyPlaceholder;
   final VoidCallback? onEditingComplete;
   final VoidCallback? onToggleCollapsed;
   final Key? collapseToggleKey;
@@ -33,7 +35,7 @@ class MindNodeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: text,
+      label: text.isEmpty ? emptyPlaceholder : text,
       textField: editing,
       selected: selected,
       excludeSemantics: true,
@@ -71,7 +73,7 @@ class MindNodeWidget extends StatelessWidget {
                         isDense: true,
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
-                      ),
+                      ).copyWith(hintText: emptyPlaceholder),
                       onEditingComplete: onEditingComplete,
                       onSubmitted: (_) => onEditingComplete?.call(),
                       onTapOutside: (_) => onEditingComplete?.call(),
@@ -102,7 +104,7 @@ class MindNodeWidget extends StatelessWidget {
                             fit: BoxFit.scaleDown,
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              text,
+                              text.isEmpty ? emptyPlaceholder ?? '' : text,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
