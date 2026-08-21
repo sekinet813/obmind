@@ -62,7 +62,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addSiblingNode => '兄弟を追加';
 
   @override
-  String get newNodeText => '新しいノード';
+  String get newNodeText => '新規ノード';
 
   @override
   String get newMindMapName => '新規マインドマップ';

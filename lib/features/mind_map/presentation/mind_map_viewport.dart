@@ -26,6 +26,7 @@ class MindMapViewport extends StatefulWidget {
     this.editingId,
     this.editingController,
     this.editingFocusNode,
+    this.emptyNodePlaceholder,
     this.onNodeSelected,
     this.onNodeLongPress,
     this.onNodeDoubleTap,
@@ -55,6 +56,7 @@ class MindMapViewport extends StatefulWidget {
   final NodeId? editingId;
   final TextEditingController? editingController;
   final FocusNode? editingFocusNode;
+  final String? emptyNodePlaceholder;
   final ValueChanged<NodeId>? onNodeSelected;
   final ValueChanged<NodeId>? onNodeLongPress;
   final ValueChanged<NodeId>? onNodeDoubleTap;
@@ -509,6 +511,7 @@ class MindMapViewportState extends State<MindMapViewport>
                               hasChildren: node.children.isNotEmpty,
                               controller: widget.editingController,
                               focusNode: widget.editingFocusNode,
+                              emptyPlaceholder: widget.emptyNodePlaceholder,
                               onEditingComplete: widget.onEditingComplete,
                               collapseToggleKey: Key(
                                 'collapseToggle-${node.id.value}',
