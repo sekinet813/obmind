@@ -21,6 +21,10 @@ void main() {
     expect(find.byIcon(Icons.chevron_right), findsNothing);
     expect(find.byIcon(Icons.add), findsNothing);
     expect(find.byIcon(Icons.remove), findsNothing);
+    final label = tester.widget<Text>(find.text('課題'));
+    expect(label.textAlign, TextAlign.center);
+    expect(label.maxLines, 2);
+    expect(find.byType(FittedBox), findsNothing);
   });
 
   testWidgets('shows a placeholder only when node text is empty', (
@@ -70,6 +74,12 @@ void main() {
 
     await tester.tap(find.byKey(const Key('collapseToggle-a')));
     expect(tapped, isTrue);
+
+    final nodeRect = tester.getRect(find.byType(MindNodeWidget));
+    final toggleRect = tester.getRect(
+      find.byKey(const Key('collapseToggle-a')),
+    );
+    expect(toggleRect.center.dx, nodeRect.right - 4);
   });
 
   testWidgets('shows a minus toggle on expanded nodes with children', (
