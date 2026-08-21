@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @newNodeText.
   ///
   /// In ja, this message translates to:
-  /// **'新しいノード'**
+  /// **'新規ノード'**
   String get newNodeText;
 
   /// No description provided for @newMindMapName.

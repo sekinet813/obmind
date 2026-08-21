@@ -12,7 +12,7 @@ Phase 6の入力ルールです。Pan / Zoomは`InteractiveViewer`、Node操作�
 | 中心へ戻る | Rootを読みやすい縮尺で画面中央へ戻す。全体表示（Fit to Screen）とは別 |
 | Nodeタップ | 選択 |
 | Node長押し＋ドラッグ | 並び替え / 親変更（Panは無効） |
-| Node上の+ / - | 子を持つNodeの折りたたみ / 展開。下部メニューからも同じ操作ができる |
+| Node上の+ / - | 子を持つNodeの折りたたみ / 展開。枝（接続線）側に表示する。下部メニューからも同じ操作ができる |
 | 編集中 | Pan / Zoomは有効。完了ボタン・キャンバス空白Tap・他Node Tap・キーボードDoneで編集終了。Drag / DoubleTapは無効 |
 
 Node DragによるReorder / Move Parentは、Node長押し後のドラッグで開始します。Drag中は`InteractiveViewer`のPan / Zoomを止め、Panとの競合を避けます。

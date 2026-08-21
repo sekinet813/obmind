@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:obmind/features/mind_map/application/layout/layout_engine.dart';
 import 'package:obmind/features/mind_map/application/layout/layout_engines.dart';
 import 'package:obmind/features/mind_map/domain/models/mind_map_document.dart';
+import 'package:obmind/features/mind_map/domain/models/mind_node.dart';
 import 'package:obmind/features/mind_map/domain/models/node_id.dart';
+import 'package:obmind/features/mind_map/presentation/collapse_toggle_placement.dart';
 import 'package:obmind/features/mind_map/presentation/layout_animation.dart';
 import 'package:obmind/features/mind_map/presentation/mind_map_edge_layer.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
@@ -474,53 +476,61 @@ class MindMapViewportState extends State<MindMapViewport>
                       layout: displayLayout,
                       color: widget.canvasTheme.edgeColor,
                     ),
-                    for (final node in widget.document.root.depthFirst)
-                      if (displayLayout[node.id] != null)
+                    for (final entry in _nodesWithParents(widget.document.root))
+                      if (displayLayout[entry.node.id] != null)
                         Positioned(
-                          key: ValueKey(node.id.value),
-                          left: displayLayout[node.id]!.x,
-                          top: displayLayout[node.id]!.y,
-                          width: displayLayout[node.id]!.width,
-                          height: displayLayout[node.id]!.height,
+                          key: ValueKey(entry.node.id.value),
+                          left: displayLayout[entry.node.id]!.x,
+                          top: displayLayout[entry.node.id]!.y,
+                          width: displayLayout[entry.node.id]!.width,
+                          height: displayLayout[entry.node.id]!.height,
                           child: _NodeGestureTarget(
-                            tapEnabled: widget.editingId != node.id,
+                            tapEnabled: widget.editingId != entry.node.id,
                             dragEnabled: widget.editingId == null,
-                            dragging: widget.draggingId == node.id,
+                            dragging: widget.draggingId == entry.node.id,
                             onTap: widget.onNodeSelected == null
                                 ? null
-                                : () => widget.onNodeSelected!(node.id),
+                                : () => widget.onNodeSelected!(entry.node.id),
                             onLongPress: widget.onNodeLongPress == null
                                 ? null
-                                : () => widget.onNodeLongPress!(node.id),
+                                : () => widget.onNodeLongPress!(entry.node.id),
                             onDoubleTap: widget.onNodeDoubleTap == null
                                 ? null
-                                : () => widget.onNodeDoubleTap!(node.id),
+                                : () => widget.onNodeDoubleTap!(entry.node.id),
                             onDragStart: widget.onNodeDragStart == null
                                 ? null
-                                : () => widget.onNodeDragStart!(node.id),
+                                : () => widget.onNodeDragStart!(entry.node.id),
                             onDragUpdate: widget.onNodeDragUpdate,
                             onDragEnd: widget.onNodeDragEnd,
                             child: MindNodeWidget(
-                              text: node.text,
+                              text: entry.node.text,
                               theme: widget.canvasTheme,
-                              collapsed: node.collapsed,
+                              collapsed: entry.node.collapsed,
                               selected:
-                                  widget.selectedId == node.id ||
-                                  widget.dropTargetId == node.id,
-                              editing: widget.editingId == node.id,
-                              hasChildren: node.children.isNotEmpty,
+                                  widget.selectedId == entry.node.id ||
+                                  widget.dropTargetId == entry.node.id,
+                              editing: widget.editingId == entry.node.id,
+                              hasChildren: entry.node.children.isNotEmpty,
+                              collapseToggleDirection: collapseToggleDirection(
+                                node: entry.node,
+                                nodeLayout: displayLayout[entry.node.id]!,
+                                layout: displayLayout,
+                                parent: entry.parent,
+                              ),
                               controller: widget.editingController,
                               focusNode: widget.editingFocusNode,
                               emptyPlaceholder: widget.emptyNodePlaceholder,
                               onEditingComplete: widget.onEditingComplete,
                               collapseToggleKey: Key(
-                                'collapseToggle-${node.id.value}',
+                                'collapseToggle-${entry.node.id.value}',
                               ),
                               onToggleCollapsed:
                                   widget.onToggleCollapsed == null ||
                                       widget.editingId != null
                                   ? null
-                                  : () => widget.onToggleCollapsed!(node.id),
+                                  : () => widget.onToggleCollapsed!(
+                                      entry.node.id,
+                                    ),
                             ),
                           ),
                         ),
@@ -532,6 +542,25 @@ class MindMapViewportState extends State<MindMapViewport>
         },
       ),
     );
+  }
+}
+
+Iterable<({MindNode node, MindNode? parent})> _nodesWithParents(
+  MindNode root,
+) sync* {
+  yield (node: root, parent: null);
+  for (final child in root.children) {
+    yield* _nodesWithParentsOf(child, root);
+  }
+}
+
+Iterable<({MindNode node, MindNode? parent})> _nodesWithParentsOf(
+  MindNode node,
+  MindNode parent,
+) sync* {
+  yield (node: node, parent: parent);
+  for (final child in node.children) {
+    yield* _nodesWithParentsOf(child, node);
   }
 }
 

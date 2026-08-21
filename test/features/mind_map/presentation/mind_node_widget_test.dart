@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:obmind/features/mind_map/presentation/collapse_toggle_placement.dart';
 import 'package:obmind/features/mind_map/presentation/mind_node_widget.dart';
 import 'test_canvas_theme.dart';
 
@@ -79,7 +80,72 @@ void main() {
     final toggleRect = tester.getRect(
       find.byKey(const Key('collapseToggle-a')),
     );
-    expect(toggleRect.center.dx, nodeRect.right - 4);
+    expect(toggleRect.width, kCollapseToggleVisualSize);
+    expect(toggleRect.height, kCollapseToggleVisualSize);
+    expect(toggleRect.center.dx, closeTo(nodeRect.right - 4, 0.5));
+  });
+
+  testWidgets('keeps the visual size while expanding the hit target', (
+    tester,
+  ) async {
+    var tapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 160,
+            height: 56,
+            child: MindNodeWidget(
+              text: '展開',
+              theme: testCanvasTheme(),
+              hasChildren: true,
+              onToggleCollapsed: () => tapped = true,
+              collapseToggleKey: const Key('collapseToggle-hit'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final iconRect = tester.getRect(
+      find.byKey(const Key('collapseToggle-hit')),
+    );
+    expect(iconRect.width, kCollapseToggleVisualSize);
+
+    // Tap near the edge of the enlarged hit area, not on the painted circle.
+    final nodeRect = tester.getRect(find.byType(MindNodeWidget));
+    final hitCenter = Offset(nodeRect.right - 4, nodeRect.center.dy);
+    await tester.tapAt(
+      hitCenter - const Offset(kCollapseToggleHitSize / 2 - 2, 0),
+    );
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('places the toggle toward a leftward branch', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 160,
+            height: 56,
+            child: MindNodeWidget(
+              text: '左枝',
+              theme: testCanvasTheme(),
+              hasChildren: true,
+              collapseToggleDirection: const Offset(-1, 0),
+              onToggleCollapsed: () {},
+              collapseToggleKey: const Key('collapseToggle-left'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final nodeRect = tester.getRect(find.byType(MindNodeWidget));
+    final toggleRect = tester.getRect(
+      find.byKey(const Key('collapseToggle-left')),
+    );
+    expect(toggleRect.center.dx, closeTo(nodeRect.left + 4, 0.5));
   });
 
   testWidgets('shows a minus toggle on expanded nodes with children', (
